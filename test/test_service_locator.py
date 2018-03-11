@@ -1,6 +1,6 @@
 import unittest
 
-from service_locator import ServiceLocator, InstantiationException
+from jivago.service_locator import ServiceLocator, InstantiationException
 
 
 class ServiceLocatorTest(unittest.TestCase):
