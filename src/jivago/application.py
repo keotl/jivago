@@ -1,10 +1,16 @@
 import pkgutil
 
+from jivago.inject.components_binder import ComponentBinder
+from jivago.inject.registry import Registry
+from jivago.service_locator import ServiceLocator
+
 
 class JivagoApplication(object):
 
     def __init__(self, root_module):
         self.__importPackage(root_module)
+        self.serviceLocator = ServiceLocator()
+        self.__initializeServiceLocator()
 
     def __importPackage(self, package):
         prefix = package.__name__ + "."
@@ -14,3 +20,6 @@ class JivagoApplication(object):
             if ispkg:
                 self.__importPackage(module)
             print("Imported", module)
+
+    def __initializeServiceLocator(self):
+        ComponentBinder(Registry()).bind(self.serviceLocator)

@@ -21,8 +21,6 @@ def create_context(context_name: str) -> AbstractContext:
     context = contexts.get(context_name.lower())()
     if context is None:
         raise UnknownApplicationContextException(context_name)
-    service_locator = context.service_locator()
-    service_locator.bind(ApplicationRunner, ApplicationRunner)
     return context
 
 
