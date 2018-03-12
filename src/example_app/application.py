@@ -10,3 +10,6 @@ class Application(object):
 
 if __name__ == '__main__':
     JivagoApplication(example_app)
+    import jivago.inject.scope as scope
+    print(scope.scoped_objects)
+    print("hello")
