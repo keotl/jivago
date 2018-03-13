@@ -9,7 +9,10 @@ class Application(object):
 
 
 if __name__ == '__main__':
-    JivagoApplication(example_app)
-    import jivago.inject.scope as scope
-    print(scope.scoped_objects)
-    print("hello")
+    app = JivagoApplication(example_app)
+
+    import jivago.inject.registry as registry
+
+    component_ = registry.Registry.content[registry.Component]
+    print(component_)
+    print(app.get_annotated(registry.Component))
