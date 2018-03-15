@@ -11,7 +11,7 @@ class ServiceLocator(object):
 
     def get(self, interface: type):
         if interface in self.providers.keys():
-            return self.providers[interface]()
+            return self.__inject_function(self.providers[interface])
         if interface not in self.components.keys():
             raise InstantiationException("Could not instantiate {}.".format(interface))
 
@@ -24,8 +24,17 @@ class ServiceLocator(object):
         return self.__inject_constructor(stored_component, constructor)
 
     def __inject_function(self, provider_method):
+        parameters = []
+        try:
+            parameter_types = provider_method.__annotations__
+            parameter_names = provider_method.__code__.co_varnames
 
-
+            for name in parameter_names:
+                parameter = parameter_types[name]
+                parameters.append(self.get(parameter))
+        except AttributeError:
+            pass
+        return provider_method(*tuple(parameters))
 
     def __inject_constructor(self, stored_component, constructor):
         the_object = object.__new__(stored_component)

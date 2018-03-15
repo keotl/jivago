@@ -43,6 +43,15 @@ class ServiceLocatorTest(unittest.TestCase):
         self.assertIsInstance(component, SomeClassWithParameters)
         self.assertIsInstance(component.someObject, SomeClass)
 
+    def test_givenProviderMethodWithParameters_whenGettingComponent_thenCallProviderMethodWithRecursivelyInstantiatedParameters(
+            self):
+        self.serviceLocator.bind(SomeChildClass, provider_function_with_parameters)
+        self.serviceLocator.bind(SomeClass, SomeClass)
+
+        component = self.serviceLocator.get(SomeChildClass)
+
+        self.assertIsInstance(component, SomeChildClass)
+
 
 class SomeClass(object):
     pass
@@ -55,6 +64,10 @@ class SomeChildClass(SomeClass):
 class SomeClassWithParameters(object):
     def __init__(self, some_object: SomeClass):
         self.someObject = some_object
+
+
+def provider_function_with_parameters(parameter: SomeClass) -> SomeChildClass:
+    return SomeChildClass()
 
 
 if __name__ == "__main__":
