@@ -2,7 +2,7 @@ import pkgutil
 
 from jivago.inject.components_binder import ComponentBinder
 from jivago.inject.registry import Registry, Annotation
-from jivago.service_locator import ServiceLocator
+from jivago.inject.service_locator import ServiceLocator
 
 
 class JivagoApplication(object):

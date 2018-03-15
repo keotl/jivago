@@ -9,7 +9,7 @@ class ServiceLocator(object):
         else:
             self.components[interface] = implementation
 
-    def get(self, interface):
+    def get(self, interface: type):
         if interface in self.providers.keys():
             return self.providers[interface]()
         if interface not in self.components.keys():
@@ -21,6 +21,13 @@ class ServiceLocator(object):
             return stored_component
 
         constructor = stored_component.__init__
+        return self.__inject_constructor(stored_component, constructor)
+
+    def __inject_function(self, provider_method):
+
+
+
+    def __inject_constructor(self, stored_component, constructor):
         the_object = object.__new__(stored_component)
         parameters = []
         try:

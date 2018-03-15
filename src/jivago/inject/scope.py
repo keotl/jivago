@@ -2,8 +2,6 @@ from typing import Callable
 
 
 class Scope(object):
-    SINGLETON = object()
-
     scoped_objects = {}
 
     def __init__(self, scope: object):
@@ -12,6 +10,3 @@ class Scope(object):
     def __call__(self, wrapped_function: Callable) -> Callable:
         Scope.scoped_objects[wrapped_function] = self.scope
         return wrapped_function
-
-
-Singleton = Scope(Scope.SINGLETON)

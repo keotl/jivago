@@ -1,4 +1,4 @@
-from jivago.service_locator import ServiceLocator
+from jivago.inject.service_locator import ServiceLocator
 
 
 class AbstractBinder(object):
