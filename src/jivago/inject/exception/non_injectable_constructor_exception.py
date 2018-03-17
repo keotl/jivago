@@ -1,0 +1,2 @@
+class NonInjectableConstructorException(Exception):
+    pass

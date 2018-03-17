@@ -1,6 +1,6 @@
 from typing import Callable
 
-from jivago.inject.undefined_return_provider_function import UndefinedReturnProviderFunction
+from jivago.inject.exception.undefined_return_provider_function import UndefinedReturnProviderFunction
 
 
 class ProviderFunction(object):

@@ -4,7 +4,7 @@ from jivago.inject.registry import Annotation
 from jivago.inject.scope_cache import ScopeCache, ComponentNotHandledByScopeException, UninstantiatedObjectException
 
 
-class ScopeTest(unittest.TestCase):
+class ScopeCacheTest(unittest.TestCase):
 
     def setUp(self):
         self.scope = ScopeCache(SomeScope, [SomeScopedComponent])
