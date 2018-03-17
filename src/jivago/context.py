@@ -22,8 +22,3 @@ def create_context(context_name: str) -> AbstractContext:
     if context is None:
         raise UnknownApplicationContextException(context_name)
     return context
-
-
-def discover_contexts(context_module):
-    # Dummy way to make users load their context files
-    pass

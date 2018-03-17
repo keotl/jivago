@@ -1,5 +1,5 @@
 from jivago.inject.registry import Component
-from jivago.inject.scope import Scope
+from jivago.inject.scope_cache import ScopeCache
 
 
 @Component
@@ -8,6 +8,6 @@ class SomeBean(object):
 
 
 @Component
-@Scope(Scope.SINGLETON)
+@ScopeCache(ScopeCache.SINGLETON)
 class SomeOtherBean(object):
     pass

@@ -55,6 +55,13 @@ class StreamTest(unittest.TestCase):
         for item in self.COLLECTION:
             self.assertTrue(item in result_set)
 
+    def test_givenAListOfPairs_whenCollectingToDict_thenExpandPairsToKeyValue(self):
+        dictionary = self.stream.map(lambda x: (x, StreamTest.DIVIDES_BY_THREE(x))).toDict()
+
+        self.assertEqual(len(self.COLLECTION), len(dictionary.keys()))
+        for i in self.COLLECTION:
+            self.assertEqual(dictionary[i], StreamTest.DIVIDES_BY_THREE(i))
+
 
 if __name__ == '__main__':
     unittest.main()

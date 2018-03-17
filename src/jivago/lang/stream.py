@@ -24,6 +24,8 @@ class Stream(object):
     def toSet(self) -> set:
         return set(self.toList())
 
+    def toDict(self) -> dict:
+        return dict(self.toList())
+
     def __iter__(self) -> Iterator:
         return iter(self.iterable)
-
