@@ -7,21 +7,40 @@ class Stream(object):
         self.iterable = iterable
 
     def map(self, fun: Callable) -> "Stream":
-        return Stream(map(fun, self.iterable))
+        if self.__should_expand(fun):
+            return Stream(map(lambda tup: fun(*tup), self.iterable))
+        else:
+            return Stream(map(fun, self.iterable))
 
     def filter(self, fun: Callable) -> "Stream":
-        return Stream(filter(fun, self.iterable))
+        if self.__should_expand(fun):
+            return Stream(filter(lambda tup: fun(*tup), self.iterable))
+        else:
+            return Stream(filter(fun, self.iterable))
+
+    def forEach(self, fun: Callable) -> None:
+        if self.__should_expand(fun):
+            for i in self:
+                fun(*i)
+        else:
+            for i in self:
+                fun(i)
 
     def anyMatch(self, fun: Callable) -> bool:
-        return any(map(fun, self.iterable))
+        return any(self.map(fun))
 
     def allMatch(self, fun: Callable) -> bool:
-        return all(map(fun, self.iterable))
+        return all(self.map(fun))
 
     def firstMatch(self, fun: Callable) -> Optional:
-        for i in self:
-            if fun(i):
-                return i
+        if self.__should_expand(fun):
+            for i in self:
+                if fun(*i):
+                    return i
+        else:
+            for i in self:
+                if fun(i):
+                    return i
         return None
 
     def toList(self) -> list:
@@ -32,6 +51,9 @@ class Stream(object):
 
     def toDict(self) -> dict:
         return dict(self.toList())
+
+    def __should_expand(self, fun: Callable) -> bool:
+        return fun.__code__.co_argcount > 1
 
     def __iter__(self) -> Iterator:
         return iter(self.iterable)

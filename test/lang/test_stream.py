@@ -62,6 +62,42 @@ class StreamTest(unittest.TestCase):
         for i in self.COLLECTION:
             self.assertEqual(dictionary[i], StreamTest.DIVIDES_BY_THREE(i))
 
+    def test_whenForEach_thenCallFunctionOnAllItems(self):
+        result = []
+        add_to_list = lambda x: result.append(x)
+
+        self.stream.forEach(add_to_list)
+
+        self.assertEqual(self.COLLECTION, result)
+
+    def test_givenCollectionOfTuples_whenForEach_thenExpandTuplesWhenCallingFunction(self):
+        result = []
+        self.stream = Stream([(1, -1), (2, -2)])
+        add_sum_to_list = lambda x, y: result.append(x + y)
+
+        self.stream.forEach(add_sum_to_list)
+
+        self.assertEqual([0, 0], result)
+
+    def test_givenFunctionWithTwoParameters_whenMapping_thenExpandTuplesWhenCallingFunction(self):
+        result = self.stream.map(lambda x: (x, x)).map(lambda x, y: x - y).toList()
+
+        self.assertEqual([0 for i in self.COLLECTION], result)
+
+    def test_givenFunctionWithTwoParameters_whenFiltering_thenExpandTuplesWhenCallingFunction(self):
+        result = self.stream.map(lambda x: (x, x)).filter(lambda x, y: x == y).toList()
+
+        self.assertEqual([(i, i) for i in self.COLLECTION], result)
+
+    def test_givenFunctionWithTwoParameters_whenFindingFirstMatch_thenExpandTuplesWhenCallingFunction(self):
+        result = self.stream.map(lambda x: (x, x)).firstMatch(lambda x, y: x == y)
+
+        self.assertEqual((self.COLLECTION[0], self.COLLECTION[0]), result)
+
+    def test_givenFunctionWithTwoParameters_whenIteratingOverScalars_thenThrowTypeError(self):
+        with self.assertRaises(TypeError):
+            self.stream.map(lambda x, y: x + y).toList()
+
 
 if __name__ == '__main__':
     unittest.main()
