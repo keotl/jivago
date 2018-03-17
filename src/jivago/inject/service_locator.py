@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Optional, Callable
 
+from jivago.inject.injectable import Injectable
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.stream import Stream
 
@@ -60,6 +61,9 @@ class ServiceLocator(object):
         return provider_method(*tuple(parameters))
 
     def __inject_constructor(self, stored_component, constructor):
+        if not self.__is_injectable(constructor):
+            raise NonInjectableConstructorException(stored_component)
+
         the_object = object.__new__(stored_component)
         parameters = []
         try:
@@ -74,8 +78,21 @@ class ServiceLocator(object):
         constructor(the_object, *tuple(parameters))
         return the_object
 
+    def __is_injectable(self, constructor_function: Callable) -> bool:
+        try:
+            return isinstance(constructor_function, Injectable) or (
+                        len(constructor_function.__code__.co_varnames) == 1 and
+                        constructor_function.__code_co_varnames[0] == 'self')
+        except AttributeError:
+            # For object constructor wrapper, on classes which do not explicitly define a constructor
+            return True
+
     def __get_scope(self, component: type) -> Optional[ScopeCache]:
         return Stream(self.scopeCaches).firstMatch(lambda scope: scope.handles_component(component))
+
+
+class NonInjectableConstructorException(Exception):
+    pass
 
 
 class InstantiationException(Exception):

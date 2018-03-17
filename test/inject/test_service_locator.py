@@ -2,7 +2,8 @@ import unittest
 
 from jivago.inject.registry import Singleton
 from jivago.inject.scope_cache import ScopeCache
-from jivago.inject.service_locator import ServiceLocator, InstantiationException
+from jivago.inject.service_locator import ServiceLocator, InstantiationException, NonInjectableConstructorException
+from jivago.lang.annotations import Inject
 
 
 class ServiceLocatorTest(unittest.TestCase):
@@ -65,6 +66,13 @@ class ServiceLocatorTest(unittest.TestCase):
         self.assertIsInstance(expected, SomeClass)
         self.assertEqual(expected, result)
 
+    def test_givenClassWithNonInjectableConstructor_whenGettingComponent_thenThrowNonInjectableConstructorException(
+            self):
+        self.serviceLocator.bind(SomeClassWithANonInjectableConstructor, SomeClassWithANonInjectableConstructor)
+
+        with self.assertRaises(NonInjectableConstructorException):
+            self.serviceLocator.get(SomeClassWithANonInjectableConstructor)
+
 
 class SomeClass(object):
     pass
@@ -75,8 +83,14 @@ class SomeChildClass(SomeClass):
 
 
 class SomeClassWithParameters(object):
+    @Inject
     def __init__(self, some_object: SomeClass):
         self.someObject = some_object
+
+
+class SomeClassWithANonInjectableConstructor(object):
+    def __init__(self, some_object: SomeClass):
+        pass
 
 
 def provider_function_with_parameters(parameter: SomeClass) -> SomeChildClass:
