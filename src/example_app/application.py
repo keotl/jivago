@@ -1,4 +1,5 @@
 import example_app
+from example_app.comp.beans import SomeOtherBean
 from jivago.application import JivagoApplication
 
 
@@ -11,8 +12,7 @@ class Application(object):
 if __name__ == '__main__':
     app = JivagoApplication(example_app)
 
-    import jivago.inject.registry as registry
+    bean = app.serviceLocator.get(SomeOtherBean)
+    bean2 = app.serviceLocator.get(SomeOtherBean)
 
-    component_ = registry.Registry.content[registry.Component]
-    print(component_)
-    print(app.get_annotated(registry.Component))
+    assert bean == bean2

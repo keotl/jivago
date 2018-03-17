@@ -1,5 +1,4 @@
-from jivago.inject.registry import Component
-from jivago.inject.scope_cache import ScopeCache
+from jivago.inject.registry import Component, Singleton
 
 
 @Component
@@ -8,6 +7,6 @@ class SomeBean(object):
 
 
 @Component
-@ScopeCache(ScopeCache.SINGLETON)
+@Singleton
 class SomeOtherBean(object):
     pass
