@@ -1,5 +1,7 @@
 import unittest
 
+from jivago.inject.registry import Singleton
+from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator, InstantiationException
 
 
@@ -51,6 +53,17 @@ class ServiceLocatorTest(unittest.TestCase):
         component = self.serviceLocator.get(SomeChildClass)
 
         self.assertIsInstance(component, SomeChildClass)
+
+    def test_givenScopedComponent_whenGettingComponentTwice_thenReturnTheSameComponentTwice(self):
+        scope_cache = ScopeCache(Singleton, [SomeClass])
+        self.serviceLocator.register_scope(scope_cache)
+        self.serviceLocator.bind(SomeClass, SomeClass)
+
+        expected = self.serviceLocator.get(SomeClass)
+        result = self.serviceLocator.get(SomeClass)
+
+        self.assertIsInstance(expected, SomeClass)
+        self.assertEqual(expected, result)
 
 
 class SomeClass(object):

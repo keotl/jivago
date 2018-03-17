@@ -9,13 +9,13 @@ class ScopeTest(unittest.TestCase):
     def setUp(self):
         self.scope = ScopeCache(SomeScope, [SomeScopedComponent])
 
-    def test_whenCheckingIsComponentScoped_thenChecksWhetherTheComponentIsInTheScopedComponentsList(self):
-        scoped = self.scope.is_scoped(SomeScopedComponent)
+    def test_whenCheckingHandlesComponent_thenChecksWhetherTheComponentIsInTheScopedComponentsList(self):
+        scoped = self.scope.handles_component(SomeScopedComponent)
 
         self.assertTrue(scoped)
 
-    def test_givenUnscopedComponent_whenCheckingIsScoped_thenReturnIsNotScoped(self):
-        scoped = self.scope.is_scoped(UnscopedComponent)
+    def test_givenUnscopedComponent_whenCheckingHandlesComponent_thenReturnFalse(self):
+        scoped = self.scope.handles_component(UnscopedComponent)
 
         self.assertFalse(scoped)
 

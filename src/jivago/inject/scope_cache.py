@@ -10,7 +10,7 @@ class ScopeCache(object):
         self.scope = scope
         self.scoped_components = Stream(scoped_components).map(lambda clazz: (clazz, None)).toDict()
 
-    def is_scoped(self, component: type) -> bool:
+    def handles_component(self, component: type) -> bool:
         return component in self.scoped_components.keys()
 
     def is_stored(self, component: type) -> bool:

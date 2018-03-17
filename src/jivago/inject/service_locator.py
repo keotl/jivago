@@ -1,15 +1,30 @@
+from typing import Optional
+
+from jivago.inject.scope_cache import ScopeCache
+from jivago.lang.stream import Stream
+
+
 class ServiceLocator(object):
     def __init__(self):
+        self.literals = {}
         self.components = {}
         self.providers = {}
+        self.scopeCaches = []
 
     def bind(self, interface, implementation):
-        if callable(implementation) and not isinstance(implementation, type):
+        if self.__is_provider_function(implementation):
             self.providers[interface] = implementation
-        else:
+        elif isinstance(implementation, type):
             self.components[interface] = implementation
+        else:
+            self.literals[interface] = implementation
+
+    def register_scope(self, scope_cache: ScopeCache):
+        self.scopeCaches.append(scope_cache)
 
     def get(self, interface: type):
+        if interface in self.literals.keys():
+            return self.literals[interface]
         if interface in self.providers.keys():
             return self.__inject_function(self.providers[interface])
         if interface not in self.components.keys():
@@ -17,11 +32,19 @@ class ServiceLocator(object):
 
         stored_component = self.components[interface]
 
-        if not isinstance(stored_component, type):
-            return stored_component
+        scope = self.__get_scope(stored_component)
+        if scope is not None and scope.is_stored(stored_component):
+            return scope.get(stored_component)
 
         constructor = stored_component.__init__
-        return self.__inject_constructor(stored_component, constructor)
+        instance = self.__inject_constructor(stored_component, constructor)
+
+        if scope:
+            scope.store(stored_component, instance)
+        return instance
+
+    def __is_provider_function(self, obj) -> bool:
+        return callable(obj) and not isinstance(obj, type)
 
     def __inject_function(self, provider_method):
         parameters = []
@@ -50,6 +73,9 @@ class ServiceLocator(object):
             pass
         constructor(the_object, *tuple(parameters))
         return the_object
+
+    def __get_scope(self, component: type) -> Optional[ScopeCache]:
+        return Stream(self.scopeCaches).firstMatch(lambda scope: scope.handles_component(component))
 
 
 class InstantiationException(Exception):

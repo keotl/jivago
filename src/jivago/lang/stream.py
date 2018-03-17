@@ -1,4 +1,4 @@
-from typing import Iterable, Callable, Iterator
+from typing import Iterable, Callable, Iterator, Optional
 
 
 class Stream(object):
@@ -17,6 +17,12 @@ class Stream(object):
 
     def allMatch(self, fun: Callable) -> bool:
         return all(map(fun, self.iterable))
+
+    def firstMatch(self, fun: Callable) -> Optional:
+        for i in self:
+            if fun(i):
+                return i
+        return None
 
     def toList(self) -> list:
         return [x for x in self.iterable]
