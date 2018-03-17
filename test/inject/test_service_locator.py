@@ -73,6 +73,14 @@ class ServiceLocatorTest(unittest.TestCase):
         with self.assertRaises(NonInjectableConstructorException):
             self.serviceLocator.get(SomeClassWithANonInjectableConstructor)
 
+    def test_givenNonInjectableConstructorWithOnlyOneParameter_whenGettingComponent_thenInstantiateTheComponentAnyway(
+            self):
+        self.serviceLocator.bind(ClassWithImplicitlyInjectableConstructor, ClassWithImplicitlyInjectableConstructor)
+
+        component = self.serviceLocator.get(ClassWithImplicitlyInjectableConstructor)
+
+        self.assertIsInstance(component, ClassWithImplicitlyInjectableConstructor)
+
 
 class SomeClass(object):
     pass
@@ -91,6 +99,11 @@ class SomeClassWithParameters(object):
 class SomeClassWithANonInjectableConstructor(object):
     def __init__(self, some_object: SomeClass):
         pass
+
+
+class ClassWithImplicitlyInjectableConstructor(object):
+    def __init__(self):
+        self.value = 5
 
 
 def provider_function_with_parameters(parameter: SomeClass) -> SomeChildClass:
