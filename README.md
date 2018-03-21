@@ -1,5 +1,11 @@
 # Jivago Framework
-## Dependency Injection (WIP)
+For writing complex, robust Python backend applications. Inspired Spring, Jersey, hk2, and the like. Also includes other Java-esque goodies, such as stream operations.
+
+- What still needs to be done : Routing RESTful requests using annotations. (Wrap over Flask)
+
+Below is what currently works.
+## Dependency Injection
+
 ### Using a standalone Service Locator
 Requires type hints to be used!
 ```python
