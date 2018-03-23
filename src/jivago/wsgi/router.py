@@ -1,4 +1,4 @@
-from jivago.inject.registry import Annotation, Registry
+from jivago.inject.class_registry import Annotation, ClassRegistry
 
 
 def Resource(path: str):
@@ -17,7 +17,7 @@ def Path(path: str):
 
 
 class Router(object):
-    def __init__(self, registry: Registry):
+    def __init__(self, registry: ClassRegistry):
         pass
 
 

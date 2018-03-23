@@ -1,6 +1,6 @@
 from typing import List
 
-from jivago.inject.registry import Annotation
+from jivago.inject.class_registry import Annotation
 from jivago.lang.stream import Stream
 
 

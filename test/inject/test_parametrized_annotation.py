@@ -1,12 +1,12 @@
 import unittest
 
-from jivago.inject.registry import Registry, ParametrizedAnnotation
+from jivago.inject.class_registry import ClassRegistry, ParametrizedAnnotation
 
 
 class ParametrizedAnnotationTest(unittest.TestCase):
 
     def setUp(self):
-        self.registry = Registry()
+        self.registry = ClassRegistry()
 
     def test_whenUsingParametrizedAnnotation_thenWrappedTypesAreSavedInTheRegistry(self):
         wrapped_function = self.registry.content[myAnnotation][0]

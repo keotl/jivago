@@ -2,7 +2,7 @@ import pkgutil
 
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.inject.registry import Registry, Annotation, Singleton, Component
+from jivago.inject.class_registry import ClassRegistry, Annotation, Singleton, Component
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.router import Resource
@@ -25,13 +25,13 @@ class JivagoApplication(object):
                 self.__import_package_recursive(module)
 
     def __initialize_service_locator(self):
-        AnnotatedClassBinder(self.rootModule.__name__, Registry(), Component).bind(self.serviceLocator)
-        AnnotatedClassBinder(self.rootModule.__name__, Registry(), Resource).bind(self.serviceLocator)
-        ProviderBinder(self.rootModule.__name__, Registry()).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.rootModule.__name__, ClassRegistry(), Component).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.rootModule.__name__, ClassRegistry(), Resource).bind(self.serviceLocator)
+        ProviderBinder(self.rootModule.__name__, ClassRegistry()).bind(self.serviceLocator)
         for scope in self.scopes:
             scoped_classes = self.get_annotated(scope)
             cache = ScopeCache(scope, scoped_classes)
             self.serviceLocator.register_scope(cache)
 
     def get_annotated(self, annotation: Annotation) -> list:
-        return Registry().get_annotated_in_package(annotation, self.rootModule.__name__)
+        return ClassRegistry().get_annotated_in_package(annotation, self.rootModule.__name__)
