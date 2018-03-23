@@ -3,7 +3,8 @@ from jivago.inject.registry import Component, Singleton
 
 @Component
 class SomeBean(object):
-    pass
+    def say_hello(self):
+        return "hello"
 
 
 @Component

@@ -28,6 +28,25 @@ class Annotation(object):
         return self.decorator.__name__
 
 
+class ParametrizedAnnotation(Annotation):
+
+    def __call__(self, *args, **kwargs):
+        return SimpleSaveDecorator(self.registry, self)
+
+
+class SimpleSaveDecorator(object):
+
+    def __init__(self, registry: Registry, saveTarget):
+        self.saveTarget = saveTarget
+        self.registry = registry
+        if self.saveTarget not in self.registry.content:
+            self.registry.content[self.saveTarget] = []
+
+    def __call__(self, target):
+        self.registry.content[self.saveTarget].append(target)
+        return target
+
+
 @Annotation
 def Singleton(wrapped_class: type) -> type:
     return wrapped_class
