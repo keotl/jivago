@@ -9,7 +9,7 @@ class ParametrizedAnnotationTest(unittest.TestCase):
         self.registry = Registry()
 
     def test_whenUsingParametrizedAnnotation_thenWrappedTypesAreSavedInTheRegistry(self):
-        wrapped_function = self.registry.content[myAnnotation][0]
+        wrapped_function = self.registry.get_annotated_in_package(myAnnotation, "")[0].registered
 
         self.assertEqual(some_wrapped_function, wrapped_function)
 

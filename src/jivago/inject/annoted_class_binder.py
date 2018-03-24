@@ -13,5 +13,6 @@ class AnnotatedClassBinder(AbstractBinder):
 
     @Override
     def bind(self, service_locator: ServiceLocator):
-        for component in self.registry.get_annotated_in_package(self.annotation, self.rootPackage):
+        for registration in self.registry.get_annotated_in_package(self.annotation, self.rootPackage):
+            component = registration.registered
             service_locator.bind(component, component)
