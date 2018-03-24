@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.inject.class_registry import Annotation
+from jivago.inject.registry import Annotation
 from jivago.inject.scope_cache import ScopeCache, ComponentNotHandledByScopeException, UninstantiatedObjectException
 
 

@@ -3,7 +3,7 @@ from typing import Callable
 from jivago.inject.provider_function import ProviderFunction
 
 
-class ClassRegistry(object):
+class Registry(object):
     content = {}
 
     def get_annotated_in_package(self, annotation: "Annotation", package: str):
@@ -15,7 +15,7 @@ class Annotation(object):
 
     def __init__(self, decorator: Callable):
         self.decorator = decorator
-        self.registry = ClassRegistry()
+        self.registry = Registry()
         if self not in self.registry.content:
             self.registry.content[self] = []
 
@@ -36,7 +36,7 @@ class ParametrizedAnnotation(Annotation):
 
 class SimpleSaveDecorator(object):
 
-    def __init__(self, registry: ClassRegistry, saveTarget):
+    def __init__(self, registry: Registry, saveTarget):
         self.saveTarget = saveTarget
         self.registry = registry
         if self.saveTarget not in self.registry.content:

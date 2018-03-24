@@ -1,5 +1,5 @@
 from jivago.config import AbstractBinder
-from jivago.inject.class_registry import ClassRegistry, Provider
+from jivago.inject.registry import Registry, Provider
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Override
 from jivago.lang.stream import Stream
@@ -7,7 +7,7 @@ from jivago.lang.stream import Stream
 
 class ProviderBinder(AbstractBinder):
 
-    def __init__(self, root_package: str, registry: ClassRegistry):
+    def __init__(self, root_package: str, registry: Registry):
         self.rootPackage = root_package
         self.registry = registry
 

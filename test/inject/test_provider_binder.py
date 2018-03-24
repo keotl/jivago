@@ -1,7 +1,7 @@
 import unittest
 
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.inject.class_registry import Provider, ClassRegistry
+from jivago.inject.registry import Provider, Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.inject.exception.undefined_return_provider_function import UndefinedReturnProviderFunction
 
@@ -14,7 +14,7 @@ class ProviderBinderTest(unittest.TestCase):
         self.serviceLocator.bind = lambda interface, implementation: self.result.append((interface, implementation))
 
     def test_givenProviderFunctionWithReturnType_whenInitializingServiceLocator_thenFunctionIsBoundByReturnType(self):
-        binder = ProviderBinder("", ClassRegistry())
+        binder = ProviderBinder("", Registry())
 
         binder.bind(self.serviceLocator)
 
@@ -26,7 +26,7 @@ class ProviderBinderTest(unittest.TestCase):
         def provider_function_without_a_defined_return_type():
             return SomeClass()
 
-        binder = ProviderBinder("", ClassRegistry())
+        binder = ProviderBinder("", Registry())
 
         with self.assertRaises(UndefinedReturnProviderFunction):
             binder.bind(self.serviceLocator)

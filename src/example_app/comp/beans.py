@@ -1,4 +1,4 @@
-from jivago.inject.class_registry import Component, Singleton
+from jivago.inject.registry import Component, Singleton
 
 
 @Component

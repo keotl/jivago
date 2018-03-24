@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.inject.class_registry import Singleton
+from jivago.inject.registry import Singleton
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator, InstantiationException, NonInjectableConstructorException
 from jivago.lang.annotations import Inject
