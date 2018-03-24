@@ -36,17 +36,31 @@ class Annotation(object):
 class ParametrizedAnnotation(Annotation):
 
     def __call__(self, *args, **kwargs):
-        return SimpleSaveDecorator(self.registry, self)
+        type_hints = self.decorator.__annotations__
+        parameter_names = self.decorator.__code__
+        arguments = []
+        for key in type_hints.keys():
+            if key == 'return':
+                continue
+            if key == 'value' and len(args) == 1:
+                arguments.append((key, args[0]))
+            elif key in kwargs:
+                arguments.append((key, kwargs[key]))
+            else:
+                raise MissingAnnotationParameterException(key)
+
+        return SimpleSaveDecorator(self.registry, self, arguments=dict(arguments))
 
 
 class SimpleSaveDecorator(object):
 
-    def __init__(self, registry: Registry, saveTarget):
+    def __init__(self, registry: Registry, saveTarget, arguments: dict):
         self.saveTarget = saveTarget
         self.registry = registry
+        self.arguments = arguments
 
     def __call__(self, target):
-        self.registry.register(self.saveTarget, target)
+        self.registry.register(self.saveTarget, target, arguments=self.arguments)
         return target
 
 
@@ -63,3 +77,7 @@ def Component(wrapped_class: type) -> type:
 @Annotation
 def Provider(wrapped_function: Callable) -> Callable:
     return ProviderFunction(wrapped_function)
+
+
+class MissingAnnotationParameterException(Exception):
+    pass

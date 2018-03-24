@@ -70,6 +70,7 @@ class ServiceLocator(object):
         parameters = []
         try:
             parameter_types = constructor.__annotations__
+            # TODO might be an issue if function contains another function
             parameter_names = constructor.__code__.co_varnames[1::]
 
             for name in parameter_names:
