@@ -56,6 +56,11 @@ class ServiceLocator(object):
             parameter_names = provider_method.__code__.co_varnames
 
             for name in parameter_names:
+                if name not in parameter_types:
+                    # This is a variable, for instance a function definition, and not an actual parameter
+                    # Member variables are ordered after the function parameters, so when we get here, all parameters
+                    # have been set already.
+                    break
                 parameter = parameter_types[name]
                 parameters.append(self.get(parameter))
         except AttributeError:
@@ -70,10 +75,14 @@ class ServiceLocator(object):
         parameters = []
         try:
             parameter_types = constructor.__annotations__
-            # TODO might be an issue if function contains another function
             parameter_names = constructor.__code__.co_varnames[1::]
 
             for name in parameter_names:
+                if name not in parameter_types:
+                    # This is a variable, for instance a function definition, and not an actual parameter
+                    # Member variables are ordered after the function parameters, so when we get here, all parameters
+                    # have been set already.
+                    break
                 parameter = parameter_types[name]
                 parameters.append(self.get(parameter))
         except AttributeError:

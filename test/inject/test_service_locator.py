@@ -81,6 +81,26 @@ class ServiceLocatorTest(unittest.TestCase):
 
         self.assertIsInstance(component, ClassWithImplicitlyInjectableConstructor)
 
+    def test_givenAConstructorWhichContainsAFunctionDefinition_whenGettingComponent_thenComponentIsInstantiatedWithoutInterferingWithTheFunction(
+            self):
+        self.serviceLocator.bind(ClassWhichContainsAFunctionInItsConstructor,
+                                 ClassWhichContainsAFunctionInItsConstructor)
+        self.serviceLocator.bind(SomeClass, SomeClass)
+
+        component = self.serviceLocator.get(ClassWhichContainsAFunctionInItsConstructor)
+
+        self.assertIsInstance(component, ClassWhichContainsAFunctionInItsConstructor)
+
+    def test_givenAProviderFunctionWithAnotherFunctionDefinedInsideIt_whenGettingComponent_thenComponentIsInstantiatedWithoutInterferingWithTheInnerFunction(
+            self):
+        self.serviceLocator.bind(SomeChildClass, function_with_another_function_defined_inside_it)
+        self.serviceLocator.bind(SomeClassWithParameters, SomeClassWithParameters)
+        self.serviceLocator.bind(SomeClass, SomeClass)
+
+        component = self.serviceLocator.get(SomeChildClass)
+
+        self.assertIsInstance(component, SomeChildClass)
+
 
 class SomeClass(object):
     pass
@@ -108,6 +128,29 @@ class ClassWithImplicitlyInjectableConstructor(object):
 
 def provider_function_with_parameters(parameter: SomeClass) -> SomeChildClass:
     return SomeChildClass()
+
+
+class ClassWhichContainsAFunctionInItsConstructor(object):
+
+    @Inject
+    def __init__(self, some_class: SomeClass):
+        someVariable = 123
+        self.someMessage = "hello"
+
+        def wrapper(some_class=some_class) -> int:
+            return 5
+
+        self.someObject = wrapper(some_class)
+
+
+def function_with_another_function_defined_inside_it(parameter: SomeClass) -> SomeChildClass:
+    someVariable = 10
+
+    def someWrapperFunction(param: SomeClassWithParameters) -> SomeChildClass:
+        return SomeChildClass()
+
+    someVariable += 10
+    return someWrapperFunction(parameter)
 
 
 if __name__ == "__main__":
