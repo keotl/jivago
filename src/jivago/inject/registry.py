@@ -37,7 +37,6 @@ class ParametrizedAnnotation(Annotation):
 
     def __call__(self, *args, **kwargs):
         type_hints = self.decorator.__annotations__
-        parameter_names = self.decorator.__code__
         arguments = []
         for key in type_hints.keys():
             if key == 'return':
