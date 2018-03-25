@@ -16,7 +16,7 @@ class RouteNode(object):
                 raise AmbiguousRoutingException(http_primitive, invocation_wrapper)
             self.invocators[http_primitive] = invocation_wrapper
         else:
-            for path_element in path:
-                if path_element not in self.children:
-                    self.children[path_element] = RouteNode()
-                self.children[path_element].register_child(path[1::], http_primitive, invocation_wrapper)
+            next_path_element = path[0]
+            if next_path_element not in self.children:
+                self.children[next_path_element] = RouteNode()
+            self.children[next_path_element].register_child(path[1::], http_primitive, invocation_wrapper)
