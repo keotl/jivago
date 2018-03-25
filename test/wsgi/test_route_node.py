@@ -4,6 +4,7 @@ from jivago.wsgi.ambiguous_routing_exception import AmbiguousRoutingException
 from jivago.wsgi.methods import GET
 from jivago.wsgi.route_invocation_wrapper import RouteInvocationWrapper
 from jivago.wsgi.route_node import RouteNode
+from jivago.wsgi.unknown_path_exception import UnknownPathException
 
 
 class RouteNodeTest(unittest.TestCase):
@@ -11,6 +12,8 @@ class RouteNodeTest(unittest.TestCase):
     HTTP_PRIMITIVE = GET
     A_WRAPPER = RouteInvocationWrapper(None, None)
     A_LONGER_PATH = ['hello', 'goodbye']
+    A_PATH_WITH_PARAMETERS = ["hello", "{id}", "delete"]
+    A_PATH_WITH_DIFFERENT_PARAMETERS = ["hello", "{name}", "delete"]
 
     def setUp(self):
         self.rootNode = RouteNode()
@@ -23,7 +26,8 @@ class RouteNodeTest(unittest.TestCase):
     def test_givenPathOfMultipleElements_whenRegistering_thenMethodInvocatorIsOnlySavedAtLastChildNode(self):
         self.rootNode.register_child(self.A_LONGER_PATH, self.HTTP_PRIMITIVE, self.A_WRAPPER)
 
-        self.assertEqual({self.HTTP_PRIMITIVE: self.A_WRAPPER}, self.rootNode.children['hello'].children['goodbye'].invocators)
+        self.assertEqual({self.HTTP_PRIMITIVE: self.A_WRAPPER},
+                         self.rootNode.children['hello'].children['goodbye'].invocators)
         self.assertEqual(1, len(self.rootNode.children))
         self.assertEqual(1, len(self.rootNode.children['hello'].children))
 
@@ -33,11 +37,29 @@ class RouteNodeTest(unittest.TestCase):
         with self.assertRaises(AmbiguousRoutingException):
             self.rootNode.register_child(self.A_SIMPLE_PATH, self.HTTP_PRIMITIVE, self.A_WRAPPER)
 
-    def test_givenTwoRoutesWithDifferentPathParametersButOtherwiseIdentical_whenRegisteringPath_thenThrowAmbiguousRoutingException(self):
-        a_path_with_a_parameter = ["hello", "{id}", "delete"]
-        a_path_with_a_different_parameter = ["hello", "{name}", "delete"]
-
-        self.rootNode.register_child(a_path_with_a_parameter, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+    def test_givenTwoRoutesWithDifferentPathParametersButOtherwiseIdentical_whenRegisteringPath_thenThrowAmbiguousRoutingException(
+            self):
+        self.rootNode.register_child(self.A_PATH_WITH_PARAMETERS, self.HTTP_PRIMITIVE, self.A_WRAPPER)
 
         with self.assertRaises(AmbiguousRoutingException):
-            self.rootNode.register_child(a_path_with_a_different_parameter, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+            self.rootNode.register_child(self.A_PATH_WITH_DIFFERENT_PARAMETERS, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+
+    def test_whenExploring_thenWalkTheTreeWordByWord(self):
+        self.rootNode.register_child(self.A_LONGER_PATH, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+
+        node = self.rootNode.explore(self.A_LONGER_PATH)
+
+        self.assertEqual(self.A_WRAPPER, node.invocators[self.HTTP_PRIMITIVE])
+
+    def test_givenUnknownPath_whenExploring_thenThrowUnknownPathException(self):
+        with self.assertRaises(UnknownPathException):
+            self.rootNode.explore(self.A_SIMPLE_PATH)
+
+    def test_givenParameters_whenExploring_thenFollowPathRegardlessOfParameter(self):
+        self.rootNode.register_child(self.A_PATH_WITH_PARAMETERS, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+
+        node = self.rootNode.explore(self.A_PATH_WITH_PARAMETERS)
+        node2 = self.rootNode.explore(self.A_PATH_WITH_DIFFERENT_PARAMETERS)
+
+        self.assertEqual(self.A_WRAPPER, node.invocators[self.HTTP_PRIMITIVE])
+        self.assertEqual(node, node2)

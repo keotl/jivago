@@ -1,0 +1,2 @@
+class UnknownPathException(Exception):
+    pass
