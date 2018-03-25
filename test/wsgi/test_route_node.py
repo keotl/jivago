@@ -32,3 +32,12 @@ class RouteNodeTest(unittest.TestCase):
 
         with self.assertRaises(AmbiguousRoutingException):
             self.rootNode.register_child(self.A_SIMPLE_PATH, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+
+    def test_givenTwoRoutesWithDifferentPathParametersButOtherwiseIdentical_whenRegisteringPath_thenThrowAmbiguousRoutingException(self):
+        a_path_with_a_parameter = ["hello", "{id}", "delete"]
+        a_path_with_a_different_parameter = ["hello", "{name}", "delete"]
+
+        self.rootNode.register_child(a_path_with_a_parameter, self.HTTP_PRIMITIVE, self.A_WRAPPER)
+
+        with self.assertRaises(AmbiguousRoutingException):
+            self.rootNode.register_child(a_path_with_a_different_parameter, self.HTTP_PRIMITIVE, self.A_WRAPPER)
