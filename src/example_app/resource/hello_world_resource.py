@@ -1,6 +1,6 @@
 from example_app.comp.beans import SomeBean
 from jivago.lang.annotations import Inject
-from jivago.wsgi.methods import GET, POST
+from jivago.wsgi.methods import GET, POST, DELETE
 from jivago.wsgi.router import Resource, Path
 
 
@@ -19,4 +19,9 @@ class HelloWorldResource(object):
     @Path("/{name}")
     def post_hello(self, name: str) -> str:
         print("name: {}".format(name))
+        return self.some_bean.say_hello()
+
+    @Path("/delete")
+    @DELETE
+    def delete_hello(self) -> str:
         return self.some_bean.say_hello()

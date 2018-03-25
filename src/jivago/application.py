@@ -5,7 +5,7 @@ from jivago.inject.provider_binder import ProviderBinder
 from jivago.inject.registry import Registry, Annotation, Singleton, Component
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator
-from jivago.wsgi.router import Resource
+from jivago.wsgi.router import Resource, Router
 
 
 class JivagoApplication(object):
@@ -16,6 +16,7 @@ class JivagoApplication(object):
         self.__import_package_recursive(root_module)
         self.serviceLocator = ServiceLocator()
         self.__initialize_service_locator()
+        self.router = Router(Registry(), self.rootModule)
 
     def __import_package_recursive(self, package):
         prefix = package.__name__ + "."

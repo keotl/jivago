@@ -9,6 +9,8 @@ class Registry(object):
     content = {}
 
     def get_annotated_in_package(self, annotation: "Annotation", package: str) -> List[Registration]:
+        if annotation not in self.content:
+            return []
         annotated = self.content[annotation]
         return Stream(annotated).filter(lambda r: r.is_in_package(package)).toList()
 

@@ -6,6 +6,7 @@ from jivago.lang.stream import Stream
 class StreamTest(unittest.TestCase):
     COLLECTION = [5, 3, 1, 10, 51, 42, 7]
     DIVIDES_BY_THREE = lambda x: x % 3 == 0
+    BUMPY_COLLECTION = [[5, 3, 1], [10], [51, 42, 7]]
 
     def setUp(self):
         self.stream = Stream(self.COLLECTION)
@@ -97,6 +98,11 @@ class StreamTest(unittest.TestCase):
     def test_givenFunctionWithTwoParameters_whenIteratingOverScalars_thenThrowTypeError(self):
         with self.assertRaises(TypeError):
             self.stream.map(lambda x, y: x + y).toList()
+
+    def test_givenStreamOfLists_whenFlattening_thenReturnStreamOfConcatenatedLists(self):
+        result = Stream(self.BUMPY_COLLECTION).flat().toList()
+
+        self.assertEqual(self.COLLECTION, result)
 
 
 if __name__ == '__main__':
