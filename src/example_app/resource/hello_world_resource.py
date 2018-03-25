@@ -1,7 +1,7 @@
 from example_app.comp.beans import SomeBean
 from jivago.lang.annotations import Inject
+from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.methods import GET, POST, DELETE
-from jivago.wsgi.router import Resource, Path
 
 
 @Resource("/hello")

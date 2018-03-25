@@ -5,7 +5,8 @@ from jivago.inject.provider_binder import ProviderBinder
 from jivago.inject.registry import Registry, Annotation, Singleton, Component
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator
-from jivago.wsgi.router import Resource, Router
+from jivago.wsgi.annotations import Resource
+from jivago.wsgi.router import Router
 
 
 class JivagoApplication(object):

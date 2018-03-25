@@ -1,7 +1,6 @@
 import example_app
 from example_app.comp.beans import SomeOtherBean
 from jivago.application import JivagoApplication
-from jivago.wsgi.router import Resource
 
 
 class Application(object):
