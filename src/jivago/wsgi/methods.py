@@ -23,9 +23,9 @@ def PUT(wrapped: Callable) -> Callable:
     return wrapped
 
 
-http_primitives = [GET, POST, DELETE, PUT]
-primitive_strings = {'GET': GET, 'POST': POST, 'DELETE': DELETE, 'PUT': PUT}
+http_methods = [GET, POST, DELETE, PUT]
+method_strings = {'GET': GET, 'POST': POST, 'DELETE': DELETE, 'PUT': PUT}
 
 
-def to_primitive(primitive_string: str) -> Annotation:
-    return primitive_strings[primitive_string]
+def to_method(method_name: str) -> Annotation:
+    return method_strings[method_name]

@@ -2,7 +2,7 @@ import unittest
 
 from jivago.wsgi.ambiguous_routing_exception import AmbiguousRoutingException
 from jivago.wsgi.methods import GET
-from jivago.wsgi.route_invocation_wrapper import RouteInvocationWrapper
+from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.route_node import RouteNode
 from jivago.wsgi.unknown_path_exception import UnknownPathException
 
@@ -10,7 +10,7 @@ from jivago.wsgi.unknown_path_exception import UnknownPathException
 class RouteNodeTest(unittest.TestCase):
     A_SIMPLE_PATH = ['hello']
     HTTP_PRIMITIVE = GET
-    A_WRAPPER = RouteInvocationWrapper(None, None)
+    A_WRAPPER = RouteRegistration(None, None)
     A_LONGER_PATH = ['hello', 'goodbye']
     A_PATH_WITH_PARAMETERS = ["hello", "{id}", "delete"]
     A_PATH_WITH_DIFFERENT_PARAMETERS = ["hello", "{name}", "delete"]

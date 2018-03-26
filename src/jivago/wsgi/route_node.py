@@ -2,7 +2,7 @@ from typing import List
 
 from jivago.inject.registry import Annotation
 from jivago.wsgi.ambiguous_routing_exception import AmbiguousRoutingException
-from jivago.wsgi.route_invocation_wrapper import RouteInvocationWrapper
+from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.unknown_path_exception import UnknownPathException
 
 PATH_PARAMETER = '{param}'
@@ -13,7 +13,7 @@ class RouteNode(object):
         self.children = {}
         self.invocators = {}
 
-    def register_child(self, path: List[str], http_primitive: Annotation, invocation_wrapper: RouteInvocationWrapper):
+    def register_child(self, path: List[str], http_primitive: Annotation, invocation_wrapper: RouteRegistration):
         if len(path) == 0:
             if http_primitive in self.invocators:
                 raise AmbiguousRoutingException(http_primitive, invocation_wrapper)

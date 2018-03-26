@@ -24,4 +24,4 @@ class HelloWorldResource(object):
     @Path("/delete")
     @DELETE
     def delete_hello(self) -> str:
-        return self.some_bean.say_hello()
+        raise NotImplementedError("delete this")

@@ -4,8 +4,8 @@ from jivago.inject.registration import Registration
 from jivago.inject.registry import Annotation, Registry
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Path
-from jivago.wsgi.methods import http_primitives
-from jivago.wsgi.route_invocation_wrapper import RouteInvocationWrapper
+from jivago.wsgi.methods import http_methods
+from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.route_node import RouteNode
 
 
@@ -14,7 +14,7 @@ class RoutingTable(object):
     def __init__(self, registry: Registry, resources: List[Registration]):
         self.routeRootNode = RouteNode()
         for resource in resources:
-            for primitive in http_primitives:
+            for primitive in http_methods:
                 routable_functions = registry.get_annotated_in_package(primitive, resource.registered.__module__)
                 sub_paths = registry.get_annotated_in_package(Path, resource.registered.__module__)
 
@@ -31,8 +31,8 @@ class RoutingTable(object):
         if subpath is not None:
             path.extend(subpath.split('/'))
         path = Stream(path).filter(lambda s: s != "").toList()
-        self.routeRootNode.register_child(path, primitive, RouteInvocationWrapper(resource.registered, function))
+        self.routeRootNode.register_child(path, primitive, RouteRegistration(resource.registered, function))
 
-    def get_route_invocation(self, http_primitive: Annotation, path: List[str]) -> RouteInvocationWrapper:
+    def get_route_invocation(self, http_primitive: Annotation, path: List[str]) -> RouteRegistration:
         route_node = self.routeRootNode.explore(path)
         return route_node.invocators[http_primitive]
