@@ -17,7 +17,7 @@ class JivagoApplication(object):
         self.__import_package_recursive(root_module)
         self.serviceLocator = ServiceLocator()
         self.__initialize_service_locator()
-        self.router = Router(Registry(), self.rootModule)
+        self.router = Router(Registry(), self.rootModule, self.serviceLocator)
 
     def __import_package_recursive(self, package):
         prefix = package.__name__ + "."

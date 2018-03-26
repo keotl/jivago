@@ -32,3 +32,7 @@ class RoutingTable(object):
             path.extend(subpath.split('/'))
         path = Stream(path).filter(lambda s: s != "").toList()
         self.routeRootNode.register_child(path, primitive, RouteInvocationWrapper(resource.registered, function))
+
+    def get_route_invocation(self, http_primitive: Annotation, path: List[str]) -> RouteInvocationWrapper:
+        route_node = self.routeRootNode.explore(path)
+        return route_node.invocators[http_primitive]
