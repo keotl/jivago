@@ -15,9 +15,14 @@ class ResourceInvocator(object):
         route_registration = self.routing_table.get_route_registration(method, request.path)
         resource = self.service_locator.get(route_registration.resourceClass)
 
+        function_return = None
         if Request in route_registration.routeFunction.__annotations__.values():
-            route_registration.routeFunction(resource, request)
+            function_return = route_registration.routeFunction(resource, request)
         else:
             # TODO pass parameters
-            body = route_registration.routeFunction(resource)
-            return Response(200, {}, body)
+            function_return = route_registration.routeFunction(resource)
+
+        if isinstance(function_return, Response):
+            return function_return
+
+        return Response(200, {}, function_return)

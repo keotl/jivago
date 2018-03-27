@@ -2,6 +2,8 @@ from example_app.comp.beans import SomeBean
 from jivago.lang.annotations import Inject
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.methods import GET, POST, DELETE
+from jivago.wsgi.request import Request
+from jivago.wsgi.response import Response
 
 
 @Resource("/hello")
@@ -25,3 +27,9 @@ class HelloWorldResource(object):
     @DELETE
     def delete_hello(self) -> str:
         raise NotImplementedError("delete this")
+
+    @Path("/request")
+    @GET
+    def read_request(self, request: Request) -> Response:
+        print(request)
+        return Response(402, {}, str(request))
