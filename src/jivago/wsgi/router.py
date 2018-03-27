@@ -27,7 +27,8 @@ class Router(object):
         filter_chain = FilterChain(instantiated_filters, self.resourceInvocator)
 
         # TODO properly populate the request object
-        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], {'Accept': 'application/json'}, "")
+        headers = Stream(env.items()).filter(lambda k, v: k.startswith("HTTP")).toDict()
+        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], headers, "")
         response = Response.empty()
 
         filter_chain.doFilter(request, response)
