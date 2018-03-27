@@ -2,13 +2,13 @@ from typing import List
 
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.request import Request
-from jivago.wsgi.resource_calling_wrapper import ResourceCallingWrapper
+from jivago.wsgi.resource_calling_wrapper import ResourceInvocator
 from jivago.wsgi.response import Response
 
 
 class FilterChain(object):
 
-    def __init__(self, filters: List[Filter], resource_call_wrapper: ResourceCallingWrapper):
+    def __init__(self, filters: List[Filter], resource_call_wrapper: ResourceInvocator):
         self.resource_call_wrapper = resource_call_wrapper
         self.filters = filters
 

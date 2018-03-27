@@ -11,4 +11,4 @@ class ExceptionFilter(Filter):
             chain.doFilter(request, response)
         except Exception:
             response.status = 500
-            response.body = "An issue occurred while handling this request."
+            response.body = "An error occurred while handling this request."
