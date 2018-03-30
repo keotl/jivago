@@ -1,4 +1,6 @@
 # Jivago Framework
+![travis-ci](https://travis-ci.org/keotl/jivago.svg?branch=master)
+
 For writing complex, robust Python backend applications. Inspired Spring, Jersey, hk2, and the like. Also includes other Java-esque goodies, such as stream operations.
 
 - What still needs to be done : Passing parameters to resource calls. (Path parameters and query parameters)
