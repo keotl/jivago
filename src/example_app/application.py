@@ -1,5 +1,4 @@
 import example_app
-from example_app.comp.beans import SomeOtherBean
 from jivago.application import JivagoApplication
 
 
@@ -12,7 +11,6 @@ class Application(object):
 if __name__ == '__main__':
     app = JivagoApplication(example_app)
 
-    bean = app.serviceLocator.get(SomeOtherBean)
-    bean2 = app.serviceLocator.get(SomeOtherBean)
+    from werkzeug.serving import run_simple
 
-    assert bean == bean2
+    run_simple('localhost', 4000, app.router.route)

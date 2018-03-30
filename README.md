@@ -1,9 +1,42 @@
 # Jivago Framework
+![travis-ci](https://travis-ci.org/keotl/jivago.svg?branch=master)
+
 For writing complex, robust Python backend applications. Inspired Spring, Jersey, hk2, and the like. Also includes other Java-esque goodies, such as stream operations.
 
-- What still needs to be done : Routing RESTful requests using annotations. (Wrap over Flask)
+- What still needs to be done : Passing parameters to resource calls. (Path parameters and query parameters)
 
 Below is what currently works.
+## HTTP Resource
+```python
+from example_app.comp.beans import SomeBean
+from jivago.lang.annotations import Inject
+from jivago.wsgi.methods import GET, POST, DELETE
+from jivago.wsgi.router import Resource, Path
+
+
+@Resource("/hello")
+class HelloWorldResource(object):
+
+    @Inject
+    def __init__(self, some_bean: SomeBean):
+        self.some_bean = some_bean
+
+    @GET
+    def get_hello(self) -> str:
+        return self.some_bean.say_hello()
+
+    @POST
+    @Path("/{name}") # Path parameter passing does not work yet
+    def post_hello(self, name: str) -> str:
+        print("name: {}".format(name))
+        return self.some_bean.say_hello()
+
+    @Path("/delete")
+    @DELETE
+    def delete_hello(self) -> str:
+        return self.some_bean.say_hello()
+
+```
 ## Dependency Injection
 
 ### Using a standalone Service Locator

@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import Iterable, Callable, Iterator, Optional
 
 
@@ -42,6 +43,9 @@ class Stream(object):
                 if fun(i):
                     return i
         return None
+
+    def flat(self) -> "Stream":
+        return Stream(chain(*self))
 
     def toList(self) -> list:
         return [x for x in self.iterable]
