@@ -1,7 +1,7 @@
 # Jivago Framework
 For writing complex, robust Python backend applications. Inspired Spring, Jersey, hk2, and the like. Also includes other Java-esque goodies, such as stream operations.
 
-- What still needs to be done : Routing RESTful requests using annotations. (Wrap over Flask)
+- What still needs to be done : Passing parameters to resource calls. (Path parameters and query parameters)
 
 Below is what currently works.
 ## HTTP Resource
@@ -24,7 +24,7 @@ class HelloWorldResource(object):
         return self.some_bean.say_hello()
 
     @POST
-    @Path("/{name}")
+    @Path("/{name}") # Path parameter passing does not work yet
     def post_hello(self, name: str) -> str:
         print("name: {}".format(name))
         return self.some_bean.say_hello()
