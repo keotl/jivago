@@ -4,12 +4,14 @@ from jivago.inject.registration import Registration
 from jivago.inject.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.annotations import Resource, Path
-from jivago.wsgi.methods import GET
+from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request import Request
 from jivago.wsgi.resource_invocator import ResourceInvocator
 from jivago.wsgi.response import Response
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.routing_table import RoutingTable
+
+BODY = {"key": "value"}
 
 PATH = 'path'
 
@@ -53,6 +55,13 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(200, response.status)
 
+    def test_givenRouteWhichTakesADictionaryAsParameter_whenInvoking_thenPassRequestBodyAsParameter(self):
+        self.request = Request('POST', PATH + "/dictionary", {}, BODY)
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(ResourceClass.the_response, response)
+
 
 @Resource(PATH)
 class ResourceClass(object):
@@ -69,6 +78,13 @@ class ResourceClass(object):
     @Path("/request")
     def a_method_which_requires_a_request(self, request: Request) -> Response:
         assert isinstance(request, Request)
+        return self.the_response
+
+    @POST
+    @Path("/dictionary")
+    def a_method_which_requires_a_dictionary(self, body: dict) -> Response:
+        assert isinstance(body, dict)
+        assert body == BODY
         return self.the_response
 
 

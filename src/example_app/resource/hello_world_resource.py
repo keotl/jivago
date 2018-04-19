@@ -34,3 +34,8 @@ class HelloWorldResource(object):
     def read_request(self, request: Request) -> Response:
         print(request)
         return Response(402, {}, str(request))
+
+    @Path("/request/json")
+    @POST
+    def read_request_body_from_dict(self, body: dict) -> str:
+        return str(body)
