@@ -28,7 +28,10 @@ class Router(object):
 
         # TODO properly populate the request object
         headers = Stream(env.items()).filter(lambda k, v: k.startswith("HTTP")).toDict()
-        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], headers, "")
+        headers['CONTENT-TYPE'] = env.get('CONTENT_TYPE')
+        request_size = int(env.get('CONTENT_LENGTH')) if 'CONTENT_LENGTH' in env else 0
+        body = env['wsgi.input'].read(request_size)
+        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], headers, body)
         response = Response.empty()
 
         filter_chain.doFilter(request, response)

@@ -30,6 +30,7 @@ class HelloWorldResource(object):
 
     @Path("/request")
     @GET
+    @POST
     def read_request(self, request: Request) -> Response:
         print(request)
         return Response(402, {}, str(request))
