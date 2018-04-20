@@ -32,7 +32,7 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.dto_serialization_handler = DtoSerializationHandler(registry, "")
         self.resource_invocator = ResourceInvocator(self.serviceLocator, self.routingTable,
                                                     self.dto_serialization_handler)
-        self.request = Request('GET', PATH, {}, "")
+        self.request = Request('GET', PATH, {}, "", "")
         ResourceClass.has_been_called = False
 
     def test_whenInvoking_thenGetsCorrespondingResourceInRoutingTable(self):
@@ -63,28 +63,28 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.assertEqual(200, response.status)
 
     def test_givenRouteWhichTakesADictionaryAsParameter_whenInvoking_thenPassRequestBodyAsParameter(self):
-        self.request = Request('POST', PATH + "/dictionary", {}, BODY)
+        self.request = Request('POST', PATH + "/dictionary", {}, "", BODY)
 
         response = self.resource_invocator.invoke(self.request)
 
         self.assertEqual(ResourceClass.the_response, response)
 
     def test_givenRouteWhichTakesADtoAsParameter_whenInvoking_thenDeserializeRequestBodyIntoTheDtoClass(self):
-        self.request = Request('POST', PATH + "/dto", {}, DTO_BODY)
+        self.request = Request('POST', PATH + "/dto", {}, "", DTO_BODY)
 
         response = self.resource_invocator.invoke(self.request)
 
         self.assertEqual(ResourceClass.the_response, response)
 
     def test_givenRouteWhichTakesADtoWithoutAnExplicitConstructor_whenInvoking_thenDeserializeRequestBodyIntoDto(self):
-        self.request = Request('POST', PATH + "/dto-no-param", {}, DTO_BODY)
+        self.request = Request('POST', PATH + "/dto-no-param", {}, "", DTO_BODY)
 
         response = self.resource_invocator.invoke(self.request)
 
         self.assertEqual(ResourceClass.the_response, response)
 
     def test_givenRouteWhichReturnsADto_whenInvoking_thenPopulateTheResponseWithADictionary(self):
-        self.request = Request('GET', PATH + "/return-dto", {}, "")
+        self.request = Request('GET', PATH + "/return-dto", {}, "", "")
 
         response = self.resource_invocator.invoke(self.request)
 
@@ -92,7 +92,7 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.assertEqual({"name": "a_name"}, response.body)
 
     def test_givenRouteWithPathParameters_whenInvoking_thenPassAsArguments(self):
-        self.request = Request('GET', PATH + "/path-param/" + A_PATH_PARAM, {}, "")
+        self.request = Request('GET', PATH + "/path-param/" + A_PATH_PARAM, {}, "", "")
 
         response = self.resource_invocator.invoke(self.request)
 
@@ -100,11 +100,19 @@ class ResourceInvocatorTest(unittest.TestCase):
 
     def test_givenRouteWithNumericPathParameter_whenInvoking_thenParseStringToNumberBeforePassing(self):
         a_numeric_path_param = 5
-        self.request = Request('GET', PATH + "/numeric-param/" + str(a_numeric_path_param), {}, "")
+        self.request = Request('GET', PATH + "/numeric-param/" + str(a_numeric_path_param), {}, "", "")
 
         response = self.resource_invocator.invoke(self.request)
 
         self.assertEqual(a_numeric_path_param, response.body)
+
+    def test_givenRouteWithQueryParameter_whenInvoking_thenParseQueryParametersBeforeInvoking(self):
+        name = "foobar"
+        self.request = Request('GET', PATH + "/query-param", {}, "name=" + name, "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(name, response.body)
 
 
 @Serializable
@@ -178,6 +186,12 @@ class ResourceClass(object):
     def with_numeric_path_param(self, number: int) -> int:
         assert isinstance(number, int)
         return number
+
+    @GET
+    @Path("/query-param")
+    def with_query_param(self, name: str) -> str:
+        assert isinstance(name, str)
+        return name
 
 
 ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])

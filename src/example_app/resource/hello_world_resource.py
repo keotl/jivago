@@ -44,6 +44,9 @@ class HelloWorldResource(object):
     @Path("/request/dto")
     @POST
     def read_with_dto(self, a_dto: MyDto) -> str:
-        a_dto.name
-        "name"
         return str(a_dto)
+
+    @GET
+    @Path("/query")
+    def with_query(self, name: str) -> str:
+        return "Hello {}!".format(name)
