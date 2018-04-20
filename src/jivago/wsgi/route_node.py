@@ -13,16 +13,16 @@ class RouteNode(object):
         self.children = {}
         self.invocators = {}
 
-    def register_child(self, path: List[str], http_primitive: Annotation, invocation_wrapper: RouteRegistration):
+    def register_child(self, path: List[str], http_primitive: Annotation, route_registration: RouteRegistration):
         if len(path) == 0:
             if http_primitive in self.invocators:
-                raise AmbiguousRoutingException(http_primitive, invocation_wrapper)
-            self.invocators[http_primitive] = invocation_wrapper
+                raise AmbiguousRoutingException(http_primitive, route_registration)
+            self.invocators[http_primitive] = route_registration
         else:
             next_path_element = PATH_PARAMETER if path[0].startswith("{") and path[0].endswith('}') else path[0]
             if next_path_element not in self.children:
                 self.children[next_path_element] = RouteNode()
-            self.children[next_path_element].register_child(path[1::], http_primitive, invocation_wrapper)
+            self.children[next_path_element].register_child(path[1::], http_primitive, route_registration)
 
     def explore(self, path: List[str]) -> "RouteNode":
         if len(path) == 0:

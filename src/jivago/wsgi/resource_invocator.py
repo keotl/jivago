@@ -5,7 +5,7 @@ from jivago.wsgi.request import Request
 from jivago.wsgi.response import Response
 from jivago.wsgi.routing_table import RoutingTable
 
-
+ALLOWED_PATH_PARAMETER_TYPES = [str, int, float]
 class ResourceInvocator(object):
     def __init__(self, service_locator: ServiceLocator, routing_table: RoutingTable,
                  dto_serialization_handler: DtoSerializationHandler):
@@ -17,6 +17,7 @@ class ResourceInvocator(object):
         method = to_method(request.method)
         route_registration = self.routing_table.get_route_registration(method, request.path)
         resource = self.service_locator.get(route_registration.resourceClass)
+        path_parameters = route_registration.parse_path_parameters(request.path)
 
         parameter_declaration = route_registration.routeFunction.__annotations__.items()
         parameters = []
@@ -29,6 +30,9 @@ class ResourceInvocator(object):
                 parameters.append(request.body)
             elif self.dto_serialization_handler.is_serializable(clazz):
                 parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
+            elif clazz in ALLOWED_PATH_PARAMETER_TYPES and name in path_parameters:
+                parameters.append(clazz(path_parameters[name]))
+
 
         function_return = route_registration.routeFunction(resource, *parameters)
 

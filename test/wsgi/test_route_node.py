@@ -10,7 +10,7 @@ from jivago.wsgi.unknown_path_exception import UnknownPathException
 class RouteNodeTest(unittest.TestCase):
     A_SIMPLE_PATH = ['hello']
     HTTP_PRIMITIVE = GET
-    A_WRAPPER = RouteRegistration(None, None)
+    A_WRAPPER = RouteRegistration(None, None, [""])
     A_LONGER_PATH = ['hello', 'goodbye']
     A_PATH_WITH_PARAMETERS = ["hello", "{id}", "delete"]
     A_PATH_WITH_DIFFERENT_PARAMETERS = ["hello", "{name}", "delete"]

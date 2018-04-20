@@ -17,6 +17,7 @@ BODY = {"key": "value"}
 DTO_BODY = {"name": "hello"}
 
 PATH = 'path'
+A_PATH_PARAM = "a-param"
 
 HTTP_METHOD = GET
 
@@ -90,6 +91,21 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.assertIsInstance(response.body, dict)
         self.assertEqual({"name": "a_name"}, response.body)
 
+    def test_givenRouteWithPathParameters_whenInvoking_thenPassAsArguments(self):
+        self.request = Request('GET', PATH + "/path-param/" + A_PATH_PARAM, {}, "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(A_PATH_PARAM, response.body)
+
+    def test_givenRouteWithNumericPathParameter_whenInvoking_thenParseStringToNumberBeforePassing(self):
+        a_numeric_path_param = 5
+        self.request = Request('GET', PATH + "/numeric-param/" + str(a_numeric_path_param), {}, "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(a_numeric_path_param, response.body)
+
 
 @Serializable
 class A_Dto(object):
@@ -151,5 +167,17 @@ class ResourceClass(object):
     def returns_a_dto(self) -> A_Dto:
         return A_Dto("a_name")
 
+    @GET
+    @Path("/path-param/{name}")
+    def with_path_param(self, name: str) -> str:
+        assert isinstance(name, str)
+        return name
 
-ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method)
+    @GET
+    @Path("/numeric-param/{number}")
+    def with_numeric_path_param(self, number: int) -> int:
+        assert isinstance(number, int)
+        return number
+
+
+ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])
