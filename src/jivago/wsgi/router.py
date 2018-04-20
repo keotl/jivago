@@ -4,6 +4,7 @@ from jivago.inject.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
+from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.filter_chain import FilterChain
 from jivago.wsgi.request import Request
@@ -20,15 +21,18 @@ class Router(object):
         self.routingTable = RoutingTable(registry,
                                          self.registry.get_annotated_in_package(Resource, self.rootPackage.__name__))
         self.filters = filters
-        self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable)
+        self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable,
+                                                   DtoSerializationHandler(registry, self.rootPackage.__name__))
 
     def route(self, env, start_response):
         instantiated_filters = Stream(self.filters).map(lambda clazz: self.serviceLocator.get(clazz)).toList()
         filter_chain = FilterChain(instantiated_filters, self.resourceInvocator)
 
-        # TODO properly populate the request object
         headers = Stream(env.items()).filter(lambda k, v: k.startswith("HTTP")).toDict()
-        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], headers, "")
+        headers['CONTENT-TYPE'] = env.get('CONTENT_TYPE')
+        request_size = int(env.get('CONTENT_LENGTH')) if 'CONTENT_LENGTH' in env else 0
+        body = env['wsgi.input'].read(request_size)
+        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], headers, env['QUERY_STRING'], body)
         response = Response.empty()
 
         filter_chain.doFilter(request, response)

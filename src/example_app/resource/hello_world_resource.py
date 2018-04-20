@@ -1,4 +1,5 @@
 from example_app.comp.beans import SomeBean
+from example_app.model.my_dto import MyDto
 from jivago.lang.annotations import Inject
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.methods import GET, POST, DELETE
@@ -30,6 +31,22 @@ class HelloWorldResource(object):
 
     @Path("/request")
     @GET
+    @POST
     def read_request(self, request: Request) -> Response:
         print(request)
         return Response(402, {}, str(request))
+
+    @Path("/request/json")
+    @POST
+    def read_request_body_from_dict(self, body: dict) -> str:
+        return str(body)
+
+    @Path("/request/dto")
+    @POST
+    def read_with_dto(self, a_dto: MyDto) -> str:
+        return str(a_dto)
+
+    @GET
+    @Path("/query")
+    def with_query(self, name: str) -> str:
+        return "Hello {}!".format(name)

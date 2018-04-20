@@ -9,7 +9,7 @@ class Application(object):
 
 
 if __name__ == '__main__':
-    app = JivagoApplication(example_app)
+    app = JivagoApplication(example_app, debug=True)
 
     from werkzeug.serving import run_simple
 

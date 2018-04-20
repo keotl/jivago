@@ -104,6 +104,20 @@ class StreamTest(unittest.TestCase):
 
         self.assertEqual(self.COLLECTION, result)
 
+    def test_givenNoMatchingElements_whenCheckingNoneMatch_thenReturnTrue(self):
+        always_false = lambda x: False
+
+        result = Stream(self.COLLECTION).noneMatch(always_false)
+
+        self.assertTrue(result)
+
+    def test_givenMatchingElements_whenCheckingNoneMatch_thenReturnFalse(self):
+        alwasy_true = lambda x: True
+
+        result = Stream(self.COLLECTION).noneMatch(alwasy_true)
+
+        self.assertFalse(result)
+
 
 if __name__ == '__main__':
     unittest.main()

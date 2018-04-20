@@ -44,6 +44,9 @@ class Stream(object):
                     return i
         return None
 
+    def noneMatch(self, fun: Callable) -> bool:
+        return not self.allMatch(fun)
+
     def flat(self) -> "Stream":
         return Stream(chain(*self))
 

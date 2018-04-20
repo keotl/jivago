@@ -1,0 +1,2 @@
+class IncorrectAttributeTypeException(Exception):
+    pass

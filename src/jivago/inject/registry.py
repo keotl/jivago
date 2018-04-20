@@ -19,6 +19,9 @@ class Registry(object):
             self.content[label] = []
         self.content[label].append(Registration(clazz, arguments=arguments))
 
+    def is_annotated(self, object: object, annotation: "Annotation"):
+        return object in map(lambda registration: registration.registered, self.content[annotation])
+
 
 class Annotation(object):
 
