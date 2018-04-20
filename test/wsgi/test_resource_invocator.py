@@ -75,6 +75,13 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(ResourceClass.the_response, response)
 
+    def test_givenRouteWhichTakesADtoWithoutAnExplicitConstructor_whenInvoking_thenDeserializeRequestBodyIntoDto(self):
+        self.request = Request('POST', PATH + "/dto-no-param", {}, DTO_BODY)
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(ResourceClass.the_response, response)
+
 
 @Serializable
 class A_Dto(object):
@@ -82,6 +89,14 @@ class A_Dto(object):
 
     def __init__(self, name: str):
         self.name = name
+
+
+@Serializable
+class ADtoWithoutAnExplicitConstructor(object):
+    name: str
+
+    def a_dummy_function(self) -> bool:
+        return False
 
 
 @Resource(PATH)
@@ -113,6 +128,14 @@ class ResourceClass(object):
     def a_method_which_requires_a_dto(self, body: A_Dto) -> Response:
         assert isinstance(body, A_Dto)
         assert body.name == DTO_BODY['name']
+        return self.the_response
+
+    @POST
+    @Path("/dto-no-param")
+    def a_method_which_requires_a_dto_without_a_constructor(self, body: ADtoWithoutAnExplicitConstructor) -> Response:
+        assert isinstance(body, ADtoWithoutAnExplicitConstructor)
+        assert body.name == DTO_BODY['name']
+        assert body.a_dummy_function() == False  # assert function does not get overwritten
         return self.the_response
 
 
