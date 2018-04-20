@@ -82,6 +82,14 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(ResourceClass.the_response, response)
 
+    def test_givenRouteWhichReturnsADto_whenInvoking_thenPopulateTheResponseWithADictionary(self):
+        self.request = Request('GET', PATH + "/return-dto", {}, "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertIsInstance(response.body, dict)
+        self.assertEqual({"name": "a_name"}, response.body)
+
 
 @Serializable
 class A_Dto(object):
@@ -137,6 +145,11 @@ class ResourceClass(object):
         assert body.name == DTO_BODY['name']
         assert body.a_dummy_function() == False  # assert function does not get overwritten
         return self.the_response
+
+    @GET
+    @Path("/return-dto")
+    def returns_a_dto(self) -> A_Dto:
+        return A_Dto("a_name")
 
 
 ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method)

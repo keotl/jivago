@@ -38,6 +38,7 @@ class DtoSerializationHandler(object):
         return the_object
 
     def __reflexively_inject_attributes(self, clazz, body):
+        # TODO fail on unknown
         attributes = clazz.__annotations__
         the_object = object.__new__(clazz)
         for attribute, declared_type in attributes.items():
