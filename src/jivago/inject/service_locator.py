@@ -65,7 +65,7 @@ class ServiceLocator(object):
                 parameters.append(self.get(parameter))
         except AttributeError:
             pass
-        return provider_method(*tuple(parameters))
+        return provider_method(*parameters)
 
     def __inject_constructor(self, stored_component, constructor):
         if not self.__is_injectable(constructor):
@@ -87,7 +87,7 @@ class ServiceLocator(object):
                 parameters.append(self.get(parameter))
         except AttributeError:
             pass
-        constructor(the_object, *tuple(parameters))
+        constructor(the_object, *parameters)
         return the_object
 
     def __is_injectable(self, constructor_function: Callable) -> bool:
