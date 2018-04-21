@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PYTHONPATH=$(pwd)/src:$PYTHONPATH
+export PYTHONPATH=$(pwd):$PYTHONPATH
 find test/ -name "__pycache__" -type d -exec rm -rf {} \;
 find test/ -name "*.pyc" -type f -exec rm -rf {} \;
 find test/ -name ".coverage*" -type f -exec rm -rf {} \;

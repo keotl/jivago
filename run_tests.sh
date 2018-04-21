@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export PYTHONPATH=$(pwd)/src:$PYTHONPATH
+export PYTHONPATH=$(pwd):$PYTHONPATH
 
 startingDir=$(pwd)
 for dir in $(find test/ -type d)
