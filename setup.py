@@ -25,7 +25,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
 
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    packages=find_packages(exclude=['contrib', 'docs', 'tests', 'example_app']),
 
     # install_requires=['peppercorn'],  # Optional
     # extras_require={  # Optional
