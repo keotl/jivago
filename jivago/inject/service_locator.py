@@ -1,4 +1,4 @@
-from typing import Optional, Callable
+from typing import Optional, Callable, TypingMeta
 
 from jivago.inject.exception.instantiation_exception import InstantiationException
 from jivago.inject.exception.non_injectable_constructor_exception import NonInjectableConstructorException
@@ -30,6 +30,8 @@ class ServiceLocator(object):
             return self.literals[interface]
         if interface in self.providers.keys():
             return self.__inject_function(self.providers[interface])
+        if isinstance(interface, TypingMeta) and interface.__name__ == 'List':
+            return self.get_all(interface.__args__[0])
         if interface not in self.components.keys():
             raise InstantiationException("Could not instantiate {}.".format(interface))
 
@@ -45,6 +47,10 @@ class ServiceLocator(object):
         if scope:
             scope.store(stored_component, instance)
         return instance
+
+    def get_all(self, clazz: type):
+        return Stream(self.literals.keys(), self.components.keys(), self.providers.keys()).filter(
+            lambda k: issubclass(k, clazz)).map(lambda k: self.get(k)).toList()
 
     def __is_provider_function(self, obj) -> bool:
         return callable(obj) and not isinstance(obj, type)

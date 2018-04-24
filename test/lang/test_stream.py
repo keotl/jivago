@@ -118,6 +118,11 @@ class StreamTest(unittest.TestCase):
 
         self.assertFalse(result)
 
+    def test_givenMultipleIterables_whenCreatingStream_thenIterablesAreConcatenated(self):
+        result = Stream(self.BUMPY_COLLECTION, self.COLLECTION).toList()
+
+        self.assertEqual(self.BUMPY_COLLECTION + self.COLLECTION, result)
+
 
 if __name__ == '__main__':
     unittest.main()

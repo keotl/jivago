@@ -1,9 +1,11 @@
 import unittest
+from typing import List
 
 from jivago.inject.registry import Singleton
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator, InstantiationException, NonInjectableConstructorException
 from jivago.lang.annotations import Inject
+from jivago.lang.stream import Stream
 
 
 class ServiceLocatorTest(unittest.TestCase):
@@ -100,6 +102,15 @@ class ServiceLocatorTest(unittest.TestCase):
         component = self.serviceLocator.get(SomeChildClass)
 
         self.assertIsInstance(component, SomeChildClass)
+
+    def test_givenList_whenGettingComponent_thenReturnAllInstancesOfClass(self):
+        self.serviceLocator.bind(SomeClass, SomeClass)
+        self.serviceLocator.bind(SomeChildClass, SomeChildClass)
+
+        components = self.serviceLocator.get(List[SomeClass])
+
+        self.assertEqual(2, len(components))
+        self.assertTrue(Stream(components).allMatch(lambda c: isinstance(c, SomeClass)))
 
 
 class SomeClass(object):

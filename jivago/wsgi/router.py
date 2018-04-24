@@ -1,5 +1,3 @@
-from typing import List, Type
-
 from jivago.inject.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
@@ -14,15 +12,15 @@ from jivago.wsgi.routing_table import RoutingTable
 
 
 class Router(object):
-    def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator, filters: List[Type[Filter]]):
+    def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator):
         self.serviceLocator = service_locator
         self.registry = registry
         self.rootPackage = rootPackage
         self.routingTable = RoutingTable(registry,
                                          self.registry.get_annotated_in_package(Resource, self.rootPackage.__name__))
-        self.filters = filters
         self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable,
                                                    DtoSerializationHandler(registry, self.rootPackage.__name__))
+        self.filters = self.registry.get_annotated_in_package(Filter, self.rootPackage.__name__)
 
     def route(self, env, start_response):
         instantiated_filters = Stream(self.filters).map(lambda clazz: self.serviceLocator.get(clazz)).toList()

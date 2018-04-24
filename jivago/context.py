@@ -1,4 +1,4 @@
-from jivago.config import AbstractContext
+from jivago.config.abstract_context import AbstractContext
 
 contexts = {}
 
@@ -10,10 +10,6 @@ def ApplicationContext(wrapped_class: type) -> type:
 
 
 class UnknownApplicationContextException(Exception):
-    pass
-
-
-class ApplicationRunner(object):
     pass
 
 

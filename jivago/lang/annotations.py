@@ -15,3 +15,7 @@ def Inject(fun: Callable) -> Callable:
 @Annotation
 def Serializable(clazz: type) -> type:
     return clazz
+
+@Annotation
+def BackgroundWorker(clazz: type) -> type:
+    return clazz
