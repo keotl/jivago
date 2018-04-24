@@ -27,7 +27,7 @@ class JivagoApplication(object):
         self.router = Router(Registry(), self.rootModule, self.serviceLocator)
 
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
-            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker()))
+            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker))
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
 
     def __import_package_recursive(self, package):

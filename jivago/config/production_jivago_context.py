@@ -15,9 +15,9 @@ from jivago.wsgi.filters.json_serialization_filter import JsonSerializationFilte
 class ProductionJivagoContext(AbstractContext):
 
     def __init__(self, root_package: str, registry: Registry):
-        super().__init__()
         self.rootPackage = root_package
         self.registry = registry
+        super().__init__()
 
     @Override
     def configure_service_locator(self):
