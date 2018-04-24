@@ -57,6 +57,16 @@ class AnotherDto(object):
     def __init__(self, name: str): # Or with an explicit constructor
         self.name = name
 ```
+## Background Worker Threads
+```python
+@BackgroundWorker
+class Worker(object):
+    @Inject
+    def __init__(self, some_bean: SomeBean):
+        self.some_bean = some_bean
+    def __call__(self):
+        print("hello")
+```
 ## Dependency Injection
 
 ### Using a standalone Service Locator
