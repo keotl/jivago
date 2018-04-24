@@ -8,6 +8,7 @@ class AbstractContext(object):
         self.serviceLocator = ServiceLocator()
         self.configure_service_locator()
         self.INSTANCE = self
+        self.serviceLocator.bind(ServiceLocator, self.serviceLocator)
 
     def configure_service_locator(self):
         raise NotImplementedError
