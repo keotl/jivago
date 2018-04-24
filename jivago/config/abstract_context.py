@@ -1,12 +1,6 @@
 from jivago.inject.service_locator import ServiceLocator
 
 
-class AbstractBinder(object):
-
-    def bind(self, service_locator: ServiceLocator):
-        raise NotImplementedError
-
-
 class AbstractContext(object):
     INSTANCE = None
 
@@ -20,4 +14,3 @@ class AbstractContext(object):
 
     def service_locator(self) -> ServiceLocator:
         return self.serviceLocator
-

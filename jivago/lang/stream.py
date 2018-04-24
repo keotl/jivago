@@ -4,8 +4,8 @@ from typing import Iterable, Callable, Iterator, Optional
 
 class Stream(object):
 
-    def __init__(self, iterable: Iterable):
-        self.iterable = iterable
+    def __init__(self, *iterables: Iterable):
+        self.iterable = chain(*iterables)
 
     def map(self, fun: Callable) -> "Stream":
         if self.__should_expand(fun):

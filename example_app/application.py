@@ -1,5 +1,5 @@
 import example_app
-from jivago.application import JivagoApplication
+from jivago.jivago_application import JivagoApplication
 
 
 class Application(object):
