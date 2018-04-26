@@ -1,3 +1,4 @@
+coverage==4.5.1
 PyYAML==3.12
-Werkzeug==0.14.1
 setuptools-git-version==1.0.3
+Werkzeug==0.14.1
