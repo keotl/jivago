@@ -40,3 +40,7 @@ class JivagoApplication(object):
     def get_annotated(self, annotation: Annotation) -> List[Type]:
         return Stream(Registry().get_annotated_in_package(annotation, self.rootModule.__name__)).map(
             lambda registration: registration.registered).toList()
+
+    def __call__(self, env, start_response):
+        """wsgi entry point."""
+        return self.router.route(env, start_response)
