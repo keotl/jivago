@@ -20,6 +20,8 @@ class Registry(object):
         self.content[label].append(Registration(clazz, arguments=arguments))
 
     def is_annotated(self, object: object, annotation: "Annotation"):
+        if annotation not in self.content:
+            return False
         return object in map(lambda registration: registration.registered, self.content[annotation])
 
 

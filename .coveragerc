@@ -3,4 +3,4 @@ branch = True
 source = src
 
 [report]
-omit = test*, venv/*
+omit = *test*, venv/*
