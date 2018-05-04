@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Type
 
 from jivago.config.abstract_context import AbstractContext
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
@@ -9,6 +9,7 @@ from jivago.lang.annotations import Override, BackgroundWorker
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.filters.exception_filter import ExceptionFilter
+from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.json_serialization_filter import JsonSerializationFilter
 
 
@@ -31,10 +32,11 @@ class ProductionJivagoContext(AbstractContext):
             cache = ScopeCache(scope, scoped_classes)
             self.serviceLocator.register_scope(cache)
 
-        Stream(self.filter_chain()).forEach(lambda f: self.serviceLocator.bind(f, f))
-
-    def filter_chain(self) -> List[type]:
-        return [ExceptionFilter, JsonSerializationFilter]
+        Stream(self.get_filters("")).forEach(lambda f: self.serviceLocator.bind(f, f))
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]
+
+    @Override
+    def get_filters(self, path: str) -> List[Type[Filter]]:
+        return [ExceptionFilter, JsonSerializationFilter]

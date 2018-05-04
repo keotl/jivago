@@ -1,9 +1,9 @@
+from jivago.config.abstract_context import AbstractContext
 from jivago.inject.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.filter_chain import FilterChain
 from jivago.wsgi.request import Request
 from jivago.wsgi.resource_invocator import ResourceInvocator
@@ -12,7 +12,8 @@ from jivago.wsgi.routing_table import RoutingTable
 
 
 class Router(object):
-    def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator):
+    def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator, context: AbstractContext):
+        self.context = context
         self.serviceLocator = service_locator
         self.registry = registry
         self.rootPackage = rootPackage
@@ -20,17 +21,18 @@ class Router(object):
                                          self.registry.get_annotated_in_package(Resource, self.rootPackage.__name__))
         self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable,
                                                    DtoSerializationHandler(registry, self.rootPackage.__name__))
-        self.filters = self.registry.get_annotated_in_package(Filter, self.rootPackage.__name__)
 
     def route(self, env, start_response):
-        instantiated_filters = Stream(self.filters).map(lambda clazz: self.serviceLocator.get(clazz)).toList()
+        path = env['PATH_INFO']
+        instantiated_filters = Stream(self.context.get_filters(path)).map(
+            lambda clazz: self.serviceLocator.get(clazz)).toList()
         filter_chain = FilterChain(instantiated_filters, self.resourceInvocator)
 
         headers = Stream(env.items()).filter(lambda k, v: k.startswith("HTTP")).toDict()
         headers['CONTENT-TYPE'] = env.get('CONTENT_TYPE')
         request_size = int(env.get('CONTENT_LENGTH')) if 'CONTENT_LENGTH' in env else 0
         body = env['wsgi.input'].read(request_size)
-        request = Request(env['REQUEST_METHOD'], env['PATH_INFO'], headers, env['QUERY_STRING'], body)
+        request = Request(env['REQUEST_METHOD'], path, headers, env['QUERY_STRING'], body)
         response = Response.empty()
 
         filter_chain.doFilter(request, response)
