@@ -114,6 +114,24 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(name, response.body)
 
+    def test_givenEscapedQueryParameter_whenInvoking_thenUnescapeBeforeInvoking(self):
+        escaped_name = "rocket%20man"
+        unescaped_name = "rocket man"
+        self.request = Request('GET', PATH + "/query-param", {}, "name=" + escaped_name, "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(unescaped_name, response.body)
+
+    def test_givenEscapedPathParameter_whenInvoking_thenUnescapeBeforeInvoking(self):
+        escaped_name = "rocket%20man"
+        unescaped_name = "rocket man"
+        self.request = Request('GET', PATH + "/path-param/" + escaped_name, {}, "", "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(unescaped_name, response.body)
+
 
 @Serializable
 class A_Dto(object):

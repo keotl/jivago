@@ -1,3 +1,5 @@
+import urllib.parse
+
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.methods import to_method
@@ -35,9 +37,9 @@ class ResourceInvocator(object):
                 parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
             elif clazz in ALLOWED_URL_PARAMETER_TYPES:
                 if name in path_parameters:
-                    parameters.append(clazz(path_parameters[name]))
+                    parameters.append(clazz(self._url_parameter_unescape(path_parameters[name])))
                 elif name in query_parameters:
-                    parameters.append(clazz(query_parameters[name]))
+                    parameters.append(clazz(self._url_parameter_unescape(query_parameters[name])))
 
         function_return = route_registration.routeFunction(resource, *parameters)
 
@@ -46,3 +48,9 @@ class ResourceInvocator(object):
         elif self.dto_serialization_handler.is_serializable(function_return.__class__):
             function_return = self.dto_serialization_handler.serialize(function_return)
         return Response(200, {}, function_return)
+
+    def _url_parameter_unescape(self, escaped):
+        if isinstance(escaped, str):
+            return urllib.parse.unquote(escaped)
+        else:
+            return escaped
