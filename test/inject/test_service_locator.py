@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from jivago.inject.registry import Singleton
+from jivago.inject.registry import Singleton, Registry
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator, InstantiationException, NonInjectableConstructorException
 from jivago.lang.annotations import Inject
@@ -12,7 +12,7 @@ class ServiceLocatorTest(unittest.TestCase):
     A_LITERAL_OBJECT = "A Message"
 
     def setUp(self):
-        self.serviceLocator = ServiceLocator()
+        self.serviceLocator = ServiceLocator(Registry())
 
     def test_givenInexistentComponent_whenGettingComponent_thenThrowInstantiationException(self):
         with self.assertRaises(InstantiationException):
@@ -111,6 +111,13 @@ class ServiceLocatorTest(unittest.TestCase):
 
         self.assertEqual(2, len(components))
         self.assertTrue(Stream(components).allMatch(lambda c: isinstance(c, SomeClass)))
+
+    def test_whenManuallyInstantiatingAnInjectable_thenPassSelfVariableAndDoNotCrash(self):
+        # Injectable should not interfere with the base class
+        # fix crash on version 0.0.9
+        obj = SomeClassWithParameters(None)
+
+        self.assertIsInstance(obj, SomeClassWithParameters)
 
 
 class SomeClass(object):
