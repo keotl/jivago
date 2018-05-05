@@ -14,6 +14,6 @@ class JsonSerializationFilter(Filter):
 
         chain.doFilter(request, response)
 
-        if isinstance(request.body, dict):
+        if isinstance(response.body, dict):
             response.body = json.dumps(response.body)
             response.headers['Content-Type'] = 'application/json'
