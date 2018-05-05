@@ -44,5 +44,5 @@ class ResourceInvocator(object):
         if isinstance(function_return, Response):
             return function_return
         elif self.dto_serialization_handler.is_serializable(function_return.__class__):
-            function_return = function_return.__dict__
+            function_return = self.dto_serialization_handler.serialize(function_return)
         return Response(200, {}, function_return)

@@ -1,5 +1,5 @@
 import unittest
-from typing import Optional
+from typing import Optional, List
 
 from jivago.inject.registry import Registry
 from jivago.lang.annotations import Serializable
@@ -32,6 +32,33 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertIsInstance(dto, ADtoWithOptionalValue)
         self.assertIsNone(dto.name)
 
+    def test_givenNestedDtos_whenSerializing_thenRecursivelySerializeDtos(self):
+        child = ChildDto()
+        child.name = "a name"
+        nested = ANestedDto()
+        nested.child_dto = child
+
+        dictionary = self.serializationHandler.serialize(nested)
+
+        self.assertEqual({"child_dto": {"name": "a name"}}, dictionary)
+
+    def test_givenNestedDtoCollection_whenSerializing_thenRecursivelySerializeDtos(self):
+        children = [ChildDto() for x in range(0, 2)]
+        for child in children:
+            child.name = "a name"
+        collection = ACollectionDto(children)
+
+        dictionary = self.serializationHandler.serialize(collection)
+        self.assertEqual({"children": [{"name": "a name"}, {"name": "a name"}]}, dictionary)
+
+    def test_givenNestedDictionary_whenDeserializing_thenRecursivelyDeserializeToDto(self):
+        dictionary = {"children": [{"name": "a name"}, {"name": "a name"}]}
+
+        dto = self.serializationHandler.deserialize(dictionary, ACollectionDto)
+
+        self.assertIsInstance(dto, ACollectionDto)
+        self.assertEqual("a name", dto.children[1].name)
+
 
 @Serializable
 class ADto(object):
@@ -41,3 +68,21 @@ class ADto(object):
 @Serializable
 class ADtoWithOptionalValue(object):
     name: Optional[str]
+
+
+@Serializable
+class ChildDto(object):
+    name: str
+
+
+@Serializable
+class ANestedDto(object):
+    child_dto: ChildDto
+
+
+@Serializable
+class ACollectionDto(object):
+    children: List[ChildDto]
+
+    def __init__(self, children: List[ChildDto]):
+        self.children = children

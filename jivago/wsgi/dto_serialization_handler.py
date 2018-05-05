@@ -1,4 +1,5 @@
-from typing import Any, _Union
+import collections
+from typing import Any, _Union, TypingMeta
 
 from jivago.inject.registry import Registry
 from jivago.lang.annotations import Serializable
@@ -22,6 +23,17 @@ class DtoSerializationHandler(object):
         else:
             return self.__inject_constructor(clazz, constructor, body)
 
+    def serialize(self, dto):
+        if isinstance(dto, list):
+            return [self.serialize(x) for x in dto]
+        if self.is_serializable(dto.__class__):
+            dictionary = dto.__dict__
+            for key, value in dictionary.items():
+                if self.is_serializable(value.__class__) or isinstance(value, list):
+                    dictionary[key] = self.serialize(value)
+            return dictionary
+        return dto
+
     def __inject_constructor(self, clazz, constructor, body):
         the_object = object.__new__(clazz)
         parameters = []
@@ -33,7 +45,11 @@ class DtoSerializationHandler(object):
                 break
             allowed_attribute_types = [declared_type] if not isinstance(declared_type,
                                                                         _Union) else declared_type.__args__
-            if Stream(allowed_attribute_types).anyMatch(
+
+            if isinstance(declared_type, TypingMeta) and declared_type.__name__ == 'List':
+                parameters.append([self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in
+                                   range(0, len(body[attribute]))])
+            elif Stream(allowed_attribute_types).anyMatch(
                     lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
                 parameters.append(body.get(attribute))
             else:
@@ -48,7 +64,11 @@ class DtoSerializationHandler(object):
         for attribute, declared_type in attributes.items():
             allowed_attribute_types = [declared_type] if not isinstance(declared_type,
                                                                         _Union) else declared_type.__args__
-            if Stream(allowed_attribute_types).anyMatch(
+            if isinstance(declared_type, TypingMeta) and declared_type.__name__ == 'List':
+                the_object.__setattr__(attribute,
+                                       [self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in
+                                        range(0, len(body[attribute]))])
+            elif Stream(allowed_attribute_types).anyMatch(
                     lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
                 the_object.__setattr__(attribute, body.get(attribute))
             else:
