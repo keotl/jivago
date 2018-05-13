@@ -7,8 +7,8 @@ from jivago.wsgi.request.response import Response
 
 class FilterChain(object):
 
-    def __init__(self, filters: List["Filter"], resource_call_wrapper: ResourceInvocator):
-        self.resource_call_wrapper = resource_call_wrapper
+    def __init__(self, filters: List["Filter"], resource_invocator: ResourceInvocator):
+        self.resource_call_wrapper = resource_invocator
         self.filters = filters
 
     def doFilter(self, request: Request, response: Response):
