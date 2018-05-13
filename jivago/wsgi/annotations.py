@@ -9,4 +9,3 @@ def Resource(value: str):
 @ParametrizedAnnotation
 def Path(value: str):
     return lambda x: x
-

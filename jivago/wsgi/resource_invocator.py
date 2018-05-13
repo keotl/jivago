@@ -50,7 +50,4 @@ class ResourceInvocator(object):
         return Response(200, {}, function_return)
 
     def _url_parameter_unescape(self, escaped):
-        if isinstance(escaped, str):
-            return urllib.parse.unquote(escaped)
-        else:
-            return escaped
+        return urllib.parse.unquote(escaped)

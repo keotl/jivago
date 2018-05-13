@@ -1,11 +1,13 @@
+from jivago.lang.annotations import Override
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.filter_chain import FilterChain
 from jivago.wsgi.request import Request
 from jivago.wsgi.response import Response
 
 
-class ExceptionFilter(Filter):
+class UnknownExceptionFilter(Filter):
 
+    @Override
     def doFilter(self, request: Request, response: Response, chain: FilterChain):
         try:
             chain.doFilter(request, response)

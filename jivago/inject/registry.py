@@ -27,7 +27,7 @@ class Registry(object):
 
 class Annotation(object):
 
-    def __init__(self, decorator: Callable):
+    def __init__(self, decorator: Callable = lambda x: x):
         self.decorator = decorator
         self.registry = Registry()
 

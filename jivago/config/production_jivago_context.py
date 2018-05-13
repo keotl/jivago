@@ -8,7 +8,8 @@ from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
-from jivago.wsgi.filters.exception_filter import ExceptionFilter
+from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
+from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.json_serialization_filter import JsonSerializationFilter
 
@@ -39,4 +40,4 @@ class ProductionJivagoContext(AbstractContext):
 
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
-        return [ExceptionFilter, JsonSerializationFilter]
+        return [UnknownExceptionFilter, JsonSerializationFilter, ApplicationExceptionFilter]
