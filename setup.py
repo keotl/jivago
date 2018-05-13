@@ -25,7 +25,8 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
 
-    packages=find_packages(exclude=['contrib', 'docs', 'tests', 'example_app', 'test_data']),
+    packages=find_packages(
+        exclude=['contrib', 'docs', 'tests', 'tests.*', 'example_app', 'example_app.*', 'test_data', 'test_data.*']),
 
     requires=['Jinja2', 'MarkupSafe'],
 )
