@@ -1,0 +1,2 @@
+class NoSuchTemplateException(Exception):
+    pass

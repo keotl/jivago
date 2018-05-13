@@ -3,8 +3,8 @@ import traceback
 from jivago.lang.annotations import Override
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.filter_chain import FilterChain
-from jivago.wsgi.request import Request
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
 
 
 class DebugExceptionFilter(Filter):

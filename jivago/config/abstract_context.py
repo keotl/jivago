@@ -21,3 +21,6 @@ class AbstractContext(object):
 
     def get_filters(self, path: str) -> List[Type[Filter]]:
         raise NotImplementedError
+
+    def get_views_folder_path(self) -> str:
+        raise NotImplementedError

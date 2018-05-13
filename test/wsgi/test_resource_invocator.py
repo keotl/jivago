@@ -7,9 +7,10 @@ from jivago.lang.annotations import Serializable
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.methods import GET, POST
-from jivago.wsgi.request import Request
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.resource_invocator import ResourceInvocator
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.response import Response
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.routing_table import RoutingTable
 
@@ -31,7 +32,7 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.routingTable = RoutingTable(registry, [Registration(ResourceClass, arguments={"value": PATH})])
         self.dto_serialization_handler = DtoSerializationHandler(registry, "")
         self.resource_invocator = ResourceInvocator(self.serviceLocator, self.routingTable,
-                                                    self.dto_serialization_handler)
+                                                    self.dto_serialization_handler, UrlEncodedQueryParser())
         self.request = Request('GET', PATH, {}, "", "")
         ResourceClass.has_been_called = False
 

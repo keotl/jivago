@@ -3,8 +3,8 @@ from example_app.model.my_dto import MyDto
 from jivago.lang.annotations import Inject
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.methods import GET, POST, DELETE
-from jivago.wsgi.request import Request
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
 
 
 @Resource("/hello")

@@ -3,26 +3,29 @@ import urllib.parse
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.methods import to_method
-from jivago.wsgi.request import Request
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
+from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.routing_table import RoutingTable
 
 ALLOWED_URL_PARAMETER_TYPES = [str, int, float]
 
 
 class ResourceInvocator(object):
+
     def __init__(self, service_locator: ServiceLocator, routing_table: RoutingTable,
-                 dto_serialization_handler: DtoSerializationHandler):
+                 dto_serialization_handler: DtoSerializationHandler, query_parser: UrlEncodedQueryParser):
         self.dto_serialization_handler = dto_serialization_handler
         self.routing_table = routing_table
         self.service_locator = service_locator
+        self.query_parser = query_parser
 
     def invoke(self, request: Request) -> Response:
         method = to_method(request.method)
         route_registration = self.routing_table.get_route_registration(method, request.path)
         resource = self.service_locator.get(route_registration.resourceClass)
         path_parameters = route_registration.parse_path_parameters(request.path)
-        query_parameters = request.parse_query_parameters()
+        query_parameters = self.query_parser.parse_urlencoded_query(request.queryString)
 
         parameter_declaration = route_registration.routeFunction.__annotations__.items()
         parameters = []

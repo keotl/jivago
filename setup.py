@@ -25,11 +25,7 @@ setup(
         'Programming Language :: Python :: 3.6',
     ],
 
-    packages=find_packages(exclude=['contrib', 'docs', 'tests', 'example_app']),
+    packages=find_packages(exclude=['contrib', 'docs', 'tests', 'example_app', 'test_data']),
 
-    # install_requires=['peppercorn'],  # Optional
-    # extras_require={  # Optional
-    #     'dev': ['check-manifest'],
-    #     'test': ['coverage'],
-    # },
+    requires=['Jinja2', 'MarkupSafe'],
 )
