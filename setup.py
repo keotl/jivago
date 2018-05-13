@@ -27,9 +27,5 @@ setup(
 
     packages=find_packages(exclude=['contrib', 'docs', 'tests', 'example_app']),
 
-    # install_requires=['peppercorn'],  # Optional
-    # extras_require={  # Optional
-    #     'dev': ['check-manifest'],
-    #     'test': ['coverage'],
-    # },
+    requires=['Jinja2', 'MarkupSafe'],
 )

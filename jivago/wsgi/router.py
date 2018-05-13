@@ -12,6 +12,7 @@ from jivago.wsgi.routing_table import RoutingTable
 
 
 class Router(object):
+    
     def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator, context: AbstractContext):
         self.context = context
         self.serviceLocator = service_locator

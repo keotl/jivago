@@ -16,8 +16,8 @@ class JivagoApplication(object):
     def __init__(self, root_module, *, debug: bool = False, context: AbstractContext = None):
         self.registry = Registry()
         if context is None:
-            self.context = DebugJivagoContext(root_module.__name__, self.registry) \
-                if debug else ProductionJivagoContext(root_module.__name__, self.registry)
+            self.context = DebugJivagoContext(root_module, self.registry) \
+                if debug else ProductionJivagoContext(root_module, self.registry)
         else:
             self.context = context
         self.rootModule = root_module
