@@ -16,7 +16,9 @@ from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
-from jivago.wsgi.filters.json_serialization_filter import JsonSerializationFilter
+from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
+from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
+from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 
 
 class ProductionJivagoContext(AbstractContext):
@@ -44,13 +46,15 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(DtoSerializationHandler,
                                  DtoSerializationHandler(Registry(), self.rootPackage.__name__))
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))
+        self.serviceLocator.bind(UrlEncodedQueryParser, UrlEncodedQueryParser)
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]
 
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
-        return [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, ApplicationExceptionFilter]
+        return [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, HttpFormDeserializationFilter,
+                ApplicationExceptionFilter]
 
     @Override
     def get_views_folder_path(self) -> str:

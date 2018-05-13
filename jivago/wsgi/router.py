@@ -5,14 +5,15 @@ from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.filter_chain import FilterChain
-from jivago.wsgi.request import Request
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.resource_invocator import ResourceInvocator
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.response import Response
 from jivago.wsgi.routing_table import RoutingTable
 
 
 class Router(object):
-    
+
     def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator, context: AbstractContext):
         self.context = context
         self.serviceLocator = service_locator
@@ -21,7 +22,8 @@ class Router(object):
         self.routingTable = RoutingTable(registry,
                                          self.registry.get_annotated_in_package(Resource, self.rootPackage.__name__))
         self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable,
-                                                   DtoSerializationHandler(registry, self.rootPackage.__name__))
+                                                   DtoSerializationHandler(registry, self.rootPackage.__name__),
+                                                   UrlEncodedQueryParser())
 
     def route(self, env, start_response):
         path = env['PATH_INFO']

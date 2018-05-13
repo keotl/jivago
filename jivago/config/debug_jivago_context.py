@@ -8,8 +8,9 @@ from jivago.wsgi.filters.exception.application_exception_filter import Applicati
 from jivago.wsgi.filters.exception.debug_exception_filter import DebugExceptionFilter
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
-from jivago.wsgi.filters.json_serialization_filter import JsonSerializationFilter
-from jivago.wsgi.filters.no_cors_filter import NoCorsFilter
+from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
+from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
+from jivago.wsgi.request.no_cors_filter import NoCorsFilter
 
 
 class DebugJivagoContext(ProductionJivagoContext):
@@ -20,4 +21,4 @@ class DebugJivagoContext(ProductionJivagoContext):
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
         return [NoCorsFilter, UnknownExceptionFilter, DebugExceptionFilter, TemplateFilter, JsonSerializationFilter,
-                ApplicationExceptionFilter]
+                HttpFormDeserializationFilter, ApplicationExceptionFilter]

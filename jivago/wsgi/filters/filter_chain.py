@@ -1,8 +1,8 @@
 from typing import List
 
-from jivago.wsgi.request import Request
+from jivago.wsgi.request.request import Request
 from jivago.wsgi.resource_invocator import ResourceInvocator
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.response import Response
 
 
 class FilterChain(object):

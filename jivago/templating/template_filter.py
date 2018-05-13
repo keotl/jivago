@@ -6,8 +6,8 @@ from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.filters.filter_chain import FilterChain
-from jivago.wsgi.request import Request
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
 
 
 class TemplateFilter(Filter):

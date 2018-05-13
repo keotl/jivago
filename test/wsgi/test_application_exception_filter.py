@@ -4,7 +4,7 @@ from unittest import mock
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filters.exception.exception_mapper import ExceptionMapper
 from jivago.wsgi.filters.filter_chain import FilterChain
-from jivago.wsgi.response import Response
+from jivago.wsgi.request.response import Response
 
 
 class ApplicationExceptionFilterTest(unittest.TestCase):
