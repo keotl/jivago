@@ -37,7 +37,7 @@ class Annotation(object):
         return decorator_call
 
     def __repr__(self):
-        return self.decorator.__name__
+        return "{}.{}".format(self.decorator.__module__, self.decorator.__name__)
 
 
 class ParametrizedAnnotation(Annotation):
