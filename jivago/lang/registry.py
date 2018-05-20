@@ -1,7 +1,7 @@
-from typing import Callable, List
+from typing import Callable, List, _Union
 
 from jivago.inject.provider_function import ProviderFunction
-from jivago.inject.registration import Registration
+from jivago.lang.registration import Registration
 from jivago.lang.stream import Stream
 
 
@@ -45,13 +45,15 @@ class ParametrizedAnnotation(Annotation):
     def __call__(self, *args, **kwargs):
         type_hints = self.decorator.__annotations__
         arguments = []
-        for key in type_hints.keys():
+        for key, type_annotation in type_hints.items():
             if key == 'return':
                 continue
             if key == 'value' and len(args) == 1:
                 arguments.append((key, args[0]))
             elif key in kwargs:
                 arguments.append((key, kwargs[key]))
+            elif isinstance(type_annotation, _Union) and type(None) in type_annotation.__args__:
+                arguments.append((key, None))
             else:
                 raise MissingAnnotationParameterException(key)
 

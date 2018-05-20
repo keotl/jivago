@@ -5,7 +5,7 @@ import os
 from jivago.config.abstract_context import AbstractContext
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.inject.registry import Singleton, Component, Registry
+from jivago.lang.registry import Singleton, Component, Registry
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
 from jivago.lang.stream import Stream

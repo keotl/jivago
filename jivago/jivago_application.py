@@ -5,7 +5,7 @@ from typing import List, Type
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.debug_jivago_context import DebugJivagoContext
 from jivago.config.production_jivago_context import ProductionJivagoContext
-from jivago.inject.registry import Registry, Annotation
+from jivago.lang.registry import Registry, Annotation
 from jivago.lang.annotations import BackgroundWorker
 from jivago.lang.stream import Stream
 from jivago.wsgi.router import Router

@@ -1,4 +1,4 @@
-from jivago.inject.registry import ParametrizedAnnotation
+from jivago.lang.registry import ParametrizedAnnotation
 
 
 @ParametrizedAnnotation

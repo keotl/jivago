@@ -1,5 +1,5 @@
 from jivago.config.abstract_context import AbstractContext
-from jivago.inject.registry import Registry
+from jivago.lang.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource

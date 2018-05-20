@@ -60,11 +60,11 @@ class AnotherDto(object):
 ## Background Worker Threads
 ```python
 @BackgroundWorker
-class Worker(object):
+class Worker(Runnable):
     @Inject
     def __init__(self, some_bean: SomeBean):
         self.some_bean = some_bean
-    def __call__(self):
+    def run(self):
         print("hello")
 ```
 ## Dependency Injection

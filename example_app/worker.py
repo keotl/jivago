@@ -1,17 +1,19 @@
 import time
 
 from example_app.comp.beans import SomeBean
-from jivago.lang.annotations import BackgroundWorker, Inject
+from jivago.lang.annotations import BackgroundWorker, Inject, Override
+from jivago.lang.runnable import Runnable
 
 
 @BackgroundWorker
-class Worker(object):
+class Worker(Runnable):
 
     @Inject
     def __init__(self, some_bean: SomeBean):
         self.some_bean = some_bean
 
-    def __call__(self):
+    @Override
+    def run(self):
         for i in range(0, 5):
             print(self.some_bean.say_hello())
             time.sleep(1)

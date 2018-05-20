@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.inject.registry import Registry
+from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
 
 AN_ANNOTATION = Serializable

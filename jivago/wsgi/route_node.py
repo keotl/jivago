@@ -1,6 +1,6 @@
 from typing import List
 
-from jivago.inject.registry import Annotation
+from jivago.lang.registry import Annotation
 from jivago.wsgi.ambiguous_routing_exception import AmbiguousRoutingException
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.unknown_path_exception import UnknownPathException

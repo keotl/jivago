@@ -1,7 +1,7 @@
 from typing import Callable, List
 
-from jivago.inject.registration import Registration
-from jivago.inject.registry import Annotation, Registry
+from jivago.lang.registration import Registration
+from jivago.lang.registry import Annotation, Registry
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Path
 from jivago.wsgi.methods import http_methods

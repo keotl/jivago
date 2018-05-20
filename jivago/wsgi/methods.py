@@ -1,6 +1,6 @@
 from typing import Callable
 
-from jivago.inject.registry import Annotation
+from jivago.lang.registry import Annotation
 
 
 @Annotation

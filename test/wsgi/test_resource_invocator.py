@@ -1,7 +1,7 @@
 import unittest
 
-from jivago.inject.registration import Registration
-from jivago.inject.registry import Registry
+from jivago.lang.registration import Registration
+from jivago.lang.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
 from jivago.wsgi.annotations import Resource, Path

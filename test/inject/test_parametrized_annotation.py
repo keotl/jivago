@@ -1,7 +1,7 @@
 import unittest
-from typing import Callable
+from typing import Callable, Optional
 
-from jivago.inject.registry import Registry, ParametrizedAnnotation
+from jivago.lang.registry import Registry, ParametrizedAnnotation
 
 A_MESSAGE = "A MESSAGE"
 A_ROUTE = "/route"
@@ -33,6 +33,12 @@ class ParametrizedAnnotationTest(unittest.TestCase):
 
         self.assertEqual(A_MESSAGE, registration.arguments['message'])
         self.assertEqual(A_ROUTE, registration.arguments['route'])
+
+    def test_givenMissingParameters_whenUsingOptionalArguments_thenPassNoneInstead(self):
+        registration = self.registry.get_annotated_in_package(annotationWithOptionalParameters, "")[0]
+
+        self.assertEqual(A_MESSAGE, registration.arguments['mandatory_parameter'])
+        self.assertIsNone(registration.arguments['optional_parameter'])
 
 
 @ParametrizedAnnotation
@@ -70,6 +76,14 @@ def multipleParameterAnnotation(*, message: str, route: str):
 class AnnotatedWithMultipleParameters(object):
     pass
 
+
+@ParametrizedAnnotation
+def annotationWithOptionalParameters(optional_parameter: Optional[str], mandatory_parameter: str):
+    return lambda x: x
+
+@annotationWithOptionalParameters(mandatory_parameter=A_MESSAGE)
+class AnnotatedWithOptionalParameters(object):
+    pass
 
 if __name__ == '__main__':
     unittest.main()

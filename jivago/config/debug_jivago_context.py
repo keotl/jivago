@@ -1,7 +1,7 @@
 from typing import List, Type
 
 from jivago.config.production_jivago_context import ProductionJivagoContext
-from jivago.inject.registry import Registry
+from jivago.lang.registry import Registry
 from jivago.lang.annotations import Override
 from jivago.templating.template_filter import TemplateFilter
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter

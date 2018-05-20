@@ -1,7 +1,6 @@
-import collections
 from typing import Any, _Union, TypingMeta
 
-from jivago.inject.registry import Registry
+from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
 from jivago.lang.stream import Stream
 from jivago.wsgi.incorrect_attribute_type_exception import IncorrectAttributeTypeException

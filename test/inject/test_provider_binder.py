@@ -2,7 +2,7 @@ import unittest
 
 from jivago.inject.exception.undefined_return_provider_function import UndefinedReturnProviderFunction
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.inject.registry import Provider, Registry
+from jivago.lang.registry import Provider, Registry
 from jivago.inject.service_locator import ServiceLocator
 
 

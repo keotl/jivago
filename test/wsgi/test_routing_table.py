@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.inject.registry import Registry
+from jivago.lang.registry import Registry
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.methods import GET
 from jivago.wsgi.routing_table import RoutingTable
