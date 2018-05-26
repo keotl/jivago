@@ -15,7 +15,7 @@ from jivago.wsgi.request.no_cors_filter import NoCorsFilter
 
 class DebugJivagoContext(ProductionJivagoContext):
 
-    def __init__(self, root_package, registry: Registry):
+    def __init__(self, root_package: str, registry: Registry):
         super().__init__(root_package, registry)
 
     @Override
