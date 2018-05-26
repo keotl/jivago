@@ -24,7 +24,7 @@ class JivagoApplication(object):
         self.__import_package_recursive(root_module)
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
-        self.router = Router(Registry(), self.rootModule, self.serviceLocator, self.context)
+        self.router = Router(Registry(), self.rootModule.__name__, self.serviceLocator, self.context)
 
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
             lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run))
