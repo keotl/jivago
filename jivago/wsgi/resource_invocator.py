@@ -45,11 +45,8 @@ class ResourceInvocator(object):
                     parameters.append(clazz(self._url_parameter_unescape(query_parameters[name])))
 
         function_return = route_registration.routeFunction(resource, *parameters)
-
         if isinstance(function_return, Response):
             return function_return
-        elif self.dto_serialization_handler.is_serializable(function_return.__class__):
-            function_return = self.dto_serialization_handler.serialize(function_return)
         return Response(200, {}, function_return)
 
     def _url_parameter_unescape(self, escaped):
