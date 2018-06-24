@@ -1,9 +1,10 @@
 from typing import List, Type
 
 from jivago.config.production_jivago_context import ProductionJivagoContext
-from jivago.lang.registry import Registry
 from jivago.lang.annotations import Override
+from jivago.lang.registry import Registry
 from jivago.templating.template_filter import TemplateFilter
+from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filters.exception.debug_exception_filter import DebugExceptionFilter
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
@@ -21,4 +22,4 @@ class DebugJivagoContext(ProductionJivagoContext):
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
         return [NoCorsFilter, UnknownExceptionFilter, DebugExceptionFilter, TemplateFilter, JsonSerializationFilter,
-                HttpFormDeserializationFilter, ApplicationExceptionFilter]
+                HttpFormDeserializationFilter, BodySerializationFilter, ApplicationExceptionFilter]

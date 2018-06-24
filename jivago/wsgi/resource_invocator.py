@@ -8,7 +8,7 @@ from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.routing_table import RoutingTable
 
-ALLOWED_URL_PARAMETER_TYPES = [str, int, float]
+ALLOWED_URL_PARAMETER_TYPES = (str, int, float)
 
 
 class ResourceInvocator(object):
@@ -36,20 +36,17 @@ class ResourceInvocator(object):
                 parameters.append(request)
             elif clazz == dict:
                 parameters.append(request.body)
-            elif self.dto_serialization_handler.is_serializable(clazz):
-                parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
             elif clazz in ALLOWED_URL_PARAMETER_TYPES:
                 if name in path_parameters:
                     parameters.append(clazz(self._url_parameter_unescape(path_parameters[name])))
                 elif name in query_parameters:
                     parameters.append(clazz(self._url_parameter_unescape(query_parameters[name])))
+            elif self.dto_serialization_handler.is_deserializable_into(clazz):
+                parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
 
         function_return = route_registration.routeFunction(resource, *parameters)
-
         if isinstance(function_return, Response):
             return function_return
-        elif self.dto_serialization_handler.is_serializable(function_return.__class__):
-            function_return = self.dto_serialization_handler.serialize(function_return)
         return Response(200, {}, function_return)
 
     def _url_parameter_unescape(self, escaped):

@@ -13,6 +13,7 @@ from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
@@ -47,13 +48,14 @@ class ProductionJivagoContext(AbstractContext):
                                  DtoSerializationHandler(Registry(), self.rootPackage))
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))
         self.serviceLocator.bind(UrlEncodedQueryParser, UrlEncodedQueryParser)
+        self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]
 
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
-        return [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, HttpFormDeserializationFilter,
+        return [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, HttpFormDeserializationFilter, BodySerializationFilter,
                 ApplicationExceptionFilter]
 
     @Override

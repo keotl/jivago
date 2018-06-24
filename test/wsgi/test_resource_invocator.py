@@ -84,14 +84,6 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(ResourceClass.the_response, response)
 
-    def test_givenRouteWhichReturnsADto_whenInvoking_thenPopulateTheResponseWithADictionary(self):
-        self.request = Request('GET', PATH + "/return-dto", {}, "", "")
-
-        response = self.resource_invocator.invoke(self.request)
-
-        self.assertIsInstance(response.body, dict)
-        self.assertEqual({"name": "a_name"}, response.body)
-
     def test_givenRouteWithPathParameters_whenInvoking_thenPassAsArguments(self):
         self.request = Request('GET', PATH + "/path-param/" + A_PATH_PARAM, {}, "", "")
 
