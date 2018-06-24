@@ -16,18 +16,18 @@ class JivagoApplication(object):
     def __init__(self, root_module, *, debug: bool = False, context: AbstractContext = None):
         self.registry = Registry()
         if context is None:
-            self.context = DebugJivagoContext(root_module, self.registry) \
-                if debug else ProductionJivagoContext(root_module, self.registry)
+            self.context = DebugJivagoContext(root_module.__name__, self.registry) \
+                if debug else ProductionJivagoContext(root_module.__name__, self.registry)
         else:
             self.context = context
         self.rootModule = root_module
         self.__import_package_recursive(root_module)
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
-        self.router = Router(Registry(), self.rootModule, self.serviceLocator, self.context)
+        self.router = Router(Registry(), self.rootModule.__name__, self.serviceLocator, self.context)
 
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
-            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker))
+            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run))
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
 
     def __import_package_recursive(self, package):

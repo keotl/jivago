@@ -5,6 +5,7 @@ from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.resource_invocator import ResourceInvocator
@@ -14,16 +15,18 @@ from jivago.wsgi.routing_table import RoutingTable
 
 class Router(object):
 
-    def __init__(self, registry: Registry, rootPackage, service_locator: ServiceLocator, context: AbstractContext):
+    def __init__(self, registry: Registry, root_package_name: str, service_locator: ServiceLocator,
+                 context: AbstractContext):
         self.context = context
         self.serviceLocator = service_locator
         self.registry = registry
-        self.rootPackage = rootPackage
+        self.rootPackageName = root_package_name
         self.routingTable = RoutingTable(registry,
-                                         self.registry.get_annotated_in_package(Resource, self.rootPackage.__name__))
+                                         self.registry.get_annotated_in_package(Resource, self.rootPackageName))
         self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable,
-                                                   DtoSerializationHandler(registry, self.rootPackage.__name__),
+                                                   DtoSerializationHandler(registry, self.rootPackageName),
                                                    UrlEncodedQueryParser())
+        self.http_status_resolver = HttpStatusCodeResolver()
 
     def route(self, env, start_response):
         path = env['PATH_INFO']
@@ -40,12 +43,8 @@ class Router(object):
 
         filter_chain.doFilter(request, response)
 
-        start_response(self.__get_status_string(response.status), [x for x in response.headers.items()])
-        return [response.body.encode('utf-8')]
-
-    def __get_status_string(self, status: int) -> str:
-        # TODO actual status formatting
-        if status == 200:
-            return "200 OK"
+        start_response(self.http_status_resolver.get_status_code(response.status), [x for x in response.headers.items()])
+        if isinstance(response.body, str):
+            return [response.body.encode('utf-8')]
         else:
-            return "{} status".format(status)
+            return [response.body]
