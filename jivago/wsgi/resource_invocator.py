@@ -8,7 +8,7 @@ from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.routing_table import RoutingTable
 
-ALLOWED_URL_PARAMETER_TYPES = [str, int, float]
+ALLOWED_URL_PARAMETER_TYPES = (str, int, float)
 
 
 class ResourceInvocator(object):

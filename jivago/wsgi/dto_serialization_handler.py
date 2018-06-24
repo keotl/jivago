@@ -28,9 +28,11 @@ class DtoSerializationHandler(object):
         return self.registry.is_annotated(dto_class, Serializable)
 
     def is_deserializable_into(self, dto_class: type) -> bool:
-        return self.is_a_registered_dto_type(dto_class) or dto_class in BASE_SERIALIZABLE_TYPES # TODO handle List[Dto] and/or other collections typingMeta
+        return self.is_a_registered_dto_type(dto_class) or dto_class in BASE_SERIALIZABLE_TYPES or self._is_deserializable_into_typing_meta(dto_class)
 
     def deserialize(self, body: dict, clazz: type) -> Any:
+        if self._is_deserializable_into_typing_meta(clazz):
+            return Stream(body).map(lambda x: self.deserialize(x, clazz.__args__[0])).toList()
         if isinstance(body, clazz):
             return clazz
         constructor = clazz.__init__
@@ -38,6 +40,9 @@ class DtoSerializationHandler(object):
             return self.__reflexively_inject_attributes(clazz, body)
         else:
             return self.__inject_constructor(clazz, constructor, body)
+
+    def _is_deserializable_into_typing_meta(self, typing_meta_annotation):
+        return isinstance(typing_meta_annotation, TypingMeta) and typing_meta_annotation.__name__ in ('List', 'Collection', 'Iterable')
 
     def serialize(self, dto):
         if isinstance(dto, list):

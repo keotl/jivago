@@ -110,6 +110,13 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertEqual({"foobar": {"child_dto": {"name": "a name"}}}, dictionary)
 
+    def test_givenListTypingMeta_whenDeserializing_thenReturnListOfDtos(self):
+        serialized_dtos = [{"name": "foobar"}]
+
+        dtos = self.serializationHandler.deserialize(serialized_dtos, List[ADto])
+
+        self.assertEqual(1, len(dtos))
+        self.assertEqual("foobar", dtos[0].name)
 
 @Serializable
 class ADto(object):
