@@ -118,6 +118,7 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertEqual(1, len(dtos))
         self.assertEqual("foobar", dtos[0].name)
 
+
 @Serializable
 class ADto(object):
     name: str

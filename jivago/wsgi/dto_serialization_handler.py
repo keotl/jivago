@@ -69,14 +69,10 @@ class DtoSerializationHandler(object):
         for attribute, declared_type in parameter_declarations:
             if attribute == 'return':
                 break
-            allowed_attribute_types = [declared_type] if not isinstance(declared_type,
-                                                                        _Union) else declared_type.__args__
-
-            if isinstance(declared_type, TypingMeta) and declared_type.__name__ == 'List':
-                parameters.append([self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in
-                                   range(0, len(body[attribute]))])
-            elif Stream(allowed_attribute_types).anyMatch(
-                    lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
+            allowed_attribute_types = [declared_type] if not isinstance(declared_type, _Union) else declared_type.__args__
+            if self._is_deserializable_into_typing_meta(declared_type):
+                parameters.append([self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in range(0, len(body[attribute]))])
+            elif Stream(allowed_attribute_types).anyMatch(lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
                 parameters.append(body.get(attribute))
             else:
                 raise IncorrectAttributeTypeException(attribute, declared_type)
@@ -88,14 +84,10 @@ class DtoSerializationHandler(object):
         attributes = clazz.__annotations__
         the_object = object.__new__(clazz)
         for attribute, declared_type in attributes.items():
-            allowed_attribute_types = [declared_type] if not isinstance(declared_type,
-                                                                        _Union) else declared_type.__args__
-            if isinstance(declared_type, TypingMeta) and declared_type.__name__ == 'List':
-                the_object.__setattr__(attribute,
-                                       [self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in
-                                        range(0, len(body[attribute]))])
-            elif Stream(allowed_attribute_types).anyMatch(
-                    lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
+            allowed_attribute_types = [declared_type] if not isinstance(declared_type, _Union) else declared_type.__args__
+            if self._is_deserializable_into_typing_meta(declared_type):
+                the_object.__setattr__(attribute, [self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in range(0, len(body[attribute]))])
+            elif Stream(allowed_attribute_types).anyMatch(lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
                 the_object.__setattr__(attribute, body.get(attribute))
             else:
                 raise IncorrectAttributeTypeException(attribute, declared_type)
