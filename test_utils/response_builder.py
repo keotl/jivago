@@ -12,5 +12,9 @@ class ResponseBuilder(object):
         self._body = body
         return self
 
+    def status(self, status: int) -> "ResponseBuilder":
+        self._status = status
+        return self
+
     def build(self):
         return Response(self._status, self._headers, self._body)

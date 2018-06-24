@@ -9,6 +9,7 @@ from jivago.wsgi.resource_invocator import ResourceInvocator
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.router import Router
 from jivago.wsgi.routing_table import RoutingTable
+from test_utils.response_builder import ResponseBuilder
 
 BINARY_STRING = b"foobar"
 
@@ -43,7 +44,7 @@ class RouterTest(unittest.TestCase):
     def test_givenStringResponseBody_whenRouting_thenResponseIsUtf8Encoded(self):
         self.resourceInvocatorMock.invoke.return_value = Response(200, {}, STRING_MESSAGE)
 
-        response = self.router.route(INCOMING_HEADERS, lambda x,y: None)
+        response = self.router.route(INCOMING_HEADERS, lambda x, y: None)
 
         self.assertIsInstance(response[0], bytes)
         self.assertEqual(STRING_MESSAGE, response[0].decode("utf-8"))
@@ -51,10 +52,20 @@ class RouterTest(unittest.TestCase):
     def test_givenByteResponseBody_whenRouting_thenResponseIsReturnedAsIs(self):
         self.resourceInvocatorMock.invoke.return_value = Response(200, {}, BINARY_STRING)
 
-        response = self.router.route(INCOMING_HEADERS, lambda x,y: None)
+        response = self.router.route(INCOMING_HEADERS, lambda x, y: None)
 
         self.assertIsInstance(response[0], bytes)
         self.assertEqual(BINARY_STRING, response[0])
+
+    def test_whenRouting_thenRespondWithAppropriateHttpStatusCodeDescription(self):
+        self.resourceInvocatorMock.invoke.return_value = ResponseBuilder().status(200).build()
+
+        self.router.route(INCOMING_HEADERS, lambda x, y: self.assertEqual("200 OK", x))
+
+    def test_givenNonStandardStatusCode_whenRouting_thenRespondWithoutAStatusCodeDescription(self):
+        self.resourceInvocatorMock.invoke.return_value = ResponseBuilder().status(599).build()
+
+        self.router.route(INCOMING_HEADERS, lambda x, y: self.assertEqual("599", x))
 
 
 class AResource(object):
