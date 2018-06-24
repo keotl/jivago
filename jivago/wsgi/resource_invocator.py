@@ -36,13 +36,13 @@ class ResourceInvocator(object):
                 parameters.append(request)
             elif clazz == dict:
                 parameters.append(request.body)
-            elif self.dto_serialization_handler.is_deserializable_into(clazz):
-                parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
             elif clazz in ALLOWED_URL_PARAMETER_TYPES:
                 if name in path_parameters:
                     parameters.append(clazz(self._url_parameter_unescape(path_parameters[name])))
                 elif name in query_parameters:
                     parameters.append(clazz(self._url_parameter_unescape(query_parameters[name])))
+            elif self.dto_serialization_handler.is_deserializable_into(clazz):
+                parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
 
         function_return = route_registration.routeFunction(resource, *parameters)
         if isinstance(function_return, Response):
