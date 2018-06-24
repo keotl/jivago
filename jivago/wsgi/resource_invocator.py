@@ -36,7 +36,7 @@ class ResourceInvocator(object):
                 parameters.append(request)
             elif clazz == dict:
                 parameters.append(request.body)
-            elif self.dto_serialization_handler.is_serializable(clazz):
+            elif self.dto_serialization_handler.is_deserializable_into(clazz):
                 parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
             elif clazz in ALLOWED_URL_PARAMETER_TYPES:
                 if name in path_parameters:

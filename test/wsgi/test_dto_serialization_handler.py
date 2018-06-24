@@ -3,8 +3,10 @@ from typing import Optional, List
 
 from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
+from jivago.lang.stream import Stream
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.incorrect_attribute_type_exception import IncorrectAttributeTypeException
+from jivago.wsgi.serialization_exception import SerializationException
 
 OBJECT_WITH_UNKNOWN_PROPERTY = {"name": "a_name", "unknown-property": "foobar"}
 
@@ -35,7 +37,7 @@ class DtoSerializationHandlerTest(unittest.TestCase):
     def test_givenNestedDtos_whenSerializing_thenRecursivelySerializeDtos(self):
         child = ChildDto()
         child.name = "a name"
-        nested = ANestedDto()
+        nested = A_NESTED_DTO
         nested.child_dto = child
 
         dictionary = self.serializationHandler.serialize(nested)
@@ -58,6 +60,55 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(dto, ACollectionDto)
         self.assertEqual("a name", dto.children[1].name)
+
+    def test_givenDto_whenCheckingIsSerializable_thenReturnObjectIsSerializable(self):
+        is_serializable = self.serializationHandler.is_serializable(ADto())
+
+        self.assertTrue(is_serializable)
+
+    def test_givenNestedDto_whenCheckingIsSerializable_thenReturnObjectIsSerializable(self):
+        is_serializable = self.serializationHandler.is_serializable(A_NESTED_DTO)
+
+        self.assertTrue(is_serializable)
+
+    def test_givenAListOfDtos_whenCheckingIsSerializale_thenReturnCollectionIsSerializable(self):
+        dto_list = [ChildDto() for x in range(0, 2)]
+
+        is_serializable = self.serializationHandler.is_serializable(dto_list)
+
+        self.assertTrue(is_serializable)
+
+    def test_givenADictionaryOfDtos_whenCheckingIsSerializable_thenReturnDictionnaryIsSerializable(self):
+        dictionary_of_dtos = {"key": ChildDto()}
+
+        is_serializable = self.serializationHandler.is_serializable(dictionary_of_dtos)
+
+        self.assertTrue(is_serializable)
+
+    def test_givenADictionaryWithNonBaseTypeKeys_whenCheckingIsSerializable_thenDictionaryIsNotSerializable(self):
+        incorrect_dictionary = {ChildDto(): "foo"}
+
+        is_serializable = self.serializationHandler.is_serializable(incorrect_dictionary)
+
+        self.assertFalse(is_serializable)
+
+    def test_givenBaseType_whenCheckingIsSerializable_thenObjectIsSerializable(self):
+        base_objects = [1, "hello", 5.34]
+
+        Stream(base_objects).map(lambda x: self.serializationHandler.is_serializable(x)).forEach(lambda x: self.assertTrue(x))
+
+    def test_givenNonSerializableObject_whenSerializing_thenThrowSerializationException(self):
+        non_serializable_object = object()
+
+        with self.assertRaises(SerializationException):
+            self.serializationHandler.serialize(non_serializable_object)
+
+    def test_givenDictionaryOfDtos_whenSerializing_thenSerializeValuesIntoDictionaries(self):
+        dictionary_of_dtos = {"foobar": A_NESTED_DTO}
+
+        dictionary = self.serializationHandler.serialize(dictionary_of_dtos)
+
+        self.assertEqual({"foobar": {"child_dto": {"name": "a name"}}}, dictionary)
 
 
 @Serializable
@@ -86,3 +137,8 @@ class ACollectionDto(object):
 
     def __init__(self, children: List[ChildDto]):
         self.children = children
+
+
+A_NESTED_DTO = ANestedDto()
+A_NESTED_DTO.child_dto = ChildDto()
+A_NESTED_DTO.child_dto.name = "a name"

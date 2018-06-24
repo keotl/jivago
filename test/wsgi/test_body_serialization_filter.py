@@ -11,6 +11,7 @@ from test_utils.response_builder import ResponseBuilder
 TEST_DATA = "foobar"
 
 A_REQUEST = RequestBuilder().build()
+A_DTO = {"foo": "bar"}
 
 
 class BodySerializationFilterTest(unittest.TestCase):
@@ -21,9 +22,10 @@ class BodySerializationFilterTest(unittest.TestCase):
 
         self.filterChainMock: FilterChain = mock.create_autospec(FilterChain)
 
-    def test_givenResponseDto_whenApplyingFilter_thenDtoIsConvertedToDictionaryByHandler(self):
+    def test_givenSerializableBody_whenApplyingFilter_thenDtoIsConvertedToDictionaryByHandler(self):
         expected_body = {"data": TEST_DATA}
         response = ResponseBuilder().body(A_DTO).build()
+        self.dtoSerializerMock.is_serializable.return_value = True
         self.dtoSerializerMock.serialize.return_value = expected_body
 
         self.filter.doFilter(A_REQUEST, response, self.filterChainMock)
@@ -37,14 +39,3 @@ class BodySerializationFilterTest(unittest.TestCase):
         self.filter.doFilter(A_REQUEST, response, self.filterChainMock)
 
         self.assertEqual(TEST_DATA, response.body)
-
-
-@Serializable
-class Dto(object):
-    data: str
-
-    def __init__(self):
-        self.data = TEST_DATA
-
-
-A_DTO = Dto()
