@@ -12,7 +12,7 @@ class PartialContentHandler(object):
             total_filesize = os.path.getsize(filepath)
             start, end = self._parse_range_string(request.headers['HTTP_RANGE'], max_block_size, total_filesize)
             return Response(206, {"Content-Type": "application/octet-stream", "Accept-Ranges": "bytes",
-                                  "Content-Range": f"bytes {start}-{end}/{total_filesize}"}, self._read_partial_file(filepath, start, end))
+                                  "Content-Range": f"bytes {start}-{end - 1}/{total_filesize}"}, self._read_partial_file(filepath, start, end))
 
         return Response(200, {"Content-Type": "application/octet-stream"}, self._read_whole_file(filepath))
 

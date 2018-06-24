@@ -15,5 +15,5 @@ class BodySerializationFilter(Filter):
     def doFilter(self, request: Request, response: Response, chain: FilterChain):
         chain.doFilter(request, response)
 
-        if self.dto_serialization_handler.is_serializable(response.body.__class__):
+        if self.dto_serialization_handler.is_serializable(response.body):
             response.body = self.dto_serialization_handler.serialize(response.body)
