@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Iterable, Callable, Iterator, Optional
+from typing import Iterable, Callable, Iterator, Optional, Tuple
 
 
 class Stream(object):
@@ -51,16 +51,39 @@ class Stream(object):
         return Stream(chain(*self))
 
     def toList(self) -> list:
-        return [x for x in self.iterable]
+        return list(self)
 
     def toSet(self) -> set:
-        return set(self.toList())
+        return set(self)
 
     def toDict(self) -> dict:
-        return dict(self.toList())
+        return dict(self)
+
+    def toTuple(self) -> tuple:
+        return tuple(self)
 
     def __should_expand(self, fun: Callable) -> bool:
         return fun.__code__.co_argcount > 1
 
     def __iter__(self) -> Iterator:
         return iter(self.iterable)
+
+    @staticmethod
+    def zip(*iterables: Iterable) -> "Stream":
+        return Stream(zip(*iterables))
+
+    def unzip(self) -> Tuple[tuple, ...]:
+        return tuple(zip(*self))
+
+    @staticmethod
+    def of(*args) -> "Stream":
+        return Stream(args)
+
+    def sum(self):
+        return sum(self)
+
+    def min(self):
+        return min(self)
+
+    def max(self):
+        return max(self)
