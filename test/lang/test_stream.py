@@ -49,10 +49,17 @@ class StreamTest(unittest.TestCase):
 
         self.assertFalse(result)
 
+    def test_whenCollectingToList_thenReturnAListContainingAllElements(self):
+        result_list = self.stream.toList()
+
+        self.assertIsInstance(result_list, list)
+        self.assertEqual(self.COLLECTION, result_list)
+
     def test_whenCollectingToSet_thenReturnASetContainingAllElements(self):
         result_set = self.stream.toSet()
 
         self.assertEqual(len(self.COLLECTION), len(result_set))
+        self.assertIsInstance(result_set, set)
         for item in self.COLLECTION:
             self.assertTrue(item in result_set)
 
@@ -60,6 +67,7 @@ class StreamTest(unittest.TestCase):
         dictionary = self.stream.map(lambda x: (x, StreamTest.DIVIDES_BY_THREE(x))).toDict()
 
         self.assertEqual(len(self.COLLECTION), len(dictionary.keys()))
+        self.assertIsInstance(dictionary, dict)
         for i in self.COLLECTION:
             self.assertEqual(dictionary[i], StreamTest.DIVIDES_BY_THREE(i))
 
@@ -123,6 +131,43 @@ class StreamTest(unittest.TestCase):
 
         self.assertEqual(self.BUMPY_COLLECTION + self.COLLECTION, result)
 
+    def test_whenZipping_thenIterateOverTheCollectionsTwoByTwo(self):
+        expected = [(1, 4), (2, 5), (3, 6)]
 
-if __name__ == '__main__':
-    unittest.main()
+        result = Stream.zip([1, 2, 3], [4, 5, 6]).toList()
+
+        self.assertEqual(expected, result)
+
+    def test_givenTupleIteration_whenUnzipping_thenReturnSeparateLists(self):
+        expected = ((1, 3, 5), (2, 4, 6))
+
+        first_list, second_list = Stream([(1, 2), (3, 4), (5, 6)]).unzip()
+
+        self.assertEqual(expected[0], first_list)
+        self.assertEqual(expected[1], second_list)
+
+    def test_whenCreatingFromNonIterableElements_thenCreateACollectionContainingAllParameters(self):
+        result = Stream.of(1, 2, 3, 4).toList()
+
+        self.assertEqual([1, 2, 3, 4], result)
+
+    def test_whenCollectingToTuple_thenReturnATupleContainingTheCollection(self):
+        result = Stream([1, 2, 3, 4, 5]).toTuple()
+
+        self.assertIsInstance(result, tuple)
+        self.assertEqual((1, 2, 3, 4, 5), result)
+
+    def test_whenCalculatingSum_thenReturnSumOfCollection(self):
+        stream_sum = self.stream.sum()
+
+        self.assertEqual(sum(self.COLLECTION), stream_sum)
+
+    def test_whenCheckingMinimum_thenReturnSmallestElementInTheCollection(self):
+        smallest_element = self.stream.min()
+
+        self.assertEqual(min(self.COLLECTION), smallest_element)
+
+    def test_whenCheckingMaximum_thenReturnLargestElementInTheCollection(self):
+        largest_element = self.stream.max()
+
+        self.assertEqual(max(self.COLLECTION), largest_element)
