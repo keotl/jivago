@@ -17,6 +17,7 @@ from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilte
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
+from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.partial_content_handler import PartialContentHandler
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
@@ -51,6 +52,7 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(UrlEncodedQueryParser, UrlEncodedQueryParser)
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
+        self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]

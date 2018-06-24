@@ -5,6 +5,7 @@ from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.resource_invocator import ResourceInvocator
@@ -25,6 +26,7 @@ class Router(object):
         self.resourceInvocator = ResourceInvocator(service_locator, self.routingTable,
                                                    DtoSerializationHandler(registry, self.rootPackageName),
                                                    UrlEncodedQueryParser())
+        self.http_status_resolver = HttpStatusCodeResolver()
 
     def route(self, env, start_response):
         path = env['PATH_INFO']
@@ -41,15 +43,8 @@ class Router(object):
 
         filter_chain.doFilter(request, response)
 
-        start_response(self.__get_status_string(response.status), [x for x in response.headers.items()])
+        start_response(self.http_status_resolver.get_status_code(response.status), [x for x in response.headers.items()])
         if isinstance(response.body, str):
             return [response.body.encode('utf-8')]
         else:
             return [response.body]
-
-    def __get_status_string(self, status: int) -> str:
-        # TODO actual status formatting
-        if status == 200:
-            return "200 OK"
-        else:
-            return "{} status".format(status)
