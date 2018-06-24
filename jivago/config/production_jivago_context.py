@@ -9,6 +9,8 @@ from jivago.lang.registry import Singleton, Component, Registry
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
 from jivago.lang.stream import Stream
+from jivago.scheduling.annotations import Scheduled
+from jivago.scheduling.task_scheduler import TaskScheduler
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
@@ -36,6 +38,7 @@ class ProductionJivagoContext(AbstractContext):
         AnnotatedClassBinder(self.rootPackage, self.registry, Component).bind(self.serviceLocator)
         AnnotatedClassBinder(self.rootPackage, self.registry, Resource).bind(self.serviceLocator)
         AnnotatedClassBinder(self.rootPackage, self.registry, BackgroundWorker).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.rootPackage, self.registry, Scheduled).bind(self.serviceLocator)
         ProviderBinder(self.rootPackage, self.registry).bind(self.serviceLocator)
         for scope in self.scopes():
             scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.rootPackage)).map(
@@ -46,6 +49,7 @@ class ProductionJivagoContext(AbstractContext):
         Stream(self.get_filters("")).forEach(lambda f: self.serviceLocator.bind(f, f))
 
         # TODO better way to handle Jivago Dependencies
+        self.serviceLocator.bind(TaskScheduler, TaskScheduler(self.serviceLocator))
         self.serviceLocator.bind(DtoSerializationHandler,
                                  DtoSerializationHandler(Registry(), self.rootPackage))
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))

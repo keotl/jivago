@@ -1,27 +1,24 @@
-from jivago.lang.registry import Registry
+import time
+from datetime import datetime
+
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Override
 from jivago.lang.runnable import Runnable
-from jivago.scheduling.annotations import Scheduled
+from jivago.scheduling.schedule import Schedule
 
 
 class ScheduledTaskRunner(Runnable):
 
-    def __init__(self, registry: Registry, root_package_name: str, service_locator: ServiceLocator):
+    def __init__(self, runner_class: type, schedule: Schedule, service_locator: ServiceLocator):
         self.service_locator = service_locator
-        self.root_package_name = root_package_name
-        self.registry = registry
+        self.runner_class = runner_class
+        self.schedule = schedule
+        self.shouldStop = False
 
     @Override
     def run(self):
-        scheduled_method_registrations = self.registry.get_annotated_in_package(Scheduled, self.root_package_name)
-
-        for registration in scheduled_method_registrations:
-            if issubclass(registration.registered, Runnable):
-                pass # TODO
-
-        print("hello")
-
-
-
-
+        while not self.shouldStop:
+            sleep_time = self.schedule.next_start_time() - datetime.utcnow()
+            if sleep_time.total_seconds() > 0:
+                time.sleep(sleep_time.total_seconds())
+            self.service_locator.get(self.runner_class).run()
