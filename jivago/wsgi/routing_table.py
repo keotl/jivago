@@ -23,8 +23,7 @@ class RoutingTable(object):
                     if route_sub_path is None:
                         self.__register_route(resource, route_function.registered, primitive)
                     else:
-                        self.__register_route(resource, route_function.registered, primitive,
-                                              route_sub_path.arguments['value'])
+                        self.__register_route(resource, route_function.registered, primitive, route_sub_path.arguments['value'])
 
     def __register_route(self, resource: Registration, function: Callable, primitive: Annotation, subpath: str = ""):
         path = resource.arguments['value'].split('/')
@@ -33,7 +32,7 @@ class RoutingTable(object):
         path = Stream(path).filter(lambda s: s != "").toList()
         self.routeRootNode.register_child(path, primitive, RouteRegistration(resource.registered, function, path))
 
-    def get_route_registration(self, http_primitive: Annotation, path: str) -> RouteRegistration:
+    def get_route_registration(self, http_primitive: Annotation, path: str) -> List[RouteRegistration]:
         path_elements = Stream(path.split('/')).filter(lambda x: x != "").toList()
         route_node = self.routeRootNode.explore(path_elements)
         return route_node.invocators[http_primitive]

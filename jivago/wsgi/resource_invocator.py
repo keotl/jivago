@@ -1,11 +1,14 @@
 import urllib.parse
+from typing import Tuple, List
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.methods import to_method
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
+from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.routing_table import RoutingTable
 
 ALLOWED_URL_PARAMETER_TYPES = (str, int, float)
@@ -22,12 +25,24 @@ class ResourceInvocator(object):
 
     def invoke(self, request: Request) -> Response:
         method = to_method(request.method)
-        route_registration = self.routing_table.get_route_registration(method, request.path)
-        resource = self.service_locator.get(route_registration.resourceClass)
+        for route_registration in self.routing_table.get_route_registration(method, request.path):
+            resource = self.service_locator.get(route_registration.resourceClass)
+
+            try:
+                parameters = self.format_parameters(request, route_registration)
+                function_return = route_registration.routeFunction(resource, *parameters)
+            except:
+                continue
+            if isinstance(function_return, Response):
+                return function_return
+            return Response(200, {}, function_return)
+        raise IncorrectResourceParametersException()
+
+    def format_parameters(self, request: Request, route_registration: RouteRegistration) -> list:
+        parameter_declaration = route_registration.routeFunction.__annotations__.items()
         path_parameters = route_registration.parse_path_parameters(request.path)
         query_parameters = self.query_parser.parse_urlencoded_query(request.queryString)
 
-        parameter_declaration = route_registration.routeFunction.__annotations__.items()
         parameters = []
         for name, clazz in parameter_declaration:
             if name == 'return':  # This is the output type annotation
@@ -44,10 +59,7 @@ class ResourceInvocator(object):
             elif self.dto_serialization_handler.is_deserializable_into(clazz):
                 parameters.append(self.dto_serialization_handler.deserialize(request.body, clazz))
 
-        function_return = route_registration.routeFunction(resource, *parameters)
-        if isinstance(function_return, Response):
-            return function_return
-        return Response(200, {}, function_return)
+        return parameters
 
     def _url_parameter_unescape(self, escaped):
         return urllib.parse.unquote(escaped)

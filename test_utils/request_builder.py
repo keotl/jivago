@@ -10,6 +10,9 @@ class RequestBuilder(object):
         self._queryString = ""
         self._body = ""
 
+    def method(self, method: str) -> "RequestBuilder":
+        self._method = method
+
     def body(self, body) -> "RequestBuilder":
         self._body = body
         return self
