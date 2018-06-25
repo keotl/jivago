@@ -1,18 +1,21 @@
 import unittest
+from typing import Optional
 
-from jivago.lang.registration import Registration
-from jivago.lang.registry import Registry
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
+from jivago.lang.registration import Registration
+from jivago.lang.registry import Registry
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.resource_invocator import ResourceInvocator
-from jivago.wsgi.request.response import Response
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.routing_table import RoutingTable
+from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}
 DTO_BODY = {"name": "hello"}
@@ -37,7 +40,7 @@ class ResourceInvocatorTest(unittest.TestCase):
         ResourceClass.has_been_called = False
 
     def test_whenInvoking_thenGetsCorrespondingResourceInRoutingTable(self):
-        response = self.resource_invocator.invoke(self.request)
+        self.resource_invocator.invoke(self.request)
 
         self.assertTrue(ResourceClass.has_been_called)
 
@@ -45,7 +48,7 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.request.path += "/request"
         self.resource_invocator.invoke(self.request)
 
-        # Assert is done in route method below
+        # Assert is done in the route method below
 
     def test_givenRouteWhichReturnsResponse_whenInvoking_thenDirectlyReturnTheRouteResponse(self):
         response = self.resource_invocator.invoke(self.request)
@@ -125,6 +128,33 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(unescaped_name, response.body)
 
+    def test_givenIncorrectParameters_whenInvoking_thenThrowIncorrectResourceParametersException(self):
+        self.request = Request('POST', PATH + "/dto", {}, "", "")
+
+        with self.assertRaises(IncorrectResourceParametersException):
+            self.resource_invocator.invoke(self.request)
+
+    def test_givenOverloadedRouteRegistrations_whenInvoking_thenChooseMethodBasedOnMethodSignature(self):
+        self.request = Request('GET', PATH + "/overloaded", {}, "query=foo", "")
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(ResourceClass.OVERLOADED_RETURN, response.body)
+
+    def test_givenMissingOptionalResourceArgument_whenInvoking_thenCallEvenIfTheArgumentIsMissing(self):
+        self.request = RequestBuilder().path(PATH + "/nullable-query").build()
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(None, response.body)
+
+    def test_givenPresentOptionalResourceArgument_whenInvoking_thenCallResourceWithParameter(self):
+        self.request = RequestBuilder().path(PATH + "/nullable-query").query_string("query=foo").build()
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual("foo", response.body)
+
 
 @Serializable
 class A_Dto(object):
@@ -203,6 +233,23 @@ class ResourceClass(object):
     def with_query_param(self, name: str) -> str:
         assert isinstance(name, str)
         return name
+
+    @GET
+    @Path("/overloaded")
+    def overloaded_param(self, name: str) -> int:
+        return 5
+
+    OVERLOADED_RETURN = 6
+
+    @GET
+    @Path("/overloaded")
+    def overloaded_without_name_parameter(self, query: str) -> int:
+        return self.OVERLOADED_RETURN
+
+    @GET
+    @Path("/nullable-query")
+    def nullable_query(self, query: Optional[str]) -> Optional[str]:
+        return query
 
 
 ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])

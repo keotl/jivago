@@ -1,7 +1,6 @@
 from typing import List
 
 from jivago.lang.registry import Annotation
-from jivago.wsgi.ambiguous_routing_exception import AmbiguousRoutingException
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.unknown_path_exception import UnknownPathException
 
@@ -16,8 +15,9 @@ class RouteNode(object):
     def register_child(self, path: List[str], http_primitive: Annotation, route_registration: RouteRegistration):
         if len(path) == 0:
             if http_primitive in self.invocators:
-                raise AmbiguousRoutingException(http_primitive, route_registration)
-            self.invocators[http_primitive] = route_registration
+                self.invocators[http_primitive].append(route_registration)
+            else:
+                self.invocators[http_primitive] = [route_registration]
         else:
             next_path_element = PATH_PARAMETER if path[0].startswith("{") and path[0].endswith('}') else path[0]
             if next_path_element not in self.children:

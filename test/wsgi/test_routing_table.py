@@ -11,8 +11,8 @@ class RoutingTableTest(unittest.TestCase):
     def test_whenInitializingRoutingTable_thenRegisterAllResourcesInRoutingTree(self):
         routing_table = RoutingTable(Registry(), RESOURCES)
 
-        self.assertEqual(HelloResource, routing_table.routeRootNode.children['hello'].invocators[GET].resourceClass)
-        self.assertEqual(HelloResource.get_hello, routing_table.routeRootNode.children['hello'].invocators[GET].routeFunction)
+        self.assertEqual(HelloResource, routing_table.routeRootNode.children['hello'].invocators[GET][0].resourceClass)
+        self.assertEqual(HelloResource.get_hello, routing_table.routeRootNode.children['hello'].invocators[GET][0].routeFunction)
 
 
 @Resource("/hello")

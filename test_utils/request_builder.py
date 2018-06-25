@@ -10,12 +10,23 @@ class RequestBuilder(object):
         self._queryString = ""
         self._body = ""
 
+    def method(self, method: str) -> "RequestBuilder":
+        self._method = method
+
     def body(self, body) -> "RequestBuilder":
         self._body = body
         return self
 
     def headers(self, headers: dict) -> "RequestBuilder":
         self._headers = headers
+        return self
+
+    def path(self, path: str) -> "RequestBuilder":
+        self._path = path
+        return self
+
+    def query_string(self, query_string: str) -> "RequestBuilder":
+        self._queryString = query_string
         return self
 
     def build(self):
