@@ -1,7 +1,7 @@
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Singleton
 from jivago.lang.runnable import Runnable
-from jivago.scheduling.annotations import Scheduled
+from jivago.scheduling.annotations import Scheduled, Duration
 
 
 @Singleton
@@ -14,3 +14,11 @@ class ScheduledHelloPrinter(Runnable):
     @Override
     def run(self):
         print("hello !")
+
+
+@Scheduled(every=Duration.SECOND)
+class RegularIntervalScheduledHelloPrinter(Runnable):
+
+    @Override
+    def run(self):
+        print("Hello every second!")
