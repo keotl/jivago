@@ -1,7 +1,10 @@
+from jivago.lang.stream import Stream
+
+
 class Headers(object):
 
     def __init__(self, content=None):
-        self.content = {} if content is None else content
+        self.content = {} if content is None else Stream(content.items()).map(lambda key, value: (key.upper(), value)).toDict()
 
     def __setitem__(self, key: str, value: str):
         self.content[key.upper()] = value
