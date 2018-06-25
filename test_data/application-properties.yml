@@ -1,0 +1,4 @@
+server:
+  url: "https://localhost:8080"
+hello:
+  message: "goodbye"
