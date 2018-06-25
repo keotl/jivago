@@ -1,14 +1,14 @@
+import os
 from typing import List, Type
 
-import os
-
 from jivago.config.abstract_context import AbstractContext
+from jivago.config.exception_mapper_binder import ExceptionMapperBinder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.lang.registry import Singleton, Component, Registry
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
+from jivago.lang.registry import Singleton, Component, Registry
 from jivago.lang.stream import Stream
 from jivago.scheduling.annotations import Scheduled
 from jivago.scheduling.task_scheduler import TaskScheduler
@@ -18,8 +18,6 @@ from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
-from jivago.wsgi.filters.exception.routing.method_not_allowed_exception_mapper import MethodNotAllowedExceptionMapper
-from jivago.wsgi.filters.exception.routing.unknown_path_exception_mapper import UnknownPathExceptionMapper
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
@@ -64,8 +62,7 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
 
-        self.serviceLocator.bind(MethodNotAllowedExceptionMapper, MethodNotAllowedExceptionMapper)
-        self.serviceLocator.bind(UnknownPathExceptionMapper, UnknownPathExceptionMapper)
+        ExceptionMapperBinder().bind(self.serviceLocator)
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]
