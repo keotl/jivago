@@ -5,6 +5,7 @@ from typing import List, Type
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.debug_jivago_context import DebugJivagoContext
 from jivago.config.production_jivago_context import ProductionJivagoContext
+from jivago.config.startup_hooks import PreInit, Init, PostInit
 from jivago.lang.registry import Registry, Annotation
 from jivago.lang.annotations import BackgroundWorker
 from jivago.lang.stream import Stream
@@ -26,7 +27,12 @@ class JivagoApplication(object):
         self.__import_package_recursive(root_module)
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
+
+        self.call_startup_hook(PreInit)
+
         self.router = Router(Registry(), self.rootModule.__name__, self.serviceLocator, self.context)
+
+        self.call_startup_hook(Init)
 
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
             lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run))
@@ -35,6 +41,8 @@ class JivagoApplication(object):
         task_schedule_initializer = TaskScheduleInitializer(self.registry, self.rootModule.__name__)
         task_scheduler = self.serviceLocator.get(TaskScheduler)
         task_schedule_initializer.initialize_task_scheduler(task_scheduler)
+
+        self.call_startup_hook(PostInit)
 
     def __import_package_recursive(self, package):
         prefix = package.__name__ + "."
@@ -46,6 +54,9 @@ class JivagoApplication(object):
     def get_annotated(self, annotation: Annotation) -> List[Type]:
         return Stream(Registry().get_annotated_in_package(annotation, self.rootModule.__name__)).map(
             lambda registration: registration.registered).toList()
+
+    def call_startup_hook(self, hook: Annotation):
+        Stream(self.get_annotated(hook)).map(lambda triggered_class: self.serviceLocator.get(triggered_class)).forEach(lambda x: x.run())
 
     def __call__(self, env, start_response):
         """wsgi entry point."""
