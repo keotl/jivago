@@ -11,7 +11,8 @@ class CronSchedule(Schedule):
     def __init__(self, cron_string: str, start_time: datetime):
         if start_time:
             self.iterator = croniter(cron_string, start_time=start_time.timestamp())
-        self.iterator = croniter(cron_string)
+        else:
+            self.iterator = croniter(cron_string)
 
     @Override
     def next_start_time(self) -> datetime:
