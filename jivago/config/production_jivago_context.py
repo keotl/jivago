@@ -18,6 +18,8 @@ from jivago.wsgi.annotations import Resource
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
+from jivago.wsgi.filters.exception.routing.method_not_allowed_exception_mapper import MethodNotAllowedExceptionMapper
+from jivago.wsgi.filters.exception.routing.unknown_path_exception_mapper import UnknownPathExceptionMapper
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
 from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
@@ -61,6 +63,9 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
+
+        self.serviceLocator.bind(MethodNotAllowedExceptionMapper, MethodNotAllowedExceptionMapper)
+        self.serviceLocator.bind(UnknownPathExceptionMapper, UnknownPathExceptionMapper)
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]
