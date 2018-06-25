@@ -75,3 +75,7 @@ class ProductionJivagoContext(AbstractContext):
     @Override
     def get_views_folder_path(self) -> str:
         return os.path.join(os.path.dirname(self.rootPackage), "views")
+
+    @Override
+    def get_config_file_locations(self) -> List[str]:
+        return ["application.yml", "application.json", "properties.yml", "properties.json"]

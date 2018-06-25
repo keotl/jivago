@@ -1,3 +1,4 @@
+import os
 import pkgutil
 from threading import Thread
 from typing import List, Type
@@ -5,6 +6,10 @@ from typing import List, Type
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.debug_jivago_context import DebugJivagoContext
 from jivago.config.production_jivago_context import ProductionJivagoContext
+from jivago.config.properties.application_properties import ApplicationProperties
+from jivago.config.properties.global_config_loader import GlobalConfigLoader
+from jivago.config.properties.json_config_loader import JsonConfigLoader
+from jivago.config.properties.yaml_config_loader import YamlConfigLoader
 from jivago.config.startup_hooks import PreInit, Init, PostInit
 from jivago.lang.registry import Registry, Annotation
 from jivago.lang.annotations import BackgroundWorker
@@ -30,6 +35,7 @@ class JivagoApplication(object):
 
         self.call_startup_hook(PreInit)
 
+        self.serviceLocator.bind(ApplicationProperties, self.__load_application_properties(self.context))
         self.router = Router(Registry(), self.rootModule.__name__, self.serviceLocator, self.context)
 
         self.call_startup_hook(Init)
@@ -50,6 +56,12 @@ class JivagoApplication(object):
             module = __import__(modname, fromlist="dummy")
             if ispkg:
                 self.__import_package_recursive(module)
+
+    def __load_application_properties(self, context: AbstractContext) -> ApplicationProperties:
+        composite_config_loader = GlobalConfigLoader([YamlConfigLoader(), JsonConfigLoader()])
+        config_file_which_exists = Stream(context.get_config_file_locations()).firstMatch(lambda filepath: os.path.exists(filepath))
+
+        return composite_config_loader.read(config_file_which_exists)
 
     def get_annotated(self, annotation: Annotation) -> List[Type]:
         return Stream(Registry().get_annotated_in_package(annotation, self.rootModule.__name__)).map(

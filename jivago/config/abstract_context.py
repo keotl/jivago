@@ -24,3 +24,6 @@ class AbstractContext(object):
 
     def get_views_folder_path(self) -> str:
         raise NotImplementedError
+
+    def get_config_file_locations(self) -> List[str]:
+        raise NotImplementedError
