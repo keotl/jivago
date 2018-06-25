@@ -3,6 +3,7 @@ from typing import List, Type
 import os
 
 from jivago.config.abstract_context import AbstractContext
+from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
 from jivago.lang.registry import Singleton, Component, Registry
@@ -39,10 +40,13 @@ class ProductionJivagoContext(AbstractContext):
         AnnotatedClassBinder(self.rootPackage, self.registry, Resource).bind(self.serviceLocator)
         AnnotatedClassBinder(self.rootPackage, self.registry, BackgroundWorker).bind(self.serviceLocator)
         AnnotatedClassBinder(self.rootPackage, self.registry, Scheduled).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.rootPackage, self.registry, Init).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.rootPackage, self.registry, PreInit).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.rootPackage, self.registry, PostInit).bind(self.serviceLocator)
+
         ProviderBinder(self.rootPackage, self.registry).bind(self.serviceLocator)
         for scope in self.scopes():
-            scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.rootPackage)).map(
-                lambda registration: registration.registered).toList()
+            scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.rootPackage)).map(lambda registration: registration.registered).toList()
             cache = ScopeCache(scope, scoped_classes)
             self.serviceLocator.register_scope(cache)
 
