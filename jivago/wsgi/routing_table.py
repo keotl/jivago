@@ -4,6 +4,7 @@ from jivago.lang.registration import Registration
 from jivago.lang.registry import Annotation, Registry
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Path
+from jivago.wsgi.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.methods import http_methods
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.route_node import RouteNode
@@ -35,4 +36,7 @@ class RoutingTable(object):
     def get_route_registration(self, http_primitive: Annotation, path: str) -> List[RouteRegistration]:
         path_elements = Stream(path.split('/')).filter(lambda x: x != "").toList()
         route_node = self.routeRootNode.explore(path_elements)
-        return route_node.invocators[http_primitive]
+
+        if http_primitive in route_node.invocators:
+            return route_node.invocators[http_primitive]
+        raise MethodNotAllowedException(http_primitive)

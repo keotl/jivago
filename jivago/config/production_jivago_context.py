@@ -1,14 +1,14 @@
+import os
 from typing import List, Type
 
-import os
-
 from jivago.config.abstract_context import AbstractContext
+from jivago.config.exception_mapper_binder import ExceptionMapperBinder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.lang.registry import Singleton, Component, Registry
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
+from jivago.lang.registry import Singleton, Component, Registry
 from jivago.lang.stream import Stream
 from jivago.scheduling.annotations import Scheduled
 from jivago.scheduling.task_scheduler import TaskScheduler
@@ -61,6 +61,8 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
+
+        ExceptionMapperBinder().bind(self.serviceLocator)
 
     def scopes(self) -> List[type]:
         return [Singleton, BackgroundWorker]
