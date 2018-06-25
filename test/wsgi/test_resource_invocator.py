@@ -1,4 +1,5 @@
 import unittest
+from typing import Optional
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
@@ -14,6 +15,7 @@ from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.resource_invocator import ResourceInvocator
 from jivago.wsgi.route_registration import RouteRegistration
 from jivago.wsgi.routing_table import RoutingTable
+from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}
 DTO_BODY = {"name": "hello"}
@@ -139,6 +141,20 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual(ResourceClass.OVERLOADED_RETURN, response.body)
 
+    def test_givenMissingOptionalResourceArgument_whenInvoking_thenCallEvenIfTheArgumentIsMissing(self):
+        self.request = RequestBuilder().path(PATH + "/nullable-query").build()
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual(None, response.body)
+
+    def test_givenPresentOptionalResourceArgument_whenInvoking_thenCallResourceWithParameter(self):
+        self.request = RequestBuilder().path(PATH + "/nullable-query").query_string("query=foo").build()
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual("foo", response.body)
+
 
 @Serializable
 class A_Dto(object):
@@ -229,6 +245,11 @@ class ResourceClass(object):
     @Path("/overloaded")
     def overloaded_without_name_parameter(self, query: str) -> int:
         return self.OVERLOADED_RETURN
+
+    @GET
+    @Path("/nullable-query")
+    def nullable_query(self, query: Optional[str]) -> Optional[str]:
+        return query
 
 
 ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])

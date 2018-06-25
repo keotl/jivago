@@ -21,5 +21,13 @@ class RequestBuilder(object):
         self._headers = headers
         return self
 
+    def path(self, path: str) -> "RequestBuilder":
+        self._path = path
+        return self
+
+    def query_string(self, query_string: str) -> "RequestBuilder":
+        self._queryString = query_string
+        return self
+
     def build(self):
         return Request(self._method, self._path, self._headers, self._queryString, self._body)

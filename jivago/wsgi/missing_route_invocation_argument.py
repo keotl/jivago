@@ -1,0 +1,2 @@
+class MissingRouteInvocationArgument(Exception):
+    pass
