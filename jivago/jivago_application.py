@@ -8,6 +8,8 @@ from jivago.config.production_jivago_context import ProductionJivagoContext
 from jivago.lang.registry import Registry, Annotation
 from jivago.lang.annotations import BackgroundWorker
 from jivago.lang.stream import Stream
+from jivago.scheduling.task_schedule_initializer import TaskScheduleInitializer
+from jivago.scheduling.task_scheduler import TaskScheduler
 from jivago.wsgi.router import Router
 
 
@@ -29,6 +31,10 @@ class JivagoApplication(object):
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
             lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run))
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
+
+        task_schedule_initializer = TaskScheduleInitializer(self.registry, self.rootModule.__name__)
+        task_scheduler = self.serviceLocator.get(TaskScheduler)
+        task_schedule_initializer.initialize_task_scheduler(task_scheduler)
 
     def __import_package_recursive(self, package):
         prefix = package.__name__ + "."
