@@ -28,5 +28,5 @@ setup(
     packages=find_packages(
         exclude=['contrib', 'docs', 'tests', 'tests.*', 'example_app', 'example_app.*', 'test_data', 'test_data.*', 'test_utils', 'test_utils.*']),
 
-    install_requires=['Jinja2', 'MarkupSafe'],
+    install_requires=['Jinja2', 'MarkupSafe', 'croniter', 'pyyaml'],
 )

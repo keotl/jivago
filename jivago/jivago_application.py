@@ -60,8 +60,10 @@ class JivagoApplication(object):
     def __load_application_properties(self, context: AbstractContext) -> ApplicationProperties:
         composite_config_loader = GlobalConfigLoader([YamlConfigLoader(), JsonConfigLoader()])
         config_file_which_exists = Stream(context.get_config_file_locations()).firstMatch(lambda filepath: os.path.exists(filepath))
-
-        return composite_config_loader.read(config_file_which_exists)
+        if config_file_which_exists:
+            return composite_config_loader.read(config_file_which_exists)
+        else:
+            return ApplicationProperties()
 
     def get_annotated(self, annotation: Annotation) -> List[Type]:
         return Stream(Registry().get_annotated_in_package(annotation, self.rootModule.__name__)).map(
