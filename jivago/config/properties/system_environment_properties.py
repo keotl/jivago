@@ -1,0 +1,2 @@
+class SystemEnvironmentProperties(dict):
+    pass

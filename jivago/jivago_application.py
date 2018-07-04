@@ -9,6 +9,7 @@ from jivago.config.production_jivago_context import ProductionJivagoContext
 from jivago.config.properties.application_properties import ApplicationProperties
 from jivago.config.properties.global_config_loader import GlobalConfigLoader
 from jivago.config.properties.json_config_loader import JsonConfigLoader
+from jivago.config.properties.system_environment_properties import SystemEnvironmentProperties
 from jivago.config.properties.yaml_config_loader import YamlConfigLoader
 from jivago.config.startup_hooks import PreInit, Init, PostInit
 from jivago.lang.registry import Registry, Annotation
@@ -36,6 +37,8 @@ class JivagoApplication(object):
         self.call_startup_hook(PreInit)
 
         self.serviceLocator.bind(ApplicationProperties, self.__load_application_properties(self.context))
+        self.serviceLocator.bind(SystemEnvironmentProperties, self.__load_system_environment_properties())
+
         self.router = Router(Registry(), self.rootModule.__name__, self.serviceLocator, self.context)
 
         self.call_startup_hook(Init)
@@ -64,6 +67,9 @@ class JivagoApplication(object):
             return composite_config_loader.read(config_file_which_exists)
         else:
             return ApplicationProperties()
+
+    def __load_system_environment_properties(self) -> SystemEnvironmentProperties:
+        return SystemEnvironmentProperties(os.environ)
 
     def get_annotated(self, annotation: Annotation) -> List[Type]:
         return Stream(Registry().get_annotated_in_package(annotation, self.rootModule.__name__)).map(
