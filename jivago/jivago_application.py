@@ -22,15 +22,18 @@ from jivago.wsgi.router import Router
 
 class JivagoApplication(object):
 
-    def __init__(self, root_module, *, debug: bool = False, context: AbstractContext = None):
+    def __init__(self, root_module=None, *, debug: bool = False, context: AbstractContext = None):
         self.registry = Registry()
+        self.rootModule = root_module
+
         if context is None:
-            self.context = DebugJivagoContext(root_module.__name__, self.registry) \
-                if debug else ProductionJivagoContext(root_module.__name__, self.registry)
+            self.context = DebugJivagoContext(self.root_module_name, self.registry) \
+                if debug else ProductionJivagoContext(self.root_module_name, self.registry)
         else:
             self.context = context
-        self.rootModule = root_module
-        self.__import_package_recursive(root_module)
+
+        if self.rootModule:
+            self.__import_package_recursive(root_module)
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
 
@@ -39,7 +42,7 @@ class JivagoApplication(object):
         self.serviceLocator.bind(ApplicationProperties, self.__load_application_properties(self.context))
         self.serviceLocator.bind(SystemEnvironmentProperties, self.__load_system_environment_properties())
 
-        self.router = Router(Registry(), self.rootModule.__name__, self.serviceLocator, self.context)
+        self.router = Router(Registry(), self.root_module_name, self.serviceLocator, self.context)
 
         self.call_startup_hook(Init)
 
@@ -47,7 +50,7 @@ class JivagoApplication(object):
             lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run))
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
 
-        task_schedule_initializer = TaskScheduleInitializer(self.registry, self.rootModule.__name__)
+        task_schedule_initializer = TaskScheduleInitializer(self.registry, self.root_module_name)
         task_scheduler = self.serviceLocator.get(TaskScheduler)
         task_schedule_initializer.initialize_task_scheduler(task_scheduler)
 
@@ -72,7 +75,7 @@ class JivagoApplication(object):
         return SystemEnvironmentProperties(os.environ)
 
     def get_annotated(self, annotation: Annotation) -> List[Type]:
-        return Stream(Registry().get_annotated_in_package(annotation, self.rootModule.__name__)).map(
+        return Stream(Registry().get_annotated_in_package(annotation, self.root_module_name)).map(
             lambda registration: registration.registered).toList()
 
     def call_startup_hook(self, hook: Annotation):
@@ -81,3 +84,7 @@ class JivagoApplication(object):
     def __call__(self, env, start_response):
         """wsgi entry point."""
         return self.router.route(env, start_response)
+
+    @property
+    def root_module_name(self) -> str:
+        return self.rootModule.__name__ if self.rootModule else ''
