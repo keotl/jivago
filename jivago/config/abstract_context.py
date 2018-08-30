@@ -5,7 +5,7 @@ from jivago.wsgi.filters.filter import Filter
 
 
 class AbstractContext(object):
-    INSTANCE = None
+    INSTANCE: "AbstractContext" = None
 
     def __init__(self):
         self.serviceLocator = ServiceLocator()
