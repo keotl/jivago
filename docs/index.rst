@@ -15,9 +15,6 @@ Jivago is an object-oriented, highly-reflective Python framework for building we
    :caption: Contents:
 
 
-Indices and tables
-==================
-
 * :doc:`quickstart/index`
 * :doc:`installation/index`
 * :ref:`genindex`
