@@ -11,15 +11,16 @@ Jivago is an object-oriented, highly-reflective Python framework for building we
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Documentation
 
    installation/index
    quickstart/index
    deployment/index
    reflection/index
+   runnable/index
 
 
 .. * :ref:`genindex`
 .. * :ref:`modindex`
-* :ref:`search`
+.. * :ref:`search`
 
