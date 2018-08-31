@@ -7,6 +7,7 @@ from jivago.lang.stream import Stream
 
 class Registry(object):
     content = {}
+    INSTANCE: "Registry" = None
 
     def get_annotated_in_package(self, annotation: "Annotation", package: str) -> List[Registration]:
         if annotation not in self.content:
@@ -89,3 +90,6 @@ def Provider(wrapped_function: Callable) -> Callable:
 
 class MissingAnnotationParameterException(Exception):
     pass
+
+
+Registry.INSTANCE = Registry()

@@ -9,15 +9,18 @@ Jivago – A Python framework for writing enterprise Java applications
 
 Jivago is an object-oriented, highly-reflective Python framework for building web applications. It relies heavily on type annotations and decorators to enforce typing, providing package auto-discovery and dependency injection out of the box. This leads to less boilerplate code, while maintaining loose-coupling across components.
 
-
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Documentation
+
+   installation/index
+   quickstart/index
+   deployment/index
+   reflection/index
+   runnable/index
 
 
-* :doc:`quickstart/index`
-* :doc:`installation/index`
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`
 

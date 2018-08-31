@@ -1,6 +1,9 @@
 Quickstart
 ===========
 
+.. toctree::
+  :maxdepth: 2
+
 A minimal Jivago application is shown below :
 
 .. literalinclude:: minimal.py
