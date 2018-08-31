@@ -1,6 +1,9 @@
 Installation
 =============
 
+.. toctree::
+   :maxdepth: 2
+
 Jivago and its dependencies can be installed from PyPi. Python3.6 or greater is required.
 
 .. code-block:: sh
