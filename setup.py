@@ -8,7 +8,7 @@ setup(
     name='jivago',
     version_format='{tag}',
     setup_requires=['setuptools-git-version'],
-    description='A Python framework for writing Java-esque REST applications.',
+    description='The Highly-Reflective Object-Oriented Python Web Framework',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
@@ -18,7 +18,7 @@ setup(
     author_email='kento.lauzon@ligature.ca',
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 3 - Beta',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'License :: OSI Approved :: MIT License',
