@@ -14,6 +14,4 @@ class HelloResource(object):
 app = JivagoApplication()
 
 if __name__ == '__main__':
-    from werkzeug.serving import run_simple
-
-    run_simple('localhost', 4000, app)
+    app.run_dev()

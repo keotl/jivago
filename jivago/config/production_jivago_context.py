@@ -30,7 +30,7 @@ from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 class ProductionJivagoContext(AbstractContext):
 
     def __init__(self, root_package: "Module", registry: Registry):
-        self.root_package_name = root_package.__name__
+        self.root_package_name = root_package.__name__ if root_package else ''
         self.root_package = root_package
         self.registry = registry
         super().__init__()
@@ -75,7 +75,7 @@ class ProductionJivagoContext(AbstractContext):
 
     @Override
     def get_views_folder_path(self) -> str:
-        return os.path.join(os.path.dirname(self.root_package.__file__), "views")
+        return os.path.join(os.path.dirname(self.root_package.__file__), "views") if self.root_package else ''
 
     @Override
     def get_config_file_locations(self) -> List[str]:
