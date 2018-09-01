@@ -24,15 +24,14 @@ class JivagoApplication(object):
 
     def __init__(self, root_module=None, *, debug: bool = False, context: AbstractContext = None):
         self.registry = Registry()
-        self.rootModule = root_module
+        self.root_module = root_module
 
         if context is None:
-            self.context = DebugJivagoContext(self.root_module_name, self.registry) \
-                if debug else ProductionJivagoContext(self.root_module_name, self.registry)
+            self.context = DebugJivagoContext(self.root_module, self.registry) if debug else ProductionJivagoContext(self.root_module, self.registry)
         else:
             self.context = context
 
-        if self.rootModule:
+        if self.root_module:
             self.__import_package_recursive(root_module)
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
@@ -102,4 +101,4 @@ class JivagoApplication(object):
 
     @property
     def root_module_name(self) -> str:
-        return self.rootModule.__name__ if self.rootModule else ''
+        return self.root_module.__name__ if self.root_module else ''
