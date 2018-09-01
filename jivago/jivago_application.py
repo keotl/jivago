@@ -12,8 +12,8 @@ from jivago.config.properties.json_config_loader import JsonConfigLoader
 from jivago.config.properties.system_environment_properties import SystemEnvironmentProperties
 from jivago.config.properties.yaml_config_loader import YamlConfigLoader
 from jivago.config.startup_hooks import PreInit, Init, PostInit
-from jivago.lang.registry import Registry, Annotation
 from jivago.lang.annotations import BackgroundWorker
+from jivago.lang.registry import Registry, Annotation
 from jivago.lang.stream import Stream
 from jivago.scheduling.task_schedule_initializer import TaskScheduleInitializer
 from jivago.scheduling.task_scheduler import TaskScheduler
@@ -51,8 +51,8 @@ class JivagoApplication(object):
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
 
         task_schedule_initializer = TaskScheduleInitializer(self.registry, self.root_module_name)
-        task_scheduler = self.serviceLocator.get(TaskScheduler)
-        task_schedule_initializer.initialize_task_scheduler(task_scheduler)
+        self.task_scheduler: TaskScheduler = self.serviceLocator.get(TaskScheduler)
+        task_schedule_initializer.initialize_task_scheduler(self.task_scheduler)
 
         self.call_startup_hook(PostInit)
 
@@ -84,6 +84,21 @@ class JivagoApplication(object):
     def __call__(self, env, start_response):
         """wsgi entry point."""
         return self.router.route(env, start_response)
+
+    def cleanup(self, signum, frame):
+        print("Received shutdown signal. Terminating...")
+        self.task_scheduler.stop()
+        import sys
+        sys.exit(0)
+
+    def run_dev(self, *, port=4000, host='localhost'):
+        from werkzeug.serving import run_simple
+        import signal
+
+        signal.signal(signal.SIGTERM, self.cleanup)
+        signal.signal(signal.SIGINT, self.cleanup)
+
+        run_simple(host, port, self, processes=1, threaded=False)
 
     @property
     def root_module_name(self) -> str:

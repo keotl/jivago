@@ -38,13 +38,15 @@ We will therefore move our resource classes into their own files, and use Jivago
 
    my_hello_world_application
     ├── __init__.py
-    ├── application.py
-    └── resources          
+    └── resources
         ├── __init__.py
         └── hello_resource.py
+   application.py
+
 
 Note that, when creating the JivagoApplication object, a reference to the application's root package is passed as the first argument. The root package should contain *all* Jivago-annotated classes. (i.e. ``@Resource``, ``@Component``, etc.)
 
+**The app object should be outside of the explored package.**
 **Warning :** Since all python files are imported at run-time, any lines of code outside a class or a function will be executed before the application is started. It is therefore highly advised to avoid having any line of code outside a declarative block. 
 
 The Resource Class
