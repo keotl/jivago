@@ -31,7 +31,7 @@ class ResourceInvocator(object):
             try:
                 parameters = self.format_parameters(request, route_registration)
                 function_return = route_registration.routeFunction(resource, *parameters)
-            except:
+            except (MissingRouteInvocationArgument, AttributeError):
                 continue
 
             if isinstance(function_return, Response):

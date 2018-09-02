@@ -50,3 +50,8 @@ class HelloWorldResource(object):
     @Path("/query")
     def with_query(self, name: str) -> str:
         return "Hello {}!".format(name)
+
+    @GET
+    @Path("/error")
+    def raise_error(self) -> str:
+        raise NotImplementedError

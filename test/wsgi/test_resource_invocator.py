@@ -155,6 +155,12 @@ class ResourceInvocatorTest(unittest.TestCase):
 
         self.assertEqual("foo", response.body)
 
+    def test_givenApplicationException_whenInvokingResource_thenLetTheExceptionRise(self):
+        self.request = RequestBuilder().path(PATH + "/error").build()
+
+        with self.assertRaises(AnException):
+            self.resource_invocator.invoke(self.request)
+
 
 @Serializable
 class A_Dto(object):
@@ -170,6 +176,10 @@ class ADtoWithoutAnExplicitConstructor(object):
 
     def a_dummy_function(self) -> bool:
         return False
+
+
+class AnException(Exception):
+    pass
 
 
 @Resource(PATH)
@@ -250,6 +260,11 @@ class ResourceClass(object):
     @Path("/nullable-query")
     def nullable_query(self, query: Optional[str]) -> Optional[str]:
         return query
+
+    @GET
+    @Path("/error")
+    def raises_error(self) -> str:
+        raise AnException
 
 
 ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])
