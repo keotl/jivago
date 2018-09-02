@@ -30,7 +30,7 @@ setup(
     author_email='kento.lauzon@ligature.ca',
 
     classifiers=[
-        'Development Status :: 3 - Beta',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'License :: OSI Approved :: MIT License',
