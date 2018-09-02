@@ -12,7 +12,7 @@ init_file = None
 with open(path.join(here, 'jivago/__init__.py'), 'r', encoding='utf-8') as f:
     init_file = f.read()
 with open(path.join(here, 'jivago/__init__.py'), 'w', encoding='utf-8') as f:
-    f.write(init_file.replace("@@VERSION@@", check_output(git_version_command.split()).decode('utf-8').strip()))
+    f.write(init_file.replace("@@VERSION@@", check_output(git_version_command.split()).decode('utf-8').strip().split("-")[0]))
 
 setup(
     name='jivago',
