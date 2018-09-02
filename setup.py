@@ -8,11 +8,13 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-init_file = None
-with open(path.join(here, 'jivago/__init__.py'), 'r', encoding='utf-8') as f:
-    init_file = f.read()
-with open(path.join(here, 'jivago/__init__.py'), 'w', encoding='utf-8') as f:
-    f.write(init_file.replace("@@VERSION@@", check_output(git_version_command.split()).decode('utf-8').strip().split("-")[0]))
+if path.exists(here + "/.git"):
+    init_file = None
+    with open(path.join(here, 'jivago/__init__.py'), 'r', encoding='utf-8') as f:
+        init_file = f.read()
+    if "@@VERSION@@" in init_file:
+        with open(path.join(here, 'jivago/__init__.py'), 'w', encoding='utf-8') as f:
+            f.write(init_file.replace("@@VERSION@@", check_output(git_version_command.split()).decode('utf-8').strip().split("-")[0]))
 
 setup(
     name='jivago',
