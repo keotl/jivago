@@ -1,4 +1,4 @@
-from threading import Thread, Lock
+from threading import Lock
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream

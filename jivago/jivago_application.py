@@ -1,5 +1,5 @@
 import os
-import pkgutil
+import signal
 from threading import Thread
 from typing import List, Type
 
@@ -46,7 +46,7 @@ class JivagoApplication(object):
         self.call_startup_hook(Init)
 
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
-            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run))
+            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run, daemon=True))
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
 
         task_schedule_initializer = TaskScheduleInitializer(self.registry, self.root_module_name)
@@ -54,6 +54,9 @@ class JivagoApplication(object):
         task_schedule_initializer.initialize_task_scheduler(self.task_scheduler)
 
         self.call_startup_hook(PostInit)
+
+        signal.signal(signal.SIGTERM, self.cleanup)
+        signal.signal(signal.SIGINT, self.cleanup)
 
     def __import_package_recursive(self, package):
         prefix = package.__name__ + "."
@@ -92,11 +95,6 @@ class JivagoApplication(object):
 
     def run_dev(self, *, port=4000, host='localhost'):
         from werkzeug.serving import run_simple
-        import signal
-
-        signal.signal(signal.SIGTERM, self.cleanup)
-        signal.signal(signal.SIGINT, self.cleanup)
-
         run_simple(host, port, self, processes=1, threaded=False)
 
     @property

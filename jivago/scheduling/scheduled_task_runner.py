@@ -15,7 +15,8 @@ class ScheduledTaskRunner(Runnable):
         self.runner_class = runner_class
         self.schedule = schedule
         self.thread_stop_event = threading.Event()
-        self.thread = threading.Thread(target=self.run)
+        self.thread = threading.Thread(target=self.run, daemon=True)
+        self.run_lock = threading.Lock()
 
     @Override
     def run(self):
@@ -23,11 +24,15 @@ class ScheduledTaskRunner(Runnable):
             sleep_time = self.schedule.next_start_time() - datetime.utcnow()
             if sleep_time.total_seconds() > 0:
                 time.sleep(sleep_time.total_seconds())
+            self.run_lock.acquire()
             self.service_locator.get(self.runner_class).run()
+            self.run_lock.release()
 
     def stop(self):
         self.thread_stop_event.set()
-        self.thread.join()
+        self.run_lock.acquire()
+        self.service_locator.get(self.runner_class).cleanup()
+        self.run_lock.release()
 
     def start(self):
         self.thread.start()
