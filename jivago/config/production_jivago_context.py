@@ -20,6 +20,7 @@ from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilte
 from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filters.filter import Filter
+from jivago.wsgi.filters.jivago_banner_filter import JivagoBannerFilter
 from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.partial_content_handler import PartialContentHandler
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
@@ -29,7 +30,8 @@ from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 
 class ProductionJivagoContext(AbstractContext):
 
-    def __init__(self, root_package: "Module", registry: Registry):
+    def __init__(self, root_package: "Module", registry: Registry, banner: bool = True):
+        self.banner = banner
         self.root_package_name = root_package.__name__ if root_package else ''
         self.root_package = root_package
         self.registry = registry
@@ -47,7 +49,8 @@ class ProductionJivagoContext(AbstractContext):
 
         ProviderBinder(self.root_package_name, self.registry).bind(self.serviceLocator)
         for scope in self.scopes():
-            scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.root_package_name)).map(lambda registration: registration.registered).toList()
+            scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.root_package_name)).map(
+                lambda registration: registration.registered).toList()
             cache = ScopeCache(scope, scoped_classes)
             self.serviceLocator.register_scope(cache)
 
@@ -70,8 +73,9 @@ class ProductionJivagoContext(AbstractContext):
 
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
-        return [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, HttpFormDeserializationFilter, BodySerializationFilter,
-                ApplicationExceptionFilter]
+        filters = [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, HttpFormDeserializationFilter,
+                   BodySerializationFilter, ApplicationExceptionFilter]
+        return [JivagoBannerFilter] + filters if self.banner else filters
 
     @Override
     def get_views_folder_path(self) -> str:
