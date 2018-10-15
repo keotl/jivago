@@ -118,6 +118,11 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertEqual(1, len(dtos))
         self.assertEqual("foobar", dtos[0].name)
 
+    def test_givenTwiceNestedDto_whenDeserializing_thenDeserializeDto(self):
+        dto: TwiceNestedDto = self.serializationHandler.deserialize({"nested_dto": {"child_dto": {"name": "foobar"}}}, TwiceNestedDto)
+
+        self.assertEqual("foobar", dto.nested_dto.child_dto.name)
+
 
 @Serializable
 class ADto(object):
@@ -145,6 +150,11 @@ class ACollectionDto(object):
 
     def __init__(self, children: List[ChildDto]):
         self.children = children
+
+
+@Serializable
+class TwiceNestedDto(object):
+    nested_dto: ANestedDto
 
 
 A_NESTED_DTO = ANestedDto()

@@ -1,4 +1,4 @@
-from typing import Any, _Union, TypingMeta
+from typing import Any, _Union, TypingMeta, Union
 
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
@@ -30,7 +30,7 @@ class DtoSerializationHandler(object):
     def is_deserializable_into(self, dto_class: type) -> bool:
         return self.is_a_registered_dto_type(dto_class) or dto_class in BASE_SERIALIZABLE_TYPES or self._is_deserializable_into_typing_meta(dto_class)
 
-    def deserialize(self, body: dict, clazz: type) -> Any:
+    def deserialize(self, body: Union[dict, list], clazz: type) -> Any:
         if self._is_deserializable_into_typing_meta(clazz):
             return Stream(body).map(lambda x: self.deserialize(x, clazz.__args__[0])).toList()
         if isinstance(body, clazz):
@@ -86,9 +86,11 @@ class DtoSerializationHandler(object):
         for attribute, declared_type in attributes.items():
             allowed_attribute_types = [declared_type] if not isinstance(declared_type, _Union) else declared_type.__args__
             if self._is_deserializable_into_typing_meta(declared_type):
-                the_object.__setattr__(attribute, [self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in range(0, len(body[attribute]))])
+                the_object.__setattr__(attribute, [self.deserialize(x, declared_type.__args__[0]) for x in body[attribute]])
             elif Stream(allowed_attribute_types).anyMatch(lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
                 the_object.__setattr__(attribute, body.get(attribute))
+            elif self.is_a_registered_dto_type(declared_type):
+                the_object.__setattr__(attribute, self.deserialize(body.get(attribute), declared_type))
             else:
                 raise IncorrectAttributeTypeException(attribute, declared_type)
         return the_object
