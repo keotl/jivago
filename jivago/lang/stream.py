@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Iterable, Callable, Iterator, Optional, Tuple
+from typing import Iterable, Callable, Iterator, Optional, Tuple, Any
 
 
 class Stream(object):
@@ -67,6 +67,13 @@ class Stream(object):
 
     def count(self) -> int:
         return len(self.toTuple())
+
+    def reduce(self, start_value: object, reducer: Callable[[Any, object], Any]):
+        """e.g. lambda accumulator, element: accumulator + element"""
+        accumulator = start_value
+        for element in self:
+            accumulator = reducer(accumulator, element)
+        return accumulator
 
     def __iter__(self) -> Iterator:
         return iter(self.iterable)

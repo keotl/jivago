@@ -176,3 +176,10 @@ class StreamTest(unittest.TestCase):
         count = self.stream.count()
 
         self.assertEqual(len(self.COLLECTION), count)
+
+    def test_whenReducing_thenReturnFinalValueOfAccumulator(self):
+        sum_reducer = lambda accumulator, element: accumulator + element
+
+        reduction = self.stream.reduce(0, sum_reducer)
+
+        self.assertEqual(sum(self.COLLECTION), reduction)
