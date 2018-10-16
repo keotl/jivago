@@ -65,6 +65,9 @@ class Stream(object):
     def __should_expand(self, fun: Callable) -> bool:
         return fun.__code__.co_argcount > 1
 
+    def count(self) -> int:
+        return len(self.toTuple())
+
     def __iter__(self) -> Iterator:
         return iter(self.iterable)
 

@@ -171,3 +171,8 @@ class StreamTest(unittest.TestCase):
         largest_element = self.stream.max()
 
         self.assertEqual(max(self.COLLECTION), largest_element)
+
+    def test_whenCountingElements_thenReturnLengthOfCollection(self):
+        count = self.stream.count()
+
+        self.assertEqual(len(self.COLLECTION), count)
