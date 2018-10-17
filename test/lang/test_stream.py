@@ -172,7 +172,14 @@ class StreamTest(unittest.TestCase):
 
         self.assertEqual(max(self.COLLECTION), largest_element)
 
-    def test_whenCountingElements_thenReturnLengthOfCollection(self):
+    def test_whenCountingElementsOfACollection_thenReturnLengthOfCollection(self):
+        count = self.stream.count()
+
+        self.assertEqual(len(self.COLLECTION), count)
+
+    def test_whenCountingElementsOfIterableWithoutLength_thenIndividuallyCountElements(self):
+        self.stream = Stream(zip(self.COLLECTION, self.COLLECTION))
+
         count = self.stream.count()
 
         self.assertEqual(len(self.COLLECTION), count)

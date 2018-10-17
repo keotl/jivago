@@ -66,7 +66,9 @@ class Stream(object):
         return fun.__code__.co_argcount > 1
 
     def count(self) -> int:
-        return len(self.toTuple())
+        if hasattr(self.iterable, '__len__'):
+            return len(self.iterable)
+        return self.reduce(0, lambda accumulator, element: accumulator + 1)
 
     def reduce(self, start_value: object, reducer: Callable[[Any, object], Any]):
         """e.g. lambda accumulator, element: accumulator + element"""
