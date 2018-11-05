@@ -13,5 +13,8 @@ class RequestFactory(object):
             lambda key, value: (re.sub("^HTTP_", "", key).title().replace("_", "-"), value)).toDict()
         request_size = int(env.get('CONTENT_LENGTH')) if 'CONTENT_LENGTH' in env else 0
 
+        if 'CONTENT_TYPE' in env:
+            raw_headers['Content-Type'] = env['CONTENT_TYPE']
+
         return Request(env['REQUEST_METHOD'], env['PATH_INFO'], Headers(raw_headers), env['QUERY_STRING'],
                        env['wsgi.input'].read(request_size))

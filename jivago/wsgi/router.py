@@ -32,8 +32,7 @@ class Router(object):
     def route(self, env, start_response):
         request = self.request_factory.build_request(env)
 
-        instantiated_filters = Stream(self.context.get_filters(request.path)).map(
-            lambda clazz: self.serviceLocator.get(clazz)).toList()
+        instantiated_filters = Stream(self.context.get_filters(request.path)).map(lambda clazz: self.serviceLocator.get(clazz)).toList()
         filter_chain = FilterChain(instantiated_filters, self.resourceInvocator)
 
         response = Response.empty()
