@@ -30,18 +30,11 @@ class Router(object):
         self.http_status_resolver = HttpStatusCodeResolver()
 
     def route(self, env, start_response):
-        path = env['PATH_INFO']
-        instantiated_filters = Stream(self.context.get_filters(path)).map(
+        request = self.request_factory.build_request(env)
+
+        instantiated_filters = Stream(self.context.get_filters(request.path)).map(
             lambda clazz: self.serviceLocator.get(clazz)).toList()
         filter_chain = FilterChain(instantiated_filters, self.resourceInvocator)
-
-        # headers = Stream(env.items()).filter(lambda k, v: k.startswith("HTTP")).toDict()
-        # headers['CONTENT-TYPE'] = env.get('CONTENT_TYPE')
-        # request_size = int(env.get('CONTENT_LENGTH')) if 'CONTENT_LENGTH' in env else 0
-        # body = env['wsgi.input'].read(request_size)
-        # request = Request(env['REQUEST_METHOD'], path, headers, env['QUERY_STRING'], body)
-
-        request = self.request_factory.build_request(env)
 
         response = Response.empty()
 

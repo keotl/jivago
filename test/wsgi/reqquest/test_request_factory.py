@@ -25,6 +25,11 @@ class RequestFactoryTest(unittest.TestCase):
         self.assertEqual("/", request.path)
         self.assertEqual("", request.queryString)
 
+    def test_givenCustomHeaderStartingWithP_whenBuildingRequest_thenDoNotRemoveTheLeadingP(self):
+        request = self.request_factory.build_request(WSGI_ENV)
+
+        self.assertEqual("postman", request.headers['Postman-Token'])
+
 
 class DummyWsgiReadStream(object):
     def read(self, *args):
@@ -42,6 +47,7 @@ WSGI_ENV = {
     'SCRIPT_NAME': '',
     'PATH_INFO': '/',
     'QUERY_STRING': '',
+    'HTTP_POSTMAN_TOKEN': "postman",
     'REMOTE_ADDR': '127.0.0.1', 'REMOTE_PORT': 58576,
     'SERVER_NAME': '127.0.0.1', 'SERVER_PORT': '4000',
     'SERVER_PROTOCOL': 'HTTP/1.1', 'HTTP_HOST': 'localhost:4000',
