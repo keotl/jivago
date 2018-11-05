@@ -4,13 +4,17 @@ from jivago.lang.stream import Stream
 class Headers(object):
 
     def __init__(self, content=None):
-        self.content = {} if content is None else Stream(content.items()).map(lambda key, value: (key.upper(), value)).toDict()
+        self.content = {} if content is None else content
 
     def __setitem__(self, key: str, value: str):
-        self.content[key.upper()] = value
+        self.content[key] = value
 
     def __getitem__(self, item: str) -> str:
-        return self.content.get(item.upper())
+        found_header = Stream(self.content.items()).firstMatch(
+            lambda key, value: key == item or _format_camel_case(key) == _format_camel_case(item))
+        if found_header:
+            return found_header[1]
+        return None
 
     def values(self):
         return self.content.values()
@@ -20,3 +24,7 @@ class Headers(object):
 
     def items(self):
         return self.content.items()
+
+
+def _format_camel_case(message: str) -> str:
+    return message.replace("_", "-").title()

@@ -18,11 +18,23 @@ class RequestFactoryTest(unittest.TestCase):
 
         self.assertTrue(("Foo-Bar", "bar") in request.headers.items())
 
+    def test_whenBuildingRequest_thenPopulateRequiredHeaderFields(self):
+        request = self.request_factory.build_request(WSGI_ENV)
+
+        self.assertEqual("GET", request.method)
+        self.assertEqual("/", request.path)
+        self.assertEqual("", request.queryString)
+
+
+class DummyWsgiReadStream(object):
+    def read(self, *args):
+        return b""
+
 
 WSGI_ENV = {
     'HTTP_FOO': 'bar',  # custom header
     'HTTP_FOO_BAR': 'bar',  # custom header
-    'wsgi.version': (1, 0), 'wsgi.url_scheme': 'http', 'wsgi.input': lambda x: x, 'wsgi.errors': lambda x: x,
+    'wsgi.version': (1, 0), 'wsgi.url_scheme': 'http', 'wsgi.input': DummyWsgiReadStream(), 'wsgi.errors': lambda x: x,
     'wsgi.multithread': False, 'wsgi.multiprocess': False, 'wsgi.run_once': False,
     'werkzeug.server.shutdown': lambda x: x,
     'SERVER_SOFTWARE': 'Werkzeug/0.14.1',

@@ -4,6 +4,7 @@ from unittest import mock
 from jivago.config.abstract_context import AbstractContext
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
+from jivago.wsgi.request.request_factory import RequestFactory
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.resource_invocator import ResourceInvocator
 from jivago.wsgi.route_registration import RouteRegistration
@@ -30,19 +31,19 @@ class RouterTest(unittest.TestCase):
     def setUp(self):
         self.serviceLocator = ServiceLocator()
         self.context: AbstractContext = mock.create_autospec(AbstractContext)
-        self.routingTableMock: RoutingTable = mock.create_autospec(RoutingTable)
-        self.resourceInvocatorMock: ResourceInvocator = mock.create_autospec(ResourceInvocator)
-        self.router = Router(Registry(), "", self.serviceLocator, self.context)
+        self.routing_table_mock: RoutingTable = mock.create_autospec(RoutingTable)
+        self.resource_invocator_mock: ResourceInvocator = mock.create_autospec(ResourceInvocator)
+        self.request_factory_mock = mock.create_autospec(RequestFactory)
+        self.router = Router(Registry(), "", self.serviceLocator, self.context, self.request_factory_mock)
 
-        self.router.routingTable = self.routingTableMock
-        self.router.resourceInvocator = self.resourceInvocatorMock
+        self.router.routingTable = self.routing_table_mock
+        self.router.resourceInvocator = self.resource_invocator_mock
 
         self.context.get_filters.return_value = []
-        self.routingTableMock.get_route_registration.return_value = RouteRegistration(AResource, AResource.a_method,
-                                                                                      ["hello"])
+        self.routing_table_mock.get_route_registration.return_value = RouteRegistration(AResource, AResource.a_method, ["hello"])
 
     def test_givenStringResponseBody_whenRouting_thenResponseIsUtf8Encoded(self):
-        self.resourceInvocatorMock.invoke.return_value = Response(200, {}, STRING_MESSAGE)
+        self.resource_invocator_mock.invoke.return_value = Response(200, {}, STRING_MESSAGE)
 
         response = self.router.route(INCOMING_HEADERS, lambda x, y: None)
 
@@ -50,7 +51,7 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(STRING_MESSAGE, response[0].decode("utf-8"))
 
     def test_givenByteResponseBody_whenRouting_thenResponseIsReturnedAsIs(self):
-        self.resourceInvocatorMock.invoke.return_value = Response(200, {}, BINARY_STRING)
+        self.resource_invocator_mock.invoke.return_value = Response(200, {}, BINARY_STRING)
 
         response = self.router.route(INCOMING_HEADERS, lambda x, y: None)
 
@@ -58,12 +59,12 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(BINARY_STRING, response[0])
 
     def test_whenRouting_thenRespondWithAppropriateHttpStatusCodeDescription(self):
-        self.resourceInvocatorMock.invoke.return_value = ResponseBuilder().status(200).build()
+        self.resource_invocator_mock.invoke.return_value = ResponseBuilder().status(200).build()
 
         self.router.route(INCOMING_HEADERS, lambda x, y: self.assertEqual("200 OK", x))
 
     def test_givenNonStandardStatusCode_whenRouting_thenRespondWithoutAStatusCodeDescription(self):
-        self.resourceInvocatorMock.invoke.return_value = ResponseBuilder().status(599).build()
+        self.resource_invocator_mock.invoke.return_value = ResponseBuilder().status(599).build()
 
         self.router.route(INCOMING_HEADERS, lambda x, y: self.assertEqual("599", x))
 
