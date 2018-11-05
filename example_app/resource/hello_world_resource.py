@@ -55,3 +55,8 @@ class HelloWorldResource(object):
     @Path("/error")
     def raise_error(self) -> str:
         raise NotImplementedError
+
+    @GET
+    @Path("/return-dto")
+    def return_dto(self) -> MyDto:
+        return MyDto("Paul Atreides", 32)
