@@ -3,8 +3,8 @@ from unittest import mock
 
 from jivago.wsgi.filters.filter_chain import FilterChain
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
-from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
+from test_utils.request_builder import RequestBuilder
 
 FORM_BODY = b"a query string"
 
@@ -21,14 +21,14 @@ class HttpFormDeserializationFilterTest(unittest.TestCase):
         self.queryStringParserMock.parse_urlencoded_query.return_value = PARSED_FORM_BODY
 
     def test_givenRequestWithContentTypWwwForm_whenApplyingFilter_thenBodyGetsParsed(self):
-        request = Request('POST', '/path', {'CONTENT-TYPE': 'application/x-www-form-urlencoded'}, "", FORM_BODY)
+        request = RequestBuilder().method('POST').headers({'CONTENT-TYPE': 'application/x-www-form-urlencoded'}).body(FORM_BODY).build()
 
         self.formDeserializationFilter.doFilter(request, None, self.filterChainMock)
 
         self.assertEqual(PARSED_FORM_BODY, request.body)
 
     def test_givenRequestWithoutAForm_whenApplyingFilter_thenDoNothing(self):
-        request = Request('POST', '/path', {}, "", FORM_BODY)
+        request = RequestBuilder().method("POST").body(FORM_BODY).build()
 
         self.formDeserializationFilter.doFilter(request, None, self.filterChainMock)
 

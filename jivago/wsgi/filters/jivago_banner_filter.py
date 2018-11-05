@@ -12,4 +12,4 @@ class JivagoBannerFilter(Filter):
     def doFilter(self, request: Request, response: Response, chain: FilterChain):
         chain.doFilter(request, response)
 
-        response.headers['X-POWERED-BY'] = f"Jivago {jivago.__version__}"
+        response.headers['X-Powered-By'] = f"Jivago {jivago.__version__}"

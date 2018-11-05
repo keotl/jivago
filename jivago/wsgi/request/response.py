@@ -1,4 +1,4 @@
-from jivago.wsgi.headers import Headers
+from jivago.wsgi.request.headers import Headers
 
 
 class Response(object):

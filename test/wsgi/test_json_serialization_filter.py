@@ -39,3 +39,10 @@ class JsonSerializationFilterTest(unittest.TestCase):
         self.filter.doFilter(A_REQUEST, response, self.filterChainMock)
 
         self.assertEqual("application/json", response.headers['Content-Type'])
+
+    def test_givenApplicationJsonHeaderWithEmptyBody_whenApplyingFilter_thenDoNotDeserializeTheEmptyString(self):
+        request = RequestBuilder().headers({"Content-Type": "application/json"}).body("").method("POST").build()
+
+        self.filter.doFilter(A_REQUEST, ResponseBuilder().build(), self.filterChainMock)
+
+        self.assertEqual("", request.body)

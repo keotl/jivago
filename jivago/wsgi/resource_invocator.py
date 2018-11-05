@@ -6,6 +6,7 @@ from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.methods import to_method
 from jivago.wsgi.missing_route_invocation_argument import MissingRouteInvocationArgument
+from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
@@ -61,6 +62,8 @@ class ResourceInvocator(object):
             return request
         elif parameter_type == dict:
             return request.body
+        elif parameter_type == Headers:
+            return request.headers
         elif parameter_type in ALLOWED_URL_PARAMETER_TYPES:
             if parameter_name in path_parameters:
                 return parameter_type(self._url_parameter_unescape(path_parameters[parameter_name]))
