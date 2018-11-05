@@ -1,14 +1,16 @@
 import unittest
-from typing import Optional
+from typing import Optional, List
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
 from jivago.lang.registration import Registration
 from jivago.lang.registry import Registry
+from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.methods import GET, POST
+from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
@@ -161,6 +163,13 @@ class ResourceInvocatorTest(unittest.TestCase):
         with self.assertRaises(AnException):
             self.resource_invocator.invoke(self.request)
 
+    def test_givenResourceWithHeadersParameter_whenInvokingResource_thenInvokeRoutingMethodWithHeadersObject(self):
+        self.request = RequestBuilder().path(PATH + "/headers").headers({"foo": "bar"}).build()
+
+        response = self.resource_invocator.invoke(self.request)
+
+        self.assertEqual([("foo", "bar")], Stream(response.body).toList())
+
 
 @Serializable
 class A_Dto(object):
@@ -265,6 +274,11 @@ class ResourceClass(object):
     @Path("/error")
     def raises_error(self) -> str:
         raise AnException
+
+    @GET
+    @Path("/headers")
+    def get_with_headers(self, headers: Headers) -> list:
+        return headers.items()
 
 
 ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])
