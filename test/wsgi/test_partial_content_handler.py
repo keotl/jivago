@@ -15,7 +15,7 @@ class PartialContentHandlerTest(unittest.TestCase):
         self.partialContentHandler = PartialContentHandler()
 
     def test_givenHttpPartialRange_whenHandlingContentRequest_thenResponseHas206HttpStatus(self):
-        partial_request = RequestBuilder().headers({"HTTP_RANGE": "bytes=0-"}).build()
+        partial_request = RequestBuilder().headers({"Range": "bytes=0-"}).build()
 
         response = self.partialContentHandler.handle_partial_content_request(partial_request, TEST_FILE)
 
@@ -23,7 +23,7 @@ class PartialContentHandlerTest(unittest.TestCase):
 
     def test_givenStartingByteRange_whenHandlingContentRequest_thenReturnBytesStartingAtOffset(self):
         a_starting_offset = 6
-        partial_request = RequestBuilder().headers({"HTTP_RANGE": f"bytes={a_starting_offset}-"}).build()
+        partial_request = RequestBuilder().headers({"Range": f"bytes={a_starting_offset}-"}).build()
 
         response = self.partialContentHandler.handle_partial_content_request(partial_request, TEST_FILE, max_block_size=1000000000)
 

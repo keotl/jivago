@@ -1,5 +1,5 @@
 import unittest
-from typing import Optional, List
+from typing import Optional
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
