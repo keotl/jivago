@@ -28,7 +28,7 @@ class ResourceInvocator(object):
     def invoke(self, request: Request) -> Response:
         method = to_method(request.method)
 
-        for route_registration in self.routing_table.get_route_registration(method, request.path):
+        for route_registration in self.routing_table.get_route_registrations(method, request.path):
             resource = self.service_locator.get(route_registration.resourceClass)
             try:
                 parameters = self.format_parameters(request, route_registration)

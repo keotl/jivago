@@ -19,18 +19,18 @@ class CompositeRoutingTableTest(unittest.TestCase):
         self.routing_table = CompositeRoutingTable([self.routing_table_mock])
 
     def test_whenGettingRouteRegistration_thenInvokeChildren(self):
-        self.routing_table.get_route_registration(HTTP_PRIMITIVE, PATH)
+        self.routing_table.get_route_registrations(HTTP_PRIMITIVE, PATH)
 
-        self.routing_table_mock.get_route_registration.assert_called_with(HTTP_PRIMITIVE, PATH)
+        self.routing_table_mock.get_route_registrations.assert_called_with(HTTP_PRIMITIVE, PATH)
 
     def test_givenMethodNotAllowedRaisedByAChild_whenGettingRouteRegistration_thenRaiseMethodNotAllowedRegardlessOfOtherExceptionsBeingThrown(self):
         a_second_mock = mock.create_autospec(RoutingTable)
-        a_second_mock.get_route_registration.side_effect = MethodNotAllowedException()
-        self.routing_table_mock.get_route_registration.side_effect = UnknownPathException()
+        a_second_mock.get_route_registrations.side_effect = MethodNotAllowedException()
+        self.routing_table_mock.get_route_registrations.side_effect = UnknownPathException()
         self.routing_table = CompositeRoutingTable([a_second_mock, self.routing_table_mock])
 
         with self.assertRaises(UnknownPathException):
-            self.routing_table.get_route_registration(HTTP_PRIMITIVE, PATH)
+            self.routing_table.get_route_registrations(HTTP_PRIMITIVE, PATH)
 
 
 

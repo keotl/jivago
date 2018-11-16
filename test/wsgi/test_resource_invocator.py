@@ -15,8 +15,8 @@ from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
+from jivago.wsgi.routing.base_routing_table import BaseRoutingTable
 from jivago.wsgi.routing.route_registration import RouteRegistration
-from jivago.wsgi.routing.simple_routing_table import BaseRoutingTable
 from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}

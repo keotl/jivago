@@ -42,8 +42,8 @@ class RouterTest(unittest.TestCase):
         self.router.resource_invocator = self.resource_invocator_mock
 
         self.context.get_filters.return_value = []
-        self.routing_table_mock.get_route_registration.return_value = RouteRegistration(AResource, AResource.a_method,
-                                                                                        ["hello"])
+        self.routing_table_mock.get_route_registrations.return_value = RouteRegistration(AResource, AResource.a_method,
+                                                                                         ["hello"])
 
     def test_givenStringResponseBody_whenRouting_thenResponseIsUtf8Encoded(self):
         self.resource_invocator_mock.invoke.return_value = Response(200, {}, STRING_MESSAGE)

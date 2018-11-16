@@ -1,22 +1,17 @@
-from typing import List, Callable
+from typing import List
 
-from jivago.lang.annotations import Override
 from jivago.lang.registration import Registration
-from jivago.lang.registry import Annotation, Registry
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Path
 from jivago.wsgi.methods import http_methods
-from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
-from jivago.wsgi.routing.exception.routing_exception import RoutingException
-from jivago.wsgi.routing.route_node import RouteNode
-from jivago.wsgi.routing.route_registration import RouteRegistration
-from jivago.wsgi.routing.routing_table import RoutingTable
+from jivago.wsgi.routing.tree_routing_table import TreeRoutingTable
 
 
-class BaseRoutingTable(RoutingTable):
+class BaseRoutingTable(TreeRoutingTable):
 
     def __init__(self, registry: Registry, resources: List[Registration]):
-        self.routeRootNode = RouteNode()
+        super().__init__()
         for resource in resources:
             for primitive in http_methods:
                 routable_functions = registry.get_annotated_in_package(primitive, resource.registered.__module__)
@@ -24,32 +19,15 @@ class BaseRoutingTable(RoutingTable):
 
                 for route_function in routable_functions:
                     route_sub_path = Stream(sub_paths).firstMatch(lambda r: r.registered == route_function.registered)
+                    resource_path = resource.arguments['value']
+
                     if route_sub_path is None:
-                        self.__register_route(resource, route_function.registered, primitive)
+                        self.register_route(primitive, resource_path, resource.registered,
+                                            route_function.registered)
                     else:
-                        self.__register_route(resource, route_function.registered, primitive,
-                                              route_sub_path.arguments['value'])
+                        sub_path = route_sub_path.arguments['value']
+                        path = resource_path + sub_path if \
+                            resource_path.endswith('/') or sub_path.startswith('/') \
+                            else resource_path + '/' + sub_path
 
-    def __register_route(self, resource: Registration, function: Callable, primitive: Annotation, subpath: str = ""):
-        path = resource.arguments['value'].split('/')
-        if subpath is not None:
-            path.extend(subpath.split('/'))
-        path = Stream(path).filter(lambda s: s != "").toList()
-        self.routeRootNode.register_child(path, primitive, RouteRegistration(resource.registered, function, path))
-
-    @Override
-    def get_route_registration(self, http_primitive: Annotation, path: str) -> List[RouteRegistration]:
-        path_elements = Stream(path.split('/')).filter(lambda x: x != "").toList()
-        route_node = self.routeRootNode.explore(path_elements)
-
-        if http_primitive in route_node.invocators:
-            return route_node.invocators[http_primitive]
-        raise MethodNotAllowedException(http_primitive)
-
-    @Override
-    def can_handle(self, http_primitive: Annotation, path: str) -> bool:
-        try:
-            self.get_route_registration(http_primitive, path)
-            return True
-        except RoutingException:
-            return False
+                        self.register_route(primitive, path, resource.registered, route_function.registered)

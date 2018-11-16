@@ -1,6 +1,6 @@
 from jivago.lang.registry import Registry
 from jivago.wsgi.annotations import Resource
-from jivago.wsgi.routing.simple_routing_table import BaseRoutingTable
+from jivago.wsgi.routing.base_routing_table import BaseRoutingTable
 
 
 class AutoDiscoveringRoutingTable(BaseRoutingTable):

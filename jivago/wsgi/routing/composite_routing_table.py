@@ -15,11 +15,11 @@ class CompositeRoutingTable(RoutingTable):
         self.routing_tables = routing_tables
 
     @Override
-    def get_route_registration(self, http_primitive: Annotation, path: str) -> List[RouteRegistration]:
+    def get_route_registrations(self, http_primitive: Annotation, path: str) -> List[RouteRegistration]:
         last_exception_raised = None
         for routing_table in self.routing_tables:
             try:
-                return routing_table.get_route_registration(http_primitive, path)
+                return routing_table.get_route_registrations(http_primitive, path)
             except RoutingException as e:
                 last_exception_raised = e
                 if not isinstance(last_exception_raised, MethodNotAllowedException):
