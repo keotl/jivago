@@ -1,8 +1,8 @@
 from jivago.lang.annotations import Override
-from jivago.wsgi.filters.exception.exception_mapper import ExceptionMapper
+from jivago.wsgi.filter.error_handling.exception_mapper import ExceptionMapper
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.unknown_path_exception import UnknownPathException
+from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 
 
 class UnknownPathExceptionMapper(ExceptionMapper):

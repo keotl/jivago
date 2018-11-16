@@ -1,7 +1,7 @@
 import unittest
 from typing import Callable
 
-from jivago.wsgi.route_registration import RouteRegistration
+from jivago.wsgi.routing.route_registration import RouteRegistration
 
 A_RESOURCE_CLASS: type = None
 A_ROUTE_FUNCTION: Callable = None

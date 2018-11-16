@@ -1,7 +1,7 @@
 from typing import List
 
 from jivago.wsgi.request.request import Request
-from jivago.wsgi.resource_invocator import ResourceInvocator
+from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
 from jivago.wsgi.request.response import Response
 
 

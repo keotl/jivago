@@ -2,7 +2,7 @@ import json
 import unittest
 from unittest import mock
 
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
 from test_utils.request_builder import RequestBuilder
 from test_utils.response_builder import ResponseBuilder

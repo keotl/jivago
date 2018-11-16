@@ -3,8 +3,8 @@ from typing import List, Type
 from jivago.config.production_jivago_context import ProductionJivagoContext
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Registry
-from jivago.wsgi.filters.exception.debug_exception_filter import DebugExceptionFilter
-from jivago.wsgi.filters.filter import Filter
+from jivago.wsgi.filter.error_handling.debug_exception_filter import DebugExceptionFilter
+from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.request.no_cors_filter import NoCorsFilter
 
 

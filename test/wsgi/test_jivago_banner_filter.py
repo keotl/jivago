@@ -1,8 +1,8 @@
 import unittest
 from unittest import mock
 
-from jivago.wsgi.filters.filter_chain import FilterChain
-from jivago.wsgi.filters.jivago_banner_filter import JivagoBannerFilter
+from jivago.wsgi.filter.filter_chain import FilterChain
+from jivago.wsgi.filter.jivago_banner_filter import JivagoBannerFilter
 from test_utils.request_builder import RequestBuilder
 from test_utils.response_builder import ResponseBuilder
 

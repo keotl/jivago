@@ -6,17 +6,17 @@ from jivago.lang.annotations import Serializable
 from jivago.lang.registration import Registration
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
+from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.annotations import Resource, Path
-from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.incorrect_resource_parameters_exception import IncorrectResourceParametersException
+from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
+from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
-from jivago.wsgi.resource_invocator import ResourceInvocator
-from jivago.wsgi.route_registration import RouteRegistration
-from jivago.wsgi.routing_table import RoutingTable
+from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.routing.simple_routing_table import SimpleRoutingTable
 from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}
@@ -34,7 +34,8 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.serviceLocator = ServiceLocator()
         self.serviceLocator.bind(ResourceClass, ResourceClass)
         registry = Registry()
-        self.routingTable = RoutingTable(registry, [Registration(ResourceClass, arguments={"value": PATH})])
+        self.routingTable = SimpleRoutingTable(registry,
+                                               [Registration(ResourceClass, arguments={"value": PATH})])
         self.dto_serialization_handler = DtoSerializationHandler(registry, "")
         self.resource_invocator = ResourceInvocator(self.serviceLocator, self.routingTable,
                                                     self.dto_serialization_handler, UrlEncodedQueryParser())

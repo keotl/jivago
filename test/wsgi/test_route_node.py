@@ -1,9 +1,9 @@
 import unittest
 
 from jivago.wsgi.methods import GET
-from jivago.wsgi.route_node import RouteNode
-from jivago.wsgi.route_registration import RouteRegistration
-from jivago.wsgi.unknown_path_exception import UnknownPathException
+from jivago.wsgi.routing.route_node import RouteNode
+from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 
 
 class RouteNodeTest(unittest.TestCase):

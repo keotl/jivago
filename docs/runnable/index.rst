@@ -26,7 +26,7 @@ Application Initialization Hooks
 
 
 
-* **PreInit** is invoked right after the service locator is configured, before loading the application preferences.
+* **PreInit** is invoked right after the service locator and application properties are configured.
 * **Init** is invoked after initializing the routing table. At this stage, the application is in a coherent state.
 * **PostInit** is invoked after starting background workers and scheduled tasks. No further initialization task is left to be done.
 

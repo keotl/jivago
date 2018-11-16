@@ -15,17 +15,20 @@ from jivago.scheduling.task_scheduler import TaskScheduler
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
-from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.filters.body_serialization_filter import BodySerializationFilter
-from jivago.wsgi.filters.exception.application_exception_filter import ApplicationExceptionFilter
-from jivago.wsgi.filters.exception.unknown_exception_filter import UnknownExceptionFilter
-from jivago.wsgi.filters.filter import Filter
-from jivago.wsgi.filters.jivago_banner_filter import JivagoBannerFilter
-from jivago.wsgi.http_status_code_resolver import HttpStatusCodeResolver
-from jivago.wsgi.partial_content_handler import PartialContentHandler
+from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.filter.body_serialization_filter import BodySerializationFilter
+from jivago.wsgi.filter.error_handling.application_exception_filter import ApplicationExceptionFilter
+from jivago.wsgi.filter.error_handling.unknown_exception_filter import UnknownExceptionFilter
+from jivago.wsgi.filter.filter import Filter
+from jivago.wsgi.filter.jivago_banner_filter import JivagoBannerFilter
+from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
+from jivago.wsgi.request.partial_content_handler import PartialContentHandler
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
+from jivago.wsgi.request.request_factory import RequestFactory
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
+from jivago.wsgi.routing.auto_discovering_routing_table import AutoDiscoveringRoutingTable
+from jivago.wsgi.routing.router import Router
 
 
 class ProductionJivagoContext(AbstractContext):
@@ -84,3 +87,8 @@ class ProductionJivagoContext(AbstractContext):
     @Override
     def get_config_file_locations(self) -> List[str]:
         return ["application.yml", "application.json", "properties.yml", "properties.json"]
+
+    @Override
+    def create_router(self) -> Router:
+        routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name)
+        return Router(self.registry, self.root_package_name, self.serviceLocator, self, RequestFactory(), routing_table)

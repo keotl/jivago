@@ -19,7 +19,7 @@ from jivago.lang.stream import Stream
 from jivago.scheduling.task_schedule_initializer import TaskScheduleInitializer
 from jivago.scheduling.task_scheduler import TaskScheduler
 from jivago.wsgi.request.request_factory import RequestFactory
-from jivago.wsgi.router import Router
+from jivago.wsgi.routing.router import Router
 
 
 class JivagoApplication(object):
@@ -38,10 +38,10 @@ class JivagoApplication(object):
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
 
-        self.call_startup_hook(PreInit)
-
         self.serviceLocator.bind(ApplicationProperties, self.__load_application_properties(self.context))
         self.serviceLocator.bind(SystemEnvironmentProperties, self.__load_system_environment_properties())
+
+        self.call_startup_hook(PreInit)
 
         self.router = Router(Registry(), self.root_module_name, self.serviceLocator, self.context, RequestFactory())
 

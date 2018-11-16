@@ -1,8 +1,8 @@
 from typing import List
 
 from jivago.lang.registry import Annotation
-from jivago.wsgi.route_registration import RouteRegistration
-from jivago.wsgi.unknown_path_exception import UnknownPathException
+from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 
 PATH_PARAMETER = '{param}'
 

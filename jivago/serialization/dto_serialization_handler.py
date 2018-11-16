@@ -3,8 +3,8 @@ from typing import Any, _Union, TypingMeta, Union
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
-from jivago.wsgi.incorrect_attribute_type_exception import IncorrectAttributeTypeException
-from jivago.wsgi.serialization_exception import SerializationException
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
+from jivago.serialization.serialization_exception import SerializationException
 
 BASE_SERIALIZABLE_TYPES = (str, float, int)
 

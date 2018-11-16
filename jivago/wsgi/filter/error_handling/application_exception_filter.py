@@ -2,9 +2,9 @@ from typing import List
 
 from jivago.lang.annotations import Override, Inject
 from jivago.lang.stream import Stream
-from jivago.wsgi.filters.exception.exception_mapper import ExceptionMapper
-from jivago.wsgi.filters.filter import Filter
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.filter.error_handling.exception_mapper import ExceptionMapper
+from jivago.wsgi.filter.filter import Filter
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 

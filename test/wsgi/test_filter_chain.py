@@ -1,11 +1,11 @@
 import unittest
 from unittest import mock
 
-from jivago.wsgi.filters.filter import Filter
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.filter.filter import Filter
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.resource_invocator import ResourceInvocator
+from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
 
 A_REQUEST = Request('GET', "/path", {}, "", "")
 A_RESPONSE = Response.empty()

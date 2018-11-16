@@ -3,9 +3,9 @@ from jinja2 import Template
 from jivago.lang.annotations import Override, Inject
 from jivago.templating.rendered_view import RenderedView
 from jivago.templating.view_template_repository import ViewTemplateRepository
-from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.filters.filter import Filter
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.filter.filter import Filter
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 

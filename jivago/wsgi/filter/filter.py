@@ -1,4 +1,4 @@
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 

@@ -4,9 +4,9 @@ from typing import Optional, List
 from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
 from jivago.lang.stream import Stream
-from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.incorrect_attribute_type_exception import IncorrectAttributeTypeException
-from jivago.wsgi.serialization_exception import SerializationException
+from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
+from jivago.serialization.serialization_exception import SerializationException
 
 OBJECT_WITH_UNKNOWN_PROPERTY = {"name": "a_name", "unknown-property": "foobar"}
 

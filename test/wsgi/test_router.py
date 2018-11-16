@@ -6,10 +6,11 @@ from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.wsgi.request.request_factory import RequestFactory
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.resource_invocator import ResourceInvocator
-from jivago.wsgi.route_registration import RouteRegistration
-from jivago.wsgi.router import Router
-from jivago.wsgi.routing_table import RoutingTable
+from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
+from jivago.wsgi.routing.auto_discovering_routing_table import AutoDiscoveringRoutingTable
+from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.routing.router import Router
+from jivago.wsgi.routing.routing_table import RoutingTable
 from test_utils.response_builder import ResponseBuilder
 
 BINARY_STRING = b"foobar"
@@ -34,13 +35,15 @@ class RouterTest(unittest.TestCase):
         self.routing_table_mock: RoutingTable = mock.create_autospec(RoutingTable)
         self.resource_invocator_mock: ResourceInvocator = mock.create_autospec(ResourceInvocator)
         self.request_factory_mock = mock.create_autospec(RequestFactory)
-        self.router = Router(Registry(), "", self.serviceLocator, self.context, self.request_factory_mock)
+        self.router = Router(Registry(), "", self.serviceLocator, self.context, self.request_factory_mock,
+                             AutoDiscoveringRoutingTable(Registry(), ""))
 
         self.router.routingTable = self.routing_table_mock
-        self.router.resourceInvocator = self.resource_invocator_mock
+        self.router.resource_invocator = self.resource_invocator_mock
 
         self.context.get_filters.return_value = []
-        self.routing_table_mock.get_route_registration.return_value = RouteRegistration(AResource, AResource.a_method, ["hello"])
+        self.routing_table_mock.get_route_registration.return_value = RouteRegistration(AResource, AResource.a_method,
+                                                                                        ["hello"])
 
     def test_givenStringResponseBody_whenRouting_thenResponseIsUtf8Encoded(self):
         self.resource_invocator_mock.invoke.return_value = Response(200, {}, STRING_MESSAGE)

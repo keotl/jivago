@@ -1,17 +1,17 @@
 import urllib.parse
-from typing import TypingMeta, _Union
+from typing import _Union
 
 from jivago.inject.service_locator import ServiceLocator
-from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.incorrect_resource_parameters_exception import IncorrectResourceParametersException
+from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
+from jivago.wsgi.invocation.missing_route_invocation_argument import MissingRouteInvocationArgument
 from jivago.wsgi.methods import to_method
-from jivago.wsgi.missing_route_invocation_argument import MissingRouteInvocationArgument
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
-from jivago.wsgi.route_registration import RouteRegistration
-from jivago.wsgi.routing_table import RoutingTable
+from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.routing.routing_table import RoutingTable
 
 ALLOWED_URL_PARAMETER_TYPES = (str, int, float)
 
@@ -20,13 +20,14 @@ class ResourceInvocator(object):
 
     def __init__(self, service_locator: ServiceLocator, routing_table: RoutingTable,
                  dto_serialization_handler: DtoSerializationHandler, query_parser: UrlEncodedQueryParser):
-        self.dto_serialization_handler = dto_serialization_handler
         self.routing_table = routing_table
+        self.dto_serialization_handler = dto_serialization_handler
         self.service_locator = service_locator
         self.query_parser = query_parser
 
     def invoke(self, request: Request) -> Response:
         method = to_method(request.method)
+
         for route_registration in self.routing_table.get_route_registration(method, request.path):
             resource = self.service_locator.get(route_registration.resourceClass)
             try:
