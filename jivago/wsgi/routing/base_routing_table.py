@@ -13,7 +13,7 @@ from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
 
 
-class SimpleRoutingTable(RoutingTable):
+class BaseRoutingTable(RoutingTable):
 
     def __init__(self, registry: Registry, resources: List[Registration]):
         self.routeRootNode = RouteNode()

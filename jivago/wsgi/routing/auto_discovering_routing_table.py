@@ -1,9 +1,9 @@
 from jivago.lang.registry import Registry
 from jivago.wsgi.annotations import Resource
-from jivago.wsgi.routing.simple_routing_table import SimpleRoutingTable
+from jivago.wsgi.routing.simple_routing_table import BaseRoutingTable
 
 
-class AutoDiscoveringRoutingTable(SimpleRoutingTable):
+class AutoDiscoveringRoutingTable(BaseRoutingTable):
     """Reads @Resource annotations to build the routing table."""
 
     def __init__(self, registry: Registry, root_package_name: str):

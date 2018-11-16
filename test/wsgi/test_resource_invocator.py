@@ -16,7 +16,7 @@ from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.routing.route_registration import RouteRegistration
-from jivago.wsgi.routing.simple_routing_table import SimpleRoutingTable
+from jivago.wsgi.routing.simple_routing_table import BaseRoutingTable
 from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}
@@ -34,8 +34,8 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.serviceLocator = ServiceLocator()
         self.serviceLocator.bind(ResourceClass, ResourceClass)
         registry = Registry()
-        self.routingTable = SimpleRoutingTable(registry,
-                                               [Registration(ResourceClass, arguments={"value": PATH})])
+        self.routingTable = BaseRoutingTable(registry,
+                                             [Registration(ResourceClass, arguments={"value": PATH})])
         self.dto_serialization_handler = DtoSerializationHandler(registry, "")
         self.resource_invocator = ResourceInvocator(self.serviceLocator, self.routingTable,
                                                     self.dto_serialization_handler, UrlEncodedQueryParser())

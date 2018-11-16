@@ -4,13 +4,13 @@ from jivago.lang.registry import Registry
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
-from jivago.wsgi.routing.simple_routing_table import SimpleRoutingTable
+from jivago.wsgi.routing.simple_routing_table import BaseRoutingTable
 
 
 class SimpleRoutingTableTest(unittest.TestCase):
 
     def setUp(self):
-        self.routing_table = SimpleRoutingTable(Registry(), RESOURCES)
+        self.routing_table = BaseRoutingTable(Registry(), RESOURCES)
 
     def test_whenInitializingRoutingTable_thenRegisterAllResourcesInRoutingTree(self):
         self.assertEqual(HelloResource, self.routing_table.routeRootNode.children['hello'].invocators[GET][0].resourceClass)
