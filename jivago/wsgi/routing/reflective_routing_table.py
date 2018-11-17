@@ -8,7 +8,7 @@ from jivago.wsgi.methods import http_methods
 from jivago.wsgi.routing.tree_routing_table import TreeRoutingTable
 
 
-class BaseRoutingTable(TreeRoutingTable):
+class ReflectiveRoutingTable(TreeRoutingTable):
 
     def __init__(self, registry: Registry, resources: List[Registration]):
         super().__init__()

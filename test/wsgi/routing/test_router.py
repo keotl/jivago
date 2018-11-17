@@ -2,8 +2,8 @@ import unittest
 from unittest import mock
 
 from jivago.lang.registry import Registry
-from jivago.wsgi.routing.base_routing_table import BaseRoutingTable
 from jivago.wsgi.routing.composite_routing_table import CompositeRoutingTable
+from jivago.wsgi.routing.reflective_routing_table import ReflectiveRoutingTable
 from jivago.wsgi.routing.router import Router
 from jivago.wsgi.routing.routing_table import RoutingTable
 
@@ -11,7 +11,7 @@ from jivago.wsgi.routing.routing_table import RoutingTable
 class RouterTest(unittest.TestCase):
 
     def setUp(self):
-        self.router = Router(None, None, None, None, None, BaseRoutingTable(Registry(), []))
+        self.router = Router(None, None, None, None, None, ReflectiveRoutingTable(Registry(), []))
 
 
     def test_givenExistingSimpleRoutingTable_whenAddingAnotherRoutingTable_thenConvertTheRoutingTableIntoACompositeRoutingTable(self):

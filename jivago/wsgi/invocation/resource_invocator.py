@@ -29,7 +29,8 @@ class ResourceInvocator(object):
         method = to_method(request.method)
 
         for route_registration in self.routing_table.get_route_registrations(method, request.path):
-            resource = self.service_locator.get(route_registration.resourceClass)
+            resource = self.service_locator.get(route_registration.resourceClass) if isinstance(
+                route_registration.resourceClass, type) else route_registration.resourceClass
             try:
                 parameters = self.format_parameters(request, route_registration)
                 function_return = route_registration.routeFunction(resource, *parameters)
@@ -51,13 +52,17 @@ class ResourceInvocator(object):
             if name == 'return':  # This is the output type annotation
                 break
             if isinstance(clazz, _Union) and type(None) in clazz.__args__:
-                parameters.append(self.__get_single_parameter(name, clazz.__args__[0], request, path_parameters, query_parameters, nullable=True))
+                parameters.append(
+                    self.__get_single_parameter(name, clazz.__args__[0], request, path_parameters, query_parameters,
+                                                nullable=True))
             else:
-                parameters.append(self.__get_single_parameter(name, clazz, request, path_parameters, query_parameters, nullable=False))
+                parameters.append(self.__get_single_parameter(name, clazz, request, path_parameters, query_parameters,
+                                                              nullable=False))
 
         return parameters
 
-    def __get_single_parameter(self, parameter_name: str, parameter_type: type, request: Request, path_parameters: dict, query_parameters: dict,
+    def __get_single_parameter(self, parameter_name: str, parameter_type: type, request: Request, path_parameters: dict,
+                               query_parameters: dict,
                                nullable: bool) -> object:
         if parameter_type == Request:
             return request

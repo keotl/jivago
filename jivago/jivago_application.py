@@ -45,9 +45,7 @@ class JivagoApplication(object):
 
         self.call_startup_hook(PreInit)
 
-        self.router = Router(Registry.INSTANCE, self.root_module_name, self.serviceLocator, self.context,
-                             RequestFactory(),
-                             AutoDiscoveringRoutingTable(Registry.INSTANCE, self.root_module_name))
+        self.router = self.context.create_router()
 
         self.call_startup_hook(Init)
 
