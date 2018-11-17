@@ -61,8 +61,7 @@ class ProductionJivagoContext(AbstractContext):
 
         # TODO better way to handle Jivago Dependencies
         self.serviceLocator.bind(TaskScheduler, TaskScheduler(self.serviceLocator))
-        self.serviceLocator.bind(DtoSerializationHandler,
-                                 DtoSerializationHandler(Registry(), self.root_package_name))
+        self.serviceLocator.bind(DtoSerializationHandler, DtoSerializationHandler(Registry(), self.root_package_name))
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))
         self.serviceLocator.bind(UrlEncodedQueryParser, UrlEncodedQueryParser)
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
