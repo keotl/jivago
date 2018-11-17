@@ -14,7 +14,7 @@ class ExampleStaticServingContext(ProductionJivagoContext):
     @Override
     def create_router(self) -> Router:
         router = super().create_router()
-        router.add_routing_table(StaticFileRoutingTable(os.path.dirname(example_app.static.__file__)))
+        router.add_routing_table(StaticFileRoutingTable(os.path.dirname(example_app.static.__file__)), "/static")
         return router
 
 

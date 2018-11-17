@@ -9,6 +9,7 @@ from jivago.wsgi.request.request_factory import RequestFactory
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.routing.composite_routing_table import CompositeRoutingTable
+from jivago.wsgi.routing.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
 from jivago.wsgi.routing.routing_table import RoutingTable
 
 
@@ -24,7 +25,10 @@ class Router(object):
                                                     UrlEncodedQueryParser())
         self.http_status_resolver = HttpStatusCodeResolver()
 
-    def add_routing_table(self, routing_table: RoutingTable):
+    def add_routing_table(self, routing_table: RoutingTable, path_prefix: str = ""):
+        if path_prefix != "":
+            routing_table = PrefixDecoratedRoutingTable(routing_table, path_prefix)
+
         if isinstance(self.resource_invocator.routing_table, CompositeRoutingTable):
             self.resource_invocator.routing_table.add_routing_table(routing_table)
         else:
