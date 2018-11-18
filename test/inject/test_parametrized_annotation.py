@@ -23,10 +23,10 @@ class ParametrizedAnnotationTest(unittest.TestCase):
         self.assertEqual(A_MESSAGE, registration.arguments['message'])
         self.assertFalse("value" in registration.arguments)
 
-    def test_givenImplicitParameterName_whenUsingParametrizedAnnotation_thenParameterIsImplicitlyNamedValue(self):
+    def test_givenImplicitParameterName_whenUsingParametrizedAnnotation_thenParameterIsSavedAsTheDeclaredParameterName(self):
         registration = self.registry.get_annotated_in_package(implicit_parameter_annotation, "")[0]
 
-        self.assertEqual(A_MESSAGE, registration.arguments['value'])
+        self.assertEqual(A_MESSAGE, registration.arguments['path'])
 
     def test_givenKeywordOnlyArguments_whenUsingParametrizedAnnotation_thenParametersAreSavedInTheRegistration(self):
         registration = self.registry.get_annotated_in_package(multipleParameterAnnotation, "")[0]
@@ -55,7 +55,7 @@ def some_wrapped_function():
 
 
 @ParametrizedAnnotation
-def implicit_parameter_annotation(value: str) -> Callable:
+def implicit_parameter_annotation(path: str) -> Callable:
     def wrapper(auie):
         return auie
 

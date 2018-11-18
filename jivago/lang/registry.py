@@ -49,7 +49,7 @@ class ParametrizedAnnotation(Annotation):
         for key, type_annotation in type_hints.items():
             if key == 'return':
                 continue
-            if key == 'value' and len(args) == 1:
+            if len(args) == 1:
                 arguments.append((key, args[0]))
             elif key in kwargs:
                 arguments.append((key, kwargs[key]))
