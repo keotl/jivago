@@ -28,7 +28,7 @@ Standard annotations can be defined using either the python-esque *decorator-sty
 
 Parametrized annotations can only defined using the decorator-style syntax. To create a new parametrized annotation, use the ``@ParametrizedAnnotation`` decorator on a function which returns a pass-through function. (See the example below.)
 
-**When using the parametrized annotation, all parameters should be passed as keyword arguments. An unnamed argument will be saved in the dictionary as "value".**
+**Unnamed argument will be saved in the dictionary with the declared parameter name as the key.**
 
 .. literalinclude:: parametrized_annotations.py
    :language: python
