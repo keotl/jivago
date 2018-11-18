@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from test_utils.request_builder import RequestBuilder

@@ -4,8 +4,8 @@ from unittest import mock
 from jivago.templating.rendered_view import RenderedView
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
-from jivago.wsgi.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.filters.filter_chain import FilterChain
+from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 

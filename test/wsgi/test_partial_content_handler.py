@@ -2,7 +2,7 @@ import os
 import unittest
 
 import test_data
-from jivago.wsgi.partial_content_handler import PartialContentHandler
+from jivago.wsgi.request.partial_content_handler import PartialContentHandler
 from test_utils.request_builder import RequestBuilder
 
 TEST_FILE = os.path.join(os.path.dirname(test_data.__file__), "binary_file")

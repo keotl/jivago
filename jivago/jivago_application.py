@@ -19,7 +19,8 @@ from jivago.lang.stream import Stream
 from jivago.scheduling.task_schedule_initializer import TaskScheduleInitializer
 from jivago.scheduling.task_scheduler import TaskScheduler
 from jivago.wsgi.request.request_factory import RequestFactory
-from jivago.wsgi.router import Router
+from jivago.wsgi.routing.auto_discovering_routing_table import AutoDiscoveringRoutingTable
+from jivago.wsgi.routing.router import Router
 
 
 class JivagoApplication(object):
@@ -29,7 +30,8 @@ class JivagoApplication(object):
         self.root_module = root_module
 
         if context is None:
-            self.context = DebugJivagoContext(self.root_module, self.registry) if debug else ProductionJivagoContext(self.root_module, self.registry)
+            self.context = DebugJivagoContext(self.root_module, self.registry) if debug else ProductionJivagoContext(
+                self.root_module, self.registry)
         else:
             self.context = context
 
@@ -38,12 +40,12 @@ class JivagoApplication(object):
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
 
-        self.call_startup_hook(PreInit)
-
         self.serviceLocator.bind(ApplicationProperties, self.__load_application_properties(self.context))
         self.serviceLocator.bind(SystemEnvironmentProperties, self.__load_system_environment_properties())
 
-        self.router = Router(Registry(), self.root_module_name, self.serviceLocator, self.context, RequestFactory())
+        self.call_startup_hook(PreInit)
+
+        self.router = self.context.create_router()
 
         self.call_startup_hook(Init)
 
@@ -69,7 +71,8 @@ class JivagoApplication(object):
 
     def __load_application_properties(self, context: AbstractContext) -> ApplicationProperties:
         composite_config_loader = GlobalConfigLoader([YamlConfigLoader(), JsonConfigLoader()])
-        config_file_which_exists = Stream(context.get_config_file_locations()).firstMatch(lambda filepath: os.path.exists(filepath))
+        config_file_which_exists = Stream(context.get_config_file_locations()).firstMatch(
+            lambda filepath: os.path.exists(filepath))
         if config_file_which_exists:
             return composite_config_loader.read(config_file_which_exists)
         else:
@@ -83,7 +86,8 @@ class JivagoApplication(object):
             lambda registration: registration.registered).toList()
 
     def call_startup_hook(self, hook: Annotation):
-        Stream(self.get_annotated(hook)).map(lambda triggered_class: self.serviceLocator.get(triggered_class)).forEach(lambda x: x.run())
+        Stream(self.get_annotated(hook)).map(lambda triggered_class: self.serviceLocator.get(triggered_class)).forEach(
+            lambda x: x.run())
 
     def __call__(self, env, start_response):
         """wsgi entry point."""
