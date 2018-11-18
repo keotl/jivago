@@ -1,6 +1,7 @@
 from typing import List, Type
 
 from jivago.inject.service_locator import ServiceLocator
+from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.routing.router import Router
 
@@ -30,3 +31,13 @@ class AbstractContext(object):
 
     def create_router(self) -> Router:
         raise NotImplementedError
+
+    def get_banner(self) -> List[str]:
+        return """       _ _                        
+      | (_)                       
+      | |___   ____ _  __ _  ___  
+  _   | | \ \ / / _` |/ _` |/ _ \ 
+ | |__| | |\ V / (_| | (_| | (_) |
+  \____/|_| \_/ \__,_|\__, |\___/ 
+                       __/ |      
+                      |___/       """.split("\n")

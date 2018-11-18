@@ -1,9 +1,11 @@
+import logging
 import os
 import pkgutil
 import signal
 from threading import Thread
 from typing import List, Type
 
+import jivago
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.debug_jivago_context import DebugJivagoContext
 from jivago.config.production_jivago_context import ProductionJivagoContext
@@ -18,12 +20,10 @@ from jivago.lang.registry import Registry, Annotation
 from jivago.lang.stream import Stream
 from jivago.scheduling.task_schedule_initializer import TaskScheduleInitializer
 from jivago.scheduling.task_scheduler import TaskScheduler
-from jivago.wsgi.request.request_factory import RequestFactory
-from jivago.wsgi.routing.auto_discovering_routing_table import AutoDiscoveringRoutingTable
-from jivago.wsgi.routing.router import Router
 
 
 class JivagoApplication(object):
+    LOGGER = logging.getLogger("Jivago")
 
     def __init__(self, root_module=None, *, debug: bool = False, context: AbstractContext = None):
         self.registry = Registry()
@@ -35,20 +35,30 @@ class JivagoApplication(object):
         else:
             self.context = context
 
+        self.print_banner()
+        self.__initialize_logger()
+
+        self.LOGGER.info(f"Using {self.context.__class__.__name__} with root package {root_module}.")
+
         if self.root_module:
+            self.LOGGER.info("Discovering annotated classes")
             self.__import_package_recursive(root_module)
+
         self.context.configure_service_locator()
         self.serviceLocator = self.context.service_locator()
 
         self.serviceLocator.bind(ApplicationProperties, self.__load_application_properties(self.context))
         self.serviceLocator.bind(SystemEnvironmentProperties, self.__load_system_environment_properties())
 
+        self.LOGGER.info("Running PreInit hooks")
         self.call_startup_hook(PreInit)
 
         self.router = self.context.create_router()
 
+        self.LOGGER.info("Running Init hooks")
         self.call_startup_hook(Init)
 
+        self.LOGGER.info("Starting background workers")
         self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
             lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run, daemon=True))
         Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
@@ -57,6 +67,7 @@ class JivagoApplication(object):
         self.task_scheduler: TaskScheduler = self.serviceLocator.get(TaskScheduler)
         task_schedule_initializer.initialize_task_scheduler(self.task_scheduler)
 
+        self.LOGGER.info("Runnig PostInit hooks")
         self.call_startup_hook(PostInit)
 
         signal.signal(signal.SIGTERM, self.cleanup)
@@ -94,15 +105,32 @@ class JivagoApplication(object):
         return self.router.route(env, start_response)
 
     def cleanup(self, signum, frame):
-        print("Received shutdown signal. Terminating...")
+        self.LOGGER.info("Received shutdown signal. Terminating...")
         self.task_scheduler.stop()
         import sys
         sys.exit(0)
 
-    def run_dev(self, *, port=4000, host='localhost'):
+    def run_dev(self, *, port=4000, host='localhost', logging_level=logging.INFO):
+        logging.getLogger().setLevel(logging_level)
         from werkzeug.serving import run_simple
         run_simple(host, port, self, processes=1, threaded=False)
 
     @property
     def root_module_name(self) -> str:
         return self.root_module.__name__ if self.root_module else ''
+
+    def __initialize_logger(self):
+        logging.basicConfig(
+            format="%(asctime)-s [%(name)-s] [%(levelname)-s]  %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+            handlers=[
+                logging.StreamHandler()
+            ])
+
+    def print_banner(self):
+        Stream(self.context.get_banner()).forEach(lambda x: print(x))
+        print(f":: Running Jivago {jivago.__version__} ::")
+        import sys
+        sys.stdout.flush()
+        import time
+        time.sleep(0.01)

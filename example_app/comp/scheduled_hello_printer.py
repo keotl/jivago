@@ -1,3 +1,5 @@
+import logging
+
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Singleton
 from jivago.lang.runnable import Runnable
@@ -7,18 +9,20 @@ from jivago.scheduling.annotations import Scheduled, Duration
 @Singleton
 @Scheduled(cron="* * * * *")
 class ScheduledHelloPrinter(Runnable):
+    LOGGER = logging.getLogger("HelloPrinter")
 
     def __init__(self):
-        print("created a new scheduled hello printer")
+        self.LOGGER.info("created a new scheduled hello printer")
 
     @Override
     def run(self):
-        print("hello !")
+        self.LOGGER.info("hello !")
 
 
 @Scheduled(every=Duration.SECOND)
 class RegularIntervalScheduledHelloPrinter(Runnable):
+    LOGGER = logging.getLogger("ScheduledHelloPrinter")
 
     @Override
     def run(self):
-        print("Hello every second!")
+        self.LOGGER.info("Hello every second!")

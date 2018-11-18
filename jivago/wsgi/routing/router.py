@@ -1,3 +1,5 @@
+import logging
+
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
@@ -14,6 +16,7 @@ from jivago.wsgi.routing.routing_table import RoutingTable
 
 
 class Router(object):
+    LOGGER = logging.getLogger("Jivago").getChild("Router")
 
     def __init__(self, registry: Registry, root_package_name: str, service_locator: ServiceLocator,
                  context: "AbstractContext", request_factory: RequestFactory, routing_table: RoutingTable):
@@ -26,7 +29,9 @@ class Router(object):
         self.http_status_resolver = HttpStatusCodeResolver()
 
     def add_routing_table(self, routing_table: RoutingTable, path_prefix: str = ""):
+
         if path_prefix != "":
+            self.LOGGER.info(f"Mapped URL path [{path_prefix}/*] to {routing_table.__class__.__name__}")
             routing_table = PrefixDecoratedRoutingTable(routing_table, path_prefix)
 
         if isinstance(self.resource_invocator.routing_table, CompositeRoutingTable):

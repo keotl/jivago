@@ -1,3 +1,4 @@
+import logging
 import os
 
 import example_app.static
@@ -19,5 +20,6 @@ class ExampleStaticServingContext(ProductionJivagoContext):
 
 
 if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.INFO)
     app = JivagoApplication(example_app, context=ExampleStaticServingContext(example_app, Registry.INSTANCE))
     app.run_dev()
