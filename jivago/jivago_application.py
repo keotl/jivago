@@ -67,7 +67,7 @@ class JivagoApplication(object):
         self.task_scheduler: TaskScheduler = self.serviceLocator.get(TaskScheduler)
         task_schedule_initializer.initialize_task_scheduler(self.task_scheduler)
 
-        self.LOGGER.info("Runnig PostInit hooks")
+        self.LOGGER.info("Running PostInit hooks")
         self.call_startup_hook(PostInit)
 
         signal.signal(signal.SIGTERM, self.cleanup)
