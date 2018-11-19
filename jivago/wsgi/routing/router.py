@@ -24,7 +24,7 @@ class Router(object):
         self.context = context
         self.serviceLocator = service_locator
         self.resource_invocator = ResourceInvocator(service_locator, routing_table,
-                                                    DtoSerializationHandler(registry, root_package_name),
+                                                    DtoSerializationHandler(registry),
                                                     UrlEncodedQueryParser())
         self.http_status_resolver = HttpStatusCodeResolver()
 

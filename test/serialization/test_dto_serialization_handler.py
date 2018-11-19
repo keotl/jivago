@@ -16,7 +16,7 @@ OBJECT_WITH_MISSING_VALUES = {}
 class DtoSerializationHandlerTest(unittest.TestCase):
 
     def setUp(self):
-        self.serializationHandler = DtoSerializationHandler(Registry(), "")
+        self.serializationHandler = DtoSerializationHandler(Registry())
 
     def test_givenUnknownProperty_whenDeserializing_thenIgnoreTheUnknownProperty(self):
         dto = self.serializationHandler.deserialize(OBJECT_WITH_UNKNOWN_PROPERTY, ADto)
@@ -122,6 +122,11 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         dto: TwiceNestedDto = self.serializationHandler.deserialize({"nested_dto": {"child_dto": {"name": "foobar"}}}, TwiceNestedDto)
 
         self.assertEqual("foobar", dto.nested_dto.child_dto.name)
+
+    def test_givenBodyAlreadyInTheRightType_whenDeserializing_thenReturnObjectAsIs(self):
+        result = self.serializationHandler.deserialize(5, int)
+
+        self.assertEqual(5, result)
 
 
 @Serializable

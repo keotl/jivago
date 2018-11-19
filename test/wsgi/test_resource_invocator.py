@@ -36,7 +36,7 @@ class ResourceInvocatorTest(unittest.TestCase):
         registry = Registry()
         self.routingTable = ReflectiveRoutingTable(registry,
                                                    [Registration(ResourceClass, arguments={"value": PATH})])
-        self.dto_serialization_handler = DtoSerializationHandler(registry, "")
+        self.dto_serialization_handler = DtoSerializationHandler(registry)
         self.resource_invocator = ResourceInvocator(self.serviceLocator, self.routingTable,
                                                     self.dto_serialization_handler, UrlEncodedQueryParser())
         self.request = Request('GET', PATH, {}, "", "")

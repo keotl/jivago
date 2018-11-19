@@ -12,6 +12,7 @@ from jivago.lang.registry import Singleton, Component, Registry
 from jivago.lang.stream import Stream
 from jivago.scheduling.annotations import Scheduled
 from jivago.scheduling.task_scheduler import TaskScheduler
+from jivago.serialization.object_mapper import ObjectMapper
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
@@ -61,12 +62,13 @@ class ProductionJivagoContext(AbstractContext):
 
         # TODO better way to handle Jivago Dependencies
         self.serviceLocator.bind(TaskScheduler, TaskScheduler(self.serviceLocator))
-        self.serviceLocator.bind(DtoSerializationHandler, DtoSerializationHandler(Registry(), self.root_package_name))
+        self.serviceLocator.bind(DtoSerializationHandler, DtoSerializationHandler(Registry.INSTANCE))
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))
         self.serviceLocator.bind(UrlEncodedQueryParser, UrlEncodedQueryParser)
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
+        self.serviceLocator.bind(ObjectMapper, ObjectMapper)
 
         ExceptionMapperBinder().bind(self.serviceLocator)
 

@@ -3,16 +3,14 @@ from typing import Any, _Union, TypingMeta, Union
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
-from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 from jivago.serialization.serialization_exception import SerializationException
-
-BASE_SERIALIZABLE_TYPES = (str, float, int)
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 
 class DtoSerializationHandler(object):
+    BASE_SERIALIZABLE_TYPES = (str, float, int)
 
-    def __init__(self, registry: Registry, root_package: str):
-        self.root_package = root_package
+    def __init__(self, registry: Registry):
         self.registry = registry
 
     def is_serializable(self, dto: object) -> bool:
@@ -21,20 +19,21 @@ class DtoSerializationHandler(object):
         if isinstance(dto, list):
             return Stream(dto).allMatch(lambda x: self.is_serializable(x))
         if isinstance(dto, dict):
-            return Stream(dto.items()).allMatch(lambda key, value: type(key) in BASE_SERIALIZABLE_TYPES and self.is_serializable(value))
-        return type(dto) in BASE_SERIALIZABLE_TYPES
+            return Stream(dto.items()).allMatch(lambda key, value: type(key) in self.BASE_SERIALIZABLE_TYPES and self.is_serializable(value))
+        return type(dto) in self.BASE_SERIALIZABLE_TYPES
 
     def is_a_registered_dto_type(self, dto_class: type) -> bool:
         return self.registry.is_annotated(dto_class, Serializable)
 
     def is_deserializable_into(self, dto_class: type) -> bool:
-        return self.is_a_registered_dto_type(dto_class) or dto_class in BASE_SERIALIZABLE_TYPES or self._is_deserializable_into_typing_meta(dto_class)
+        return self.is_a_registered_dto_type(dto_class) or dto_class in self.BASE_SERIALIZABLE_TYPES or self._is_deserializable_into_typing_meta(
+            dto_class)
 
     def deserialize(self, body: Union[dict, list], clazz: type) -> Any:
         if self._is_deserializable_into_typing_meta(clazz):
             return Stream(body).map(lambda x: self.deserialize(x, clazz.__args__[0])).toList()
         if isinstance(body, clazz):
-            return clazz
+            return body
         constructor = clazz.__init__
         if constructor == object.__init__:
             return self.__reflexively_inject_attributes(clazz, body)
@@ -55,7 +54,7 @@ class DtoSerializationHandler(object):
                 if self.is_serializable(value):
                     dictionary[key] = self.serialize(value)
             return dictionary
-        if type(dto) in BASE_SERIALIZABLE_TYPES:
+        if type(dto) in self.BASE_SERIALIZABLE_TYPES:
             return dto
 
         raise SerializationException(dto)
