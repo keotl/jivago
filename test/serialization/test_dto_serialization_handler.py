@@ -128,6 +128,10 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertEqual(5, result)
 
+    def test_givenIncorrectParameterTypes_whenInjectingConstructor_thenRaiseIncorrectAttributeTypeException(self):
+        with self.assertRaises(IncorrectAttributeTypeException):
+            self.serializationHandler.deserialize({"children": 5}, ACollectionDto)
+
 
 @Serializable
 class ADto(object):
@@ -153,7 +157,7 @@ class ANestedDto(object):
 class ACollectionDto(object):
     children: List[ChildDto]
 
-    def __init__(self, children: List[ChildDto]):
+    def __init__(self, children: List[ChildDto]) -> "ACollectionDto":
         self.children = children
 
 

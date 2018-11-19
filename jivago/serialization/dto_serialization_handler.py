@@ -26,8 +26,9 @@ class DtoSerializationHandler(object):
         return self.registry.is_annotated(dto_class, Serializable)
 
     def is_deserializable_into(self, dto_class: type) -> bool:
-        return self.is_a_registered_dto_type(dto_class) or dto_class in self.BASE_SERIALIZABLE_TYPES or self._is_deserializable_into_typing_meta(
-            dto_class)
+        return self.is_a_registered_dto_type(dto_class) \
+               or dto_class in self.BASE_SERIALIZABLE_TYPES \
+               or self._is_deserializable_into_typing_meta(dto_class)
 
     def deserialize(self, body: Union[dict, list], clazz: type) -> Any:
         if self._is_deserializable_into_typing_meta(clazz):
@@ -36,7 +37,7 @@ class DtoSerializationHandler(object):
             return body
         constructor = clazz.__init__
         if constructor == object.__init__:
-            return self.__reflexively_inject_attributes(clazz, body)
+            return self.__reflectively_inject_attributes(clazz, body)
         else:
             return self.__inject_constructor(clazz, constructor, body)
 
@@ -61,35 +62,31 @@ class DtoSerializationHandler(object):
 
     def __inject_constructor(self, clazz, constructor, body):
         the_object = object.__new__(clazz)
-        parameters = []
-
-        parameter_declarations = constructor.__annotations__.items()
-
-        for attribute, declared_type in parameter_declarations:
-            if attribute == 'return':
-                break
-            allowed_attribute_types = [declared_type] if not isinstance(declared_type, _Union) else declared_type.__args__
-            if self._is_deserializable_into_typing_meta(declared_type):
-                parameters.append([self.deserialize(body[attribute][x], declared_type.__args__[0]) for x in range(0, len(body[attribute]))])
-            elif Stream(allowed_attribute_types).anyMatch(lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
-                parameters.append(body.get(attribute))
-            else:
-                raise IncorrectAttributeTypeException(attribute, declared_type)
-
-        constructor(the_object, *parameters)
+        parameter_declarations = constructor.__annotations__
+        constructor(the_object, **self.__get_parameters(body, parameter_declarations))
         return the_object
 
-    def __reflexively_inject_attributes(self, clazz, body):
+    def __reflectively_inject_attributes(self, clazz, body):
         attributes = clazz.__annotations__
         the_object = object.__new__(clazz)
-        for attribute, declared_type in attributes.items():
-            allowed_attribute_types = [declared_type] if not isinstance(declared_type, _Union) else declared_type.__args__
-            if self._is_deserializable_into_typing_meta(declared_type):
-                the_object.__setattr__(attribute, [self.deserialize(x, declared_type.__args__[0]) for x in body[attribute]])
-            elif Stream(allowed_attribute_types).anyMatch(lambda attribute_type: isinstance(body.get(attribute), attribute_type)):
-                the_object.__setattr__(attribute, body.get(attribute))
-            elif self.is_a_registered_dto_type(declared_type):
-                the_object.__setattr__(attribute, self.deserialize(body.get(attribute), declared_type))
-            else:
-                raise IncorrectAttributeTypeException(attribute, declared_type)
+        Stream(self.__get_parameters(body, attributes).items()).forEach(lambda k, v: the_object.__setattr__(k, v))
         return the_object
+
+    def __get_parameters(self, body, type_declarations: dict) -> dict:
+        result = {}
+        try:
+            for attribute, declared_type in type_declarations.items():
+                allowed_attribute_types = [declared_type] if not isinstance(declared_type, _Union) else declared_type.__args__
+                if attribute == 'return':
+                    break
+                if self._is_deserializable_into_typing_meta(declared_type):
+                    result[attribute] = [self.deserialize(x, declared_type.__args__[0]) for x in body[attribute]]
+                elif type(body.get(attribute)) in allowed_attribute_types:
+                    result[attribute] = body.get(attribute)
+                elif self.is_a_registered_dto_type(declared_type):
+                    result[attribute] = self.deserialize(body.get(attribute), declared_type)
+                else:
+                    raise IncorrectAttributeTypeException(attribute, declared_type)
+            return result
+        except TypeError as e:
+            raise IncorrectAttributeTypeException(e)
