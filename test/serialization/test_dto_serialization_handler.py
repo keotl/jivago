@@ -16,7 +16,7 @@ OBJECT_WITH_MISSING_VALUES = {}
 class DtoSerializationHandlerTest(unittest.TestCase):
 
     def setUp(self):
-        self.serializationHandler = DtoSerializationHandler(Registry(), "")
+        self.serializationHandler = DtoSerializationHandler(Registry())
 
     def test_givenUnknownProperty_whenDeserializing_thenIgnoreTheUnknownProperty(self):
         dto = self.serializationHandler.deserialize(OBJECT_WITH_UNKNOWN_PROPERTY, ADto)
@@ -123,6 +123,15 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertEqual("foobar", dto.nested_dto.child_dto.name)
 
+    def test_givenBodyAlreadyInTheRightType_whenDeserializing_thenReturnObjectAsIs(self):
+        result = self.serializationHandler.deserialize(5, int)
+
+        self.assertEqual(5, result)
+
+    def test_givenIncorrectParameterTypes_whenInjectingConstructor_thenRaiseIncorrectAttributeTypeException(self):
+        with self.assertRaises(IncorrectAttributeTypeException):
+            self.serializationHandler.deserialize({"children": 5}, ACollectionDto)
+
 
 @Serializable
 class ADto(object):
@@ -148,7 +157,7 @@ class ANestedDto(object):
 class ACollectionDto(object):
     children: List[ChildDto]
 
-    def __init__(self, children: List[ChildDto]):
+    def __init__(self, children: List[ChildDto]) -> "ACollectionDto":
         self.children = children
 
 
