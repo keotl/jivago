@@ -65,6 +65,10 @@ When resolving string and numeric parameters, path parameters and query paramete
 
 While return type annotations are not strictly required, they are nonetheless recommended to increase readability and enforce stylistic consistency.
 
+For manual route registration, see `Manual Route Registration`_.
+
+.. _Manual Route Registration: ../resource/index.html
+
 Serialization
 --------------
 Jivago supports the definition of *DTO* classes, which can be directly serialized/deserialized. These classes explicitly define a JSON schema and attribute typing, negating the need to use an external schema validator. To define a DTO, use the ``@Serializable`` decorator :
@@ -74,6 +78,10 @@ Jivago supports the definition of *DTO* classes, which can be directly serialize
 
 
 If a constructor is declared, it is used when deserializing. Otherwise, each attribute is set using ``__setattr__``.
+
+See `Serialization`_ for more details.
+
+.. _Serialization: ../serialization/index.html
 
 Dependency Injection
 ----------------------
