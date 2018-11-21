@@ -3,7 +3,7 @@ import os
 import pkgutil
 import signal
 from threading import Thread
-from typing import List, Type
+from typing import List, Type, Union
 
 import jivago
 from jivago.config.abstract_context import AbstractContext
@@ -25,13 +25,16 @@ from jivago.scheduling.task_scheduler import TaskScheduler
 class JivagoApplication(object):
     LOGGER = logging.getLogger("Jivago")
 
-    def __init__(self, root_module=None, *, debug: bool = False, context: AbstractContext = None):
+    def __init__(self, root_module=None, *, debug: bool = False,
+                 context: Union[AbstractContext, Type[ProductionJivagoContext]] = None):
         self.registry = Registry()
         self.root_module = root_module
 
         if context is None:
             self.context = DebugJivagoContext(self.root_module, self.registry) if debug else ProductionJivagoContext(
                 self.root_module, self.registry)
+        elif isinstance(context, type):
+            self.context = context(self.root_module, self.registry)
         else:
             self.context = context
 
