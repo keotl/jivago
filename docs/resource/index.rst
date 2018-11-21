@@ -5,7 +5,7 @@ Manual Route Registration
    :maxdepth: 2
 
 
-Additionnal URL routes can be registered by creating a new ``RoutingTable`` which references classes and their methods. Note that the appropriate classes should be imported beforehand.
+Additionnal URL routes can be registered by creating a new ``RoutingTable`` which references classes and their methods. Note that the appropriate classes should be imported beforehand. The referenced resource class can be either an instance, or the actual class. In that case, it will be instantiated by the ServiceLocator, and should therefore be registered manually in the ``configure_service_locator`` context method.
 
 .. literalinclude:: routing_table.py
    :language: python

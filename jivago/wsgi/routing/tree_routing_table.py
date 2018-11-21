@@ -1,4 +1,4 @@
-from typing import List, Callable
+from typing import List, Callable, Union
 
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Annotation
@@ -15,7 +15,7 @@ class TreeRoutingTable(RoutingTable):
     def __init__(self):
         self.root_node = RouteNode()
 
-    def register_route(self, primitive: Annotation, path: str, resource_class: type, route_method: Callable):
+    def register_route(self, primitive: Annotation, path: str, resource_class: Union[type, object], route_method: Callable):
         path = Stream(path.split('/')).filter(lambda s: s != "").toList()
         self.root_node.register_child(path, primitive, RouteRegistration(resource_class, route_method, path))
 
