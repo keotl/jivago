@@ -1,5 +1,5 @@
 import unittest
-from typing import Optional, List
+from typing import Optional, List, Dict, Tuple, Iterable
 
 from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
@@ -24,7 +24,7 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertIsInstance(dto, ADto)
         self.assertFalse("unknown-property" in dto.__dict__)
 
-    def test_givenMissingProperty_whenDeserializing_thenRaiseMissingPropertyException(self):
+    def test_givenMissingProperty_whenDeserializing_thenRaiseIncorrectAttributeException(self):
         with self.assertRaises(IncorrectAttributeTypeException):
             self.serializationHandler.deserialize(OBJECT_WITH_MISSING_VALUES, ADto)
 
@@ -95,7 +95,8 @@ class DtoSerializationHandlerTest(unittest.TestCase):
     def test_givenBaseType_whenCheckingIsSerializable_thenObjectIsSerializable(self):
         base_objects = [1, "hello", 5.34]
 
-        Stream(base_objects).map(lambda x: self.serializationHandler.is_serializable(x)).forEach(lambda x: self.assertTrue(x))
+        Stream(base_objects).map(lambda x: self.serializationHandler.is_serializable(x)).forEach(
+            lambda x: self.assertTrue(x))
 
     def test_givenNonSerializableObject_whenSerializing_thenThrowSerializationException(self):
         non_serializable_object = object()
@@ -119,7 +120,8 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertEqual("foobar", dtos[0].name)
 
     def test_givenTwiceNestedDto_whenDeserializing_thenDeserializeDto(self):
-        dto: TwiceNestedDto = self.serializationHandler.deserialize({"nested_dto": {"child_dto": {"name": "foobar"}}}, TwiceNestedDto)
+        dto: TwiceNestedDto = self.serializationHandler.deserialize({"nested_dto": {"child_dto": {"name": "foobar"}}},
+                                                                    TwiceNestedDto)
 
         self.assertEqual("foobar", dto.nested_dto.child_dto.name)
 
@@ -132,6 +134,31 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         with self.assertRaises(IncorrectAttributeTypeException):
             self.serializationHandler.deserialize({"children": 5}, ACollectionDto)
 
+    def test_givenDeclaredTypedDictionary_whenDeserializing_thenCreateProperlyPopulatedDictionary(self):
+        result: NestedTypeDictDto = self.serializationHandler.deserialize(
+            {"children": {"first": {"name": "foo"}, "second": {"name": "bar"}}}, NestedTypeDictDto)
+
+        self.assertIsInstance(result.children, dict)
+        self.assertEqual("foo", result.children["first"].name)
+        self.assertEqual("bar", result.children["second"].name)
+
+    def test_givenTypedDictTargetClass_whenDeserializing_thenCreateProperlyPopulatedDictionary(self):
+        result = self.serializationHandler.deserialize({"1": 1}, Dict[str, int])
+
+        self.assertIsInstance(result, dict)
+        self.assertEqual(1, result["1"])
+
+    def test_givenDtoWithIterables_whenDeserializing_thenPopulateIterableFieldWithList(self):
+        result: DtoWithIterablesAndTuples = self.serializationHandler.deserialize(
+            {"tuples": ["1", "2"], "iterables": ["1", "2"]}, DtoWithIterablesAndTuples)
+
+        self.assertIsInstance(result.iterables, list)
+
+    def test_givenDtoWithTuples_whenDeserializing_thenPopulateFieldWithTuple(self):
+        result: DtoWithIterablesAndTuples = self.serializationHandler.deserialize(
+            {"tuples": ["1", "2"], "iterables": ["1", "2"]}, DtoWithIterablesAndTuples)
+
+        self.assertIsInstance(result.tuples, tuple)
 
 @Serializable
 class ADto(object):
@@ -164,6 +191,17 @@ class ACollectionDto(object):
 @Serializable
 class TwiceNestedDto(object):
     nested_dto: ANestedDto
+
+
+@Serializable
+class NestedTypeDictDto(object):
+    children: Dict[str, ChildDto]
+
+
+@Serializable
+class DtoWithIterablesAndTuples(object):
+    tuples: Tuple[str]
+    iterables: Iterable[str]
 
 
 A_NESTED_DTO = ANestedDto()
