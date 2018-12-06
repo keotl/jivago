@@ -1,5 +1,5 @@
 import unittest
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
@@ -95,7 +95,8 @@ class DtoSerializationHandlerTest(unittest.TestCase):
     def test_givenBaseType_whenCheckingIsSerializable_thenObjectIsSerializable(self):
         base_objects = [1, "hello", 5.34]
 
-        Stream(base_objects).map(lambda x: self.serializationHandler.is_serializable(x)).forEach(lambda x: self.assertTrue(x))
+        Stream(base_objects).map(lambda x: self.serializationHandler.is_serializable(x)).forEach(
+            lambda x: self.assertTrue(x))
 
     def test_givenNonSerializableObject_whenSerializing_thenThrowSerializationException(self):
         non_serializable_object = object()
@@ -119,7 +120,8 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertEqual("foobar", dtos[0].name)
 
     def test_givenTwiceNestedDto_whenDeserializing_thenDeserializeDto(self):
-        dto: TwiceNestedDto = self.serializationHandler.deserialize({"nested_dto": {"child_dto": {"name": "foobar"}}}, TwiceNestedDto)
+        dto: TwiceNestedDto = self.serializationHandler.deserialize({"nested_dto": {"child_dto": {"name": "foobar"}}},
+                                                                    TwiceNestedDto)
 
         self.assertEqual("foobar", dto.nested_dto.child_dto.name)
 
@@ -131,6 +133,14 @@ class DtoSerializationHandlerTest(unittest.TestCase):
     def test_givenIncorrectParameterTypes_whenInjectingConstructor_thenRaiseIncorrectAttributeTypeException(self):
         with self.assertRaises(IncorrectAttributeTypeException):
             self.serializationHandler.deserialize({"children": 5}, ACollectionDto)
+
+    def test_givenDeclaredTypedDictionary_whenDeserializing_thenCreateProperlyPopulatedDictionary(self):
+        result: NestedTypeDictDto = self.serializationHandler.deserialize(
+            {"children": {"first": {"name": "foo"}, "second": {"name": "bar"}}}, NestedTypeDictDto)
+
+        self.assertIsInstance(result.children, dict)
+        self.assertEqual("foo", result.children["first"].name)
+        self.assertEqual("bar", result.children["second"].name)
 
 
 @Serializable
@@ -164,6 +174,11 @@ class ACollectionDto(object):
 @Serializable
 class TwiceNestedDto(object):
     nested_dto: ANestedDto
+
+
+@Serializable
+class NestedTypeDictDto(object):
+    children: Dict[str, ChildDto]
 
 
 A_NESTED_DTO = ANestedDto()
