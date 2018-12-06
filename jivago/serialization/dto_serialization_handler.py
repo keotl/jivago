@@ -1,4 +1,4 @@
-from typing import Any, _Union, TypingMeta, Union, GenericMeta
+from typing import Any, _Union, TypingMeta, Union, GenericMeta, Dict, Tuple
 
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
@@ -34,6 +34,11 @@ class DtoSerializationHandler(object):
     def deserialize(self, body: Union[dict, list], clazz: type) -> Any:
         if self._is_deserializable_into_typing_meta(clazz):
             return Stream(body).map(lambda x: self.deserialize(x, clazz.__args__[0])).toList()
+        if self._is_deserializable_into_typing_meta(clazz, (Tuple,)):
+            Stream(body).map(lambda x: self.deserialize(x, clazz.__args__[0])).toTuple()
+        if self.__is_typed_dictionary_declaration(clazz):
+            return Stream(body.items()).map(
+                lambda key, value: (key, self.deserialize(value, clazz.__args__[1]))).toDict()
         if isinstance(body, clazz):
             return body
         constructor = clazz.__init__
@@ -42,9 +47,9 @@ class DtoSerializationHandler(object):
         else:
             return self.__inject_constructor(clazz, constructor, body)
 
-    def _is_deserializable_into_typing_meta(self, typing_meta_annotation):
-        return isinstance(typing_meta_annotation, TypingMeta) and typing_meta_annotation.__name__ in (
-            'List', 'Collection', 'Iterable')
+    def _is_deserializable_into_typing_meta(self, typing_meta_annotation, metas=(
+            'List', 'Collection', 'Iterable')):
+        return isinstance(typing_meta_annotation, TypingMeta) and typing_meta_annotation.__name__ in metas
 
     def serialize(self, dto):
         if isinstance(dto, list):
@@ -84,6 +89,8 @@ class DtoSerializationHandler(object):
                     break
                 if self._is_deserializable_into_typing_meta(declared_type):
                     result[attribute] = [self.deserialize(x, declared_type.__args__[0]) for x in body[attribute]]
+                elif self._is_deserializable_into_typing_meta(declared_type, ('Tuple',)):
+                    result[attribute] = (self.deserialize(x, declared_type.__args__[0]) for x in body[attribute])
                 elif type(body.get(attribute)) in allowed_attribute_types:
                     result[attribute] = body.get(attribute)
                 elif self.is_a_registered_dto_type(declared_type):
@@ -97,7 +104,7 @@ class DtoSerializationHandler(object):
             raise IncorrectAttributeTypeException(e)
 
     def __is_typed_dictionary_declaration(self, declared_type: type) -> bool:
-        return isinstance(declared_type, GenericMeta) and declared_type.__args__[0] == str
+        return issubclass(declared_type, Dict) and declared_type.__args__[0] == str
 
     def __deserialize_typed_dictionary_declaration(self, attribute: str, declared_type: type, body: dict) -> dict:
         result = {}
