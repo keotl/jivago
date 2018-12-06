@@ -90,7 +90,8 @@ class DtoSerializationHandler(object):
                 if self._is_deserializable_into_typing_meta(declared_type):
                     result[attribute] = [self.deserialize(x, declared_type.__args__[0]) for x in body[attribute]]
                 elif self._is_deserializable_into_typing_meta(declared_type, ('Tuple',)):
-                    result[attribute] = (self.deserialize(x, declared_type.__args__[0]) for x in body[attribute])
+                    result[attribute] = Stream(body[attribute]).map(
+                        lambda x: self.deserialize(x, declared_type.__args__[0])).toTuple()
                 elif type(body.get(attribute)) in allowed_attribute_types:
                     result[attribute] = body.get(attribute)
                 elif self.is_a_registered_dto_type(declared_type):

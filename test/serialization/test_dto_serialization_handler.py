@@ -154,6 +154,11 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(result.iterables, list)
 
+    def test_givenDtoWithTuples_whenDeserializing_thenPopulateFieldWithTuple(self):
+        result: DtoWithIterablesAndTuples = self.serializationHandler.deserialize(
+            {"tuples": ["1", "2"], "iterables": ["1", "2"]}, DtoWithIterablesAndTuples)
+
+        self.assertIsInstance(result.tuples, tuple)
 
 @Serializable
 class ADto(object):
