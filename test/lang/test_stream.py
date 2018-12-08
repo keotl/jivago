@@ -195,3 +195,23 @@ class StreamTest(unittest.TestCase):
         first_elements = Stream(range(0, 30)).take(5).toList()
 
         self.assertEqual([0, 1, 2, 3, 4], first_elements)
+
+    def test_givenClassReference_whenMapping_thenCallClassConstructor(self):
+        squares = Stream.of(1, 2, 3, 4).map(AClassWithAMethod).map(AClassWithAMethod.get_square).toList()
+
+        self.assertEqual([1, 4, 9, 16], squares)
+
+    def test_givenBuiltinFunction_whenMapping_thenCorrectlyExpandParametersAndDoNotCrash(self):
+        Stream.of(1, 2, 3, 4).forEach(print)
+
+
+class AClassWithAMethod(object):
+
+    def __init__(self, value: int):
+        self.value = value
+
+    def get_square(self) -> int:
+        return self.value ** 2
+
+    def increment(self, x: int) -> int:
+        return self.value + x

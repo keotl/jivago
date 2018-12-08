@@ -63,7 +63,14 @@ class Stream(object):
         return tuple(self)
 
     def __should_expand(self, fun: Callable) -> bool:
+        if self.__is_builtin_function(fun):
+            return False
+        if type(fun) == type:
+            return fun.__init__.__code__.co_argcount > 2
         return fun.__code__.co_argcount > 1
+
+    def __is_builtin_function(self, fun: Callable) -> bool:
+        return type(fun) == type(abs)
 
     def count(self) -> int:
         if hasattr(self.iterable, '__len__'):
