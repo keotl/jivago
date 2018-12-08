@@ -190,3 +190,8 @@ class StreamTest(unittest.TestCase):
         reduction = self.stream.reduce(0, sum_reducer)
 
         self.assertEqual(sum(self.COLLECTION), reduction)
+
+    def test_whenTaking_thenReturnStreamWithOnlyFirstElements(self):
+        first_elements = Stream(range(0, 30)).take(5).toList()
+
+        self.assertEqual([0, 1, 2, 3, 4], first_elements)

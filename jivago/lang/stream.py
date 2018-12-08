@@ -1,4 +1,4 @@
-from itertools import chain
+from itertools import chain, islice
 from typing import Iterable, Callable, Iterator, Optional, Tuple, Any
 
 
@@ -99,3 +99,6 @@ class Stream(object):
 
     def max(self):
         return max(self)
+
+    def take(self, number: int) -> "Stream":
+        return Stream(islice(self, number))
