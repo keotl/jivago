@@ -20,7 +20,7 @@ setup(
     name='jivago',
     version_format='{tag}',
     setup_requires=['setuptools-git-version'],
-    description='The Highly-Reflective Object-Oriented Python Web Framework',
+    description='The highly-reflective object-oriented Python web framework',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
