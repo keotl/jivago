@@ -204,6 +204,11 @@ class StreamTest(unittest.TestCase):
     def test_givenBuiltinFunction_whenMapping_thenCorrectlyExpandParametersAndDoNotCrash(self):
         Stream.of(1, 2, 3, 4).forEach(print)
 
+    def test_givenBuiltinType_whenMapping_thenCallConstructorWithASingleParameter(self):
+        result = Stream.of("1", "2", "3").map(int).toList()
+
+        self.assertEqual([1, 2, 3], result)
+
 
 class AClassWithAMethod(object):
 

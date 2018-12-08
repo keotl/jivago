@@ -65,9 +65,11 @@ class Stream(object):
     def __should_expand(self, fun: Callable) -> bool:
         if self.__is_builtin_function(fun):
             return False
-        if type(fun) == type:
+        if type(fun) == type and hasattr(fun.__init__, "__code__"):
             return fun.__init__.__code__.co_argcount > 2
-        return fun.__code__.co_argcount > 1
+        if hasattr(fun, "__code__"):
+            return fun.__code__.co_argcount > 1
+        return False
 
     def __is_builtin_function(self, fun: Callable) -> bool:
         return type(fun) == type(abs)
