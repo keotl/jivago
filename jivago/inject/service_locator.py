@@ -1,10 +1,11 @@
-from typing import Optional, Callable, TypingMeta
+from typing import Callable, Optional
 
+from jivago.inject import typing_meta_helper
 from jivago.inject.exception.instantiation_exception import InstantiationException
 from jivago.inject.exception.non_injectable_constructor_exception import NonInjectableConstructorException
-from jivago.lang.registry import Registry
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Inject
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 
 
@@ -32,7 +33,7 @@ class ServiceLocator(object):
             return self.literals[interface]
         if interface in self.providers.keys():
             return self.__inject_function(self.providers[interface])
-        if isinstance(interface, TypingMeta) and interface.__name__ == 'List':
+        if typing_meta_helper.is_typing_meta_collection(interface):
             return self.get_all(interface.__args__[0])
         if interface not in self.components.keys():
             raise InstantiationException("Could not instantiate {}.".format(interface))

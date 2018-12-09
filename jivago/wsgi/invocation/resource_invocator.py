@@ -1,6 +1,6 @@
 import urllib.parse
-from typing import _Union
 
+from jivago.inject import typing_meta_helper
 from jivago.inject.service_locator import ServiceLocator
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
@@ -51,7 +51,7 @@ class ResourceInvocator(object):
         for name, clazz in parameter_declaration:
             if name == 'return':  # This is the output type annotation
                 break
-            if isinstance(clazz, _Union) and type(None) in clazz.__args__:
+            if typing_meta_helper.is_optional_typing_meta(clazz):
                 parameters.append(
                     self.__get_single_parameter(name, clazz.__args__[0], request, path_parameters, query_parameters,
                                                 nullable=True))
