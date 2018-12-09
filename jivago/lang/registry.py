@@ -1,5 +1,6 @@
-from typing import Callable, List, _Union
+from typing import Callable, List
 
+from jivago.inject import typing_meta_helper
 from jivago.inject.provider_function import ProviderFunction
 from jivago.lang.registration import Registration
 from jivago.lang.stream import Stream
@@ -53,7 +54,7 @@ class ParametrizedAnnotation(Annotation):
                 arguments.append((key, args[0]))
             elif key in kwargs:
                 arguments.append((key, kwargs[key]))
-            elif isinstance(type_annotation, _Union) and type(None) in type_annotation.__args__:
+            elif typing_meta_helper.is_optional_typing_meta(type_annotation):
                 arguments.append((key, None))
             else:
                 raise MissingAnnotationParameterException(key)
