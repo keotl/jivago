@@ -202,12 +202,25 @@ class StreamTest(unittest.TestCase):
         self.assertEqual([1, 4, 9, 16], squares)
 
     def test_givenBuiltinFunction_whenMapping_thenCorrectlyExpandParametersAndDoNotCrash(self):
-        Stream.of(1, 2, 3, 4).forEach(print)
+        expected = Stream(range(0, 4)).map(lambda x: ord(str(x))).toList()
+        result = Stream.of("0", "1", "2", "3").map(ord).toList()
+
+        self.assertEqual(expected, result)
 
     def test_givenBuiltinType_whenMapping_thenCallConstructorWithASingleParameter(self):
         result = Stream.of("1", "2", "3").map(int).toList()
 
         self.assertEqual([1, 2, 3], result)
+
+    def test_givenMissingParameters_whenGettingRange_thenReturnInfiniteIterator(self):
+        first_25 = Stream.range().take(25).toList()
+
+        self.assertEqual([x for x in range(0, 25)], first_25)
+
+    def test_givenParameters_whenGettingRange_thenPassParametersToBuiltinRange(self):
+        first5 = Stream.range(5).toList()
+
+        self.assertEqual([x for x in range(0, 5)], first5)
 
 
 class AClassWithAMethod(object):

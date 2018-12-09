@@ -1,11 +1,11 @@
-from itertools import chain, islice
+import itertools
 from typing import Iterable, Callable, Iterator, Optional, Tuple, Any
 
 
 class Stream(object):
 
     def __init__(self, *iterables: Iterable):
-        self.iterable = chain(*iterables)
+        self.iterable = itertools.chain(*iterables)
 
     def map(self, fun: Callable) -> "Stream":
         if self.__should_expand(fun):
@@ -48,7 +48,7 @@ class Stream(object):
         return not self.anyMatch(fun)
 
     def flat(self) -> "Stream":
-        return Stream(chain(*self))
+        return Stream(itertools.chain(*self))
 
     def toList(self) -> list:
         return list(self)
@@ -110,4 +110,11 @@ class Stream(object):
         return max(self)
 
     def take(self, number: int) -> "Stream":
-        return Stream(islice(self, number))
+        return Stream(itertools.islice(self, number))
+
+    @staticmethod
+    def range(*args) -> "Stream":
+        if len(args) == 0:
+            return Stream(itertools.count())
+        else:
+            return Stream(range(*args))
