@@ -3,6 +3,7 @@ import urllib.parse
 from jivago.inject import typing_meta_helper
 from jivago.inject.service_locator import ServiceLocator
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.invocation.missing_route_invocation_argument import MissingRouteInvocationArgument
 from jivago.wsgi.methods import to_method
@@ -76,7 +77,10 @@ class ResourceInvocator(object):
             elif parameter_name in query_parameters:
                 return parameter_type(self._url_parameter_unescape(query_parameters[parameter_name]))
         elif self.dto_serialization_handler.is_deserializable_into(parameter_type):
-            return self.dto_serialization_handler.deserialize(request.body, parameter_type)
+            try:
+                return self.dto_serialization_handler.deserialize(request.body, parameter_type)
+            except SerializationException as e:
+                raise MissingRouteInvocationArgument(e)
         if nullable:
             return None
         raise MissingRouteInvocationArgument(parameter_name, parameter_type)

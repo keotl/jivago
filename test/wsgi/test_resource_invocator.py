@@ -1,5 +1,6 @@
 import unittest
 from typing import Optional
+from unittest import mock
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
@@ -7,6 +8,7 @@ from jivago.lang.registration import Registration
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
@@ -170,6 +172,15 @@ class ResourceInvocatorTest(unittest.TestCase):
         response = self.resource_invocator.invoke(self.request)
 
         self.assertEqual([("foo", "bar")], Stream(response.body).toList())
+
+    def test_givenSerializationError_whenInvokingResource_thenRaiseException(self):
+        self.resource_invocator.dto_serialization_handler = mock.create_autospec(DtoSerializationHandler)
+        self.resource_invocator.dto_serialization_handler.deserialize.side_effect = SerializationException()
+        self.resource_invocator.dto_serialization_handler.is_deserializable_into.return_value = True
+        self.request = RequestBuilder().method("POST").path(PATH + "/dto").build()
+
+        with self.assertRaises(IncorrectResourceParametersException):
+            self.resource_invocator.invoke(self.request)
 
 
 @Serializable
