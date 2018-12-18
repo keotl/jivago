@@ -15,4 +15,4 @@ class DebugJivagoContext(ProductionJivagoContext):
 
     @Override
     def get_filters(self, path: str) -> List[Type[Filter]]:
-        return [NoCorsFilter] + super().get_filters(path) + [DebugExceptionFilter]
+        return [NoCorsFilter, DebugExceptionFilter] + super().get_filters(path)
