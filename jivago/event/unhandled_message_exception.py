@@ -1,0 +1,2 @@
+class UnhandledMessageException(Exception):
+    pass
