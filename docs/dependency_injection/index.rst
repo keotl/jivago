@@ -24,12 +24,12 @@ The *CalculationService* class is injected with a list of all components which i
 
 Scopes
 ------
-By default, all components are re-created when a request is received. However, a ``@Singleton`` annotation is provided for when unicity is important. (e.g. When making a simple persistence mechanism held in memory.)
+By default, all components are re-instantiated when a request is received. However, a ``@Singleton`` annotation is provided for when unicity is important. (e.g. when making a simple persistence mechanism held in memory.)
 
 .. literalinclude:: singleton.py
    :language: python
 
-A *singleton* component will be instantiated when it is first requested, and be reused for subsequent calls.
+A *singleton* component will be instantiated when it is first requested, and reused for subsequent calls.
 
 Factory Functions
 -------------------
@@ -42,7 +42,7 @@ The provider function can take any registered component as arguments.
 
 Manual Component Registration
 --------------------------------
-When fine-tuned control is necessary, the service locator should be manually configured by extending the *Context* object. In order to do so, first override either ``ProductionJivagoContext`` or ``DebugJivagoContext``. This will be your new application context, which should be passed to the JivagoApplication object. The ``configure_service_locator`` is where component registration is done. Use the ``self.serviceLocator.bind`` method to manually register components. Note that Jivago decorators will not be taken in consideration when using manual component registration.
+When fine-tuned control is necessary, the service locator should be manually configured by extending the *Context* object. In order to do so, first override either ``ProductionJivagoContext`` or ``DebugJivagoContext``. This will be your new application context, which should be passed to the JivagoApplication object. The ``configure_service_locator`` is where component registration is done. Use the ``self.serviceLocator.bind`` method to manually register components. Note that Jivago decorators will not be taken into consideration when using manual component registration.
 
 .. literalinclude:: manual_registration.py
    :language: python
