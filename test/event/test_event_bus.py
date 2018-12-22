@@ -17,15 +17,15 @@ class EventBusTest(unittest.TestCase):
         self.message_dispatcher: MessageDispatcher = mock.create_autospec(MessageDispatcher)
         self.message_bus = EventBus([self.message_dispatcher])
 
-    def test_whenEmittingEvent_thenInvokeMatchingMessageDispatcher(self):
+    async def test_whenEmittingEvent_thenInvokeMatchingMessageDispatcher(self):
         self.message_dispatcher.can_handle.return_value = True
 
-        self.message_bus.emit(MESSAGE_NAME, PAYLOAD)
+        await self.message_bus.emit(MESSAGE_NAME, PAYLOAD)
 
         self.message_dispatcher.handle.assert_called_with(PAYLOAD)
 
-    def test_givenNoMatchingDispatcher_whenEmittingEvent_thenRaiseException(self):
+    async def test_givenNoMatchingDispatcher_whenEmittingEvent_thenRaiseException(self):
         self.message_dispatcher.can_handle.return_value = False
 
         with self.assertRaises(UnhandledMessageException):
-            self.message_bus.emit(MESSAGE_NAME, PAYLOAD)
+            await self.message_bus.emit(MESSAGE_NAME, PAYLOAD)

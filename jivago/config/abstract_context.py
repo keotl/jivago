@@ -1,8 +1,6 @@
 from typing import List, Type
 
-from jivago.event.message_bus import EventBus
 from jivago.inject.service_locator import ServiceLocator
-from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.routing.router import Router
 

@@ -10,7 +10,7 @@ class EventBus(object):
     def __init__(self, message_handlers: List[MessageDispatcher]):
         self.message_handlers = message_handlers
 
-    def emit(self, message_name: str, payload=None):
+    async def emit(self, message_name: str, payload=None):
         handler = Stream(self.message_handlers).firstMatch(lambda h: h.can_handle(message_name))
 
         if handler:
