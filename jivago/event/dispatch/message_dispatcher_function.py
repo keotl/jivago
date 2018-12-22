@@ -7,7 +7,7 @@ from jivago.lang.annotations import Override
 class MessageDispatcherFunction(MessageDispatcher):
 
     def __init__(self, message_name: str, function: Callable):
-        self.message_name = message_name
+        super().__init__(message_name)
         self.function = function
 
     @Override

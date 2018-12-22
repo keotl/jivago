@@ -1,6 +1,9 @@
-from jivago.lang.registry import ParametrizedAnnotation
+from jivago.lang.registry import ParametrizedAnnotation, Annotation
 
 
 @ParametrizedAnnotation
-def MessageHandler(message_name: str):
+def EventHandler(event_name: str):
     return lambda x: x
+
+
+EventHandlerClass = Annotation()

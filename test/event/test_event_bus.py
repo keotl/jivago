@@ -1,8 +1,9 @@
 import unittest
 from unittest import mock
 
-from jivago.event.message_bus import MessageBus
+
 from jivago.event.dispatch.message_dispatcher import MessageDispatcher
+from jivago.event.event_bus import EventBus
 from jivago.event.unhandled_message_exception import UnhandledMessageException
 
 MESSAGE_NAME = "message_name"
@@ -10,11 +11,11 @@ MESSAGE_NAME = "message_name"
 PAYLOAD = object()
 
 
-class MessageBusTest(unittest.TestCase):
+class EventBusTest(unittest.TestCase):
 
     def setUp(self):
         self.message_dispatcher: MessageDispatcher = mock.create_autospec(MessageDispatcher)
-        self.message_bus = MessageBus([self.message_dispatcher])
+        self.message_bus = EventBus([self.message_dispatcher])
 
     def test_whenEmittingEvent_thenInvokeMatchingMessageDispatcher(self):
         self.message_dispatcher.can_handle.return_value = True

@@ -4,6 +4,8 @@ from typing import List, Type
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.exception_mapper_binder import ExceptionMapperBinder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
+from jivago.event.message_bus import EventBus
+from jivago.event.reflective_message_bus_initializer import ReflectiveEventBusInitializer
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
 from jivago.inject.scope_cache import ScopeCache
@@ -69,6 +71,7 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
         self.serviceLocator.bind(ObjectMapper, ObjectMapper)
+        self.serviceLocator.bind(EventBus, self.create_event_bus())
 
         ExceptionMapperBinder().bind(self.serviceLocator)
 
@@ -93,3 +96,7 @@ class ProductionJivagoContext(AbstractContext):
     def create_router(self) -> Router:
         routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name)
         return Router(self.registry, self.root_package_name, self.serviceLocator, self, RequestFactory(), routing_table)
+
+    def create_event_bus(self) -> EventBus:
+        return ReflectiveEventBusInitializer(self.service_locator(), self.registry,
+                                             self.root_package_name).create_message_bus()

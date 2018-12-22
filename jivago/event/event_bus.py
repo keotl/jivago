@@ -5,7 +5,7 @@ from jivago.event.unhandled_message_exception import UnhandledMessageException
 from jivago.lang.stream import Stream
 
 
-class MessageBus(object):
+class EventBus(object):
 
     def __init__(self, message_handlers: List[MessageDispatcher]):
         self.message_handlers = message_handlers
