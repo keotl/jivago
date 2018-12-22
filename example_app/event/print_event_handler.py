@@ -1,4 +1,5 @@
 import logging
+from time import sleep
 
 from jivago.event.annotations import EventHandlerClass, EventHandler
 
@@ -9,5 +10,6 @@ class PrintEventHandler(object):
 
     @EventHandler("print")
     def print(self, message: str):
+        sleep(1)
         self.LOGGER.info(message)
         return message

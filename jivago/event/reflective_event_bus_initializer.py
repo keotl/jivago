@@ -6,6 +6,7 @@ from jivago.event.dispatch.message_dispatcher import MessageDispatcher
 from jivago.event.dispatch.message_dispatcher_function import MessageDispatcherFunction
 from jivago.event.dispatch.message_dispatcher_runnable import MessageDispatcherRunnable
 from jivago.event.event_bus import EventBus
+from jivago.event.synchronous_event_bus import SynchronousEventBus
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.lang.runnable import Runnable
@@ -21,7 +22,7 @@ class ReflectiveEventBusInitializer(object):
         self.registry = registry
 
     def create_message_bus(self) -> EventBus:
-        return EventBus(self._find_dispatchers(self.registry, self.root_package_name, self.service_locator))
+        return SynchronousEventBus(self._find_dispatchers(self.registry, self.root_package_name, self.service_locator))
 
     def _find_dispatchers(self, registry: Registry,
                           root_package_name: str,
