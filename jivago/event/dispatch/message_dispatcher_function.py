@@ -11,10 +11,6 @@ class MessageDispatcherFunction(MessageDispatcher):
         self.function = function
 
     @Override
-    def can_handle(self, message_name: str) -> bool:
-        return message_name == self.message_name
-
-    @Override
     def handle(self, payload: object):
         if self._requires_payload_parameter():
             return self.function(payload)

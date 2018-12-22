@@ -16,6 +16,7 @@ script:
 branches:
   only:
   - master
+  - develop
   - /^\d+\.\d+(\.\d+)?(-\S*)?$/
 deploy:
   provider: pypi
