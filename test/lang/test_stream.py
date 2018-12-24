@@ -201,6 +201,20 @@ class StreamTest(unittest.TestCase):
 
         self.assertEqual([1, 4, 9, 16], squares)
 
+    def test_givenMethodWhichRequiresAParameter_whenMapping_thenInvokeMethodWithParameter(self):
+        calculator_object = AClassWithAMethod(0)
+
+        result = Stream.of(1, 2, 3, 4).map(calculator_object.increment).toList()
+
+        self.assertEqual([1, 2, 3, 4], result)
+
+    def test_givenMethodWhichRequiresTwoParameters_whenMapping_thenInvokeAndExpandParameters(self):
+        calculator_object = AClassWithAMethod(0)
+
+        result = Stream.zip([1, 2, 3, 4], [1, 2, 3, 4]).map(calculator_object.sum_of_two_values).toList()
+
+        self.assertEqual([2, 4, 6, 8], result)
+
     def test_givenBuiltinFunction_whenMapping_thenCorrectlyExpandParametersAndDoNotCrash(self):
         expected = Stream(range(0, 4)).map(lambda x: ord(str(x))).toList()
         result = Stream.of("0", "1", "2", "3").map(ord).toList()
@@ -243,3 +257,6 @@ class AClassWithAMethod(object):
 
     def increment(self, x: int) -> int:
         return self.value + x
+
+    def sum_of_two_values(self, x, y) -> int:
+        return x + y
