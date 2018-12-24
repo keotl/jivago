@@ -222,6 +222,16 @@ class StreamTest(unittest.TestCase):
 
         self.assertEqual([x for x in range(0, 5)], first5)
 
+    def test_whenGettingFirst_thenReturnFirstElementInIterable(self):
+        first = Stream.range().first()
+
+        self.assertEqual(0, first)
+
+    def test_givenEmptyStream_whenGettingFirst_thenReturnNone(self):
+        first = Stream([]).first()
+
+        self.assertIsNone(first)
+
 
 class AClassWithAMethod(object):
 

@@ -118,3 +118,6 @@ class Stream(object):
             return Stream(itertools.count())
         else:
             return Stream(range(*args))
+
+    def first(self) -> Optional:
+        return next(self.iterable, None)
