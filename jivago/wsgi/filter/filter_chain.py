@@ -8,7 +8,7 @@ from jivago.wsgi.request.response import Response
 
 class FilterChain(object):
 
-    def __init__(self, filters: List["Filter"], resource_invoker_factory: "ResourceInvokerFactory"):
+    def __init__(self, filters: List["Filter"], resource_invoker_factory: ResourceInvokerFactory):
         self.resource_invoker_factory = resource_invoker_factory
         self.filters = filters
 

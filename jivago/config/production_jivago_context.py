@@ -93,7 +93,7 @@ class ProductionJivagoContext(AbstractContext):
     def create_router_config(self) -> RouterBuilder:
         routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name, self.get_default_filters())
 
-        return RouterBuilder().with_routing_table(routing_table)
+        return RouterBuilder().add_routing_table(routing_table)
 
     def get_default_filters(self) -> List[Union[Filter, Type[Filter]]]:
         default_filters = [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter,

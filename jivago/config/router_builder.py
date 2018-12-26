@@ -12,7 +12,7 @@ class RouterBuilder(object):
     def __init__(self):
         self.routing_tables = []
 
-    def with_routing_table(self, routing_table: RoutingTable, path_prefix="") -> "RouterBuilder":
+    def add_routing_table(self, routing_table: RoutingTable, path_prefix="") -> "RouterBuilder":
         if path_prefix != "":
             routing_table = PrefixDecoratedRoutingTable(routing_table, path_prefix)
         self.routing_tables.append(routing_table)
