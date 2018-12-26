@@ -3,7 +3,7 @@ from unittest import mock
 
 from jivago.wsgi.methods import GET
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
-from jivago.wsgi.routing.tree.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
+from jivago.wsgi.routing.table.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
 

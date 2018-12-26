@@ -8,7 +8,7 @@ from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNot
 from jivago.wsgi.routing.exception.routing_exception import RoutingException
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
-from jivago.wsgi.routing.tree.route_node import RouteNode
+from jivago.wsgi.routing.table.route_node import RouteNode
 
 
 class TreeRoutingTable(RoutingTable):

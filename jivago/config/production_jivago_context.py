@@ -32,7 +32,7 @@ from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeseria
 from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
 from jivago.wsgi.request.partial_content_handler import PartialContentHandler
-from jivago.wsgi.routing.tree.auto_discovering_routing_table import AutoDiscoveringRoutingTable
+from jivago.wsgi.routing.table.auto_discovering_routing_table import AutoDiscoveringRoutingTable
 
 
 class ProductionJivagoContext(AbstractContext):

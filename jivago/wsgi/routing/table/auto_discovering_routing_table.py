@@ -3,7 +3,7 @@ from typing import List, Union, Type
 from jivago.lang.registry import Registry
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.filter.filter import Filter
-from jivago.wsgi.routing.tree.reflective_routing_table import ReflectiveRoutingTable
+from jivago.wsgi.routing.table.reflective_routing_table import ReflectiveRoutingTable
 
 
 class AutoDiscoveringRoutingTable(ReflectiveRoutingTable):

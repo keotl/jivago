@@ -19,7 +19,7 @@ from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
-from jivago.wsgi.routing.tree.reflective_routing_table import ReflectiveRoutingTable
+from jivago.wsgi.routing.table.reflective_routing_table import ReflectiveRoutingTable
 from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}

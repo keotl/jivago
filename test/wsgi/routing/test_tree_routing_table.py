@@ -3,7 +3,7 @@ import unittest
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
-from jivago.wsgi.routing.tree.tree_routing_table import TreeRoutingTable
+from jivago.wsgi.routing.table.tree_routing_table import TreeRoutingTable
 
 PATH = "/foobar/hello"
 

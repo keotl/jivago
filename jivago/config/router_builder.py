@@ -3,8 +3,8 @@ from jivago.lang.registry import Registry
 from jivago.wsgi.request.request_factory import RequestFactory
 from jivago.wsgi.routing.router import Router
 from jivago.wsgi.routing.routing_table import RoutingTable
-from jivago.wsgi.routing.tree.composite_routing_table import CompositeRoutingTable
-from jivago.wsgi.routing.tree.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
+from jivago.wsgi.routing.table.composite_routing_table import CompositeRoutingTable
+from jivago.wsgi.routing.table.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
 
 
 class RouterBuilder(object):

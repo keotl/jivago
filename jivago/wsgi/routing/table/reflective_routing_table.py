@@ -6,7 +6,7 @@ from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Path
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.methods import http_methods
-from jivago.wsgi.routing.tree.tree_routing_table import TreeRoutingTable
+from jivago.wsgi.routing.table.tree_routing_table import TreeRoutingTable
 
 
 class ReflectiveRoutingTable(TreeRoutingTable):

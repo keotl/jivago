@@ -5,7 +5,7 @@ from jivago.lang.registry import Registry
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.invocation.resource_invoker_factory import ResourceInvokerFactory
 from jivago.wsgi.methods import GET
-from jivago.wsgi.routing.tree.tree_routing_table import TreeRoutingTable
+from jivago.wsgi.routing.table.tree_routing_table import TreeRoutingTable
 from test_utils.request_builder import RequestBuilder
 
 RESOURCE_CLASS = object()
