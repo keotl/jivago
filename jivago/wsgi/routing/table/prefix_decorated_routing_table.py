@@ -36,6 +36,10 @@ class PrefixDecoratedRoutingTable(RoutingTable):
         self.routing_table.add_filter(filter)
 
     @Override
+    def set_filters(self, filters: List[Union[Filter, Type[Filter]]]):
+        self.routing_table.set_filters(filters)
+
+    @Override
     def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
         return Stream(self.routing_table._get_all_routes_for_path(path[len(self.prefix)::])).map(
             lambda route: RouteRegistration(route.resourceClass,

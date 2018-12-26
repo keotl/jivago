@@ -1,5 +1,5 @@
 import logging
-from typing import List, Union, Type
+from typing import Union, Type
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
@@ -32,8 +32,24 @@ class RouterBuilder(object):
             composite_table = CompositeRoutingTable(self.routing_tables)
             self.routing_tables = [composite_table, CorsRoutingTable(composite_table, cors_headers)]
         else:
-            self.LOGGER.error("Configuring CORS for an empty router. Configure a router first.")
+            self.LOGGER.error("Configuring CORS for an empty router. Create routing tables first.")
 
+        return self
+
+    def decorate_prefix(self, prefix: str) -> "RouterBuilder":
+        if len(self.routing_tables) == 1:
+            self.routing_tables = [PrefixDecoratedRoutingTable(self.routing_tables[0], prefix)]
+        elif len(self.routing_tables) > 1:
+            composite_table = CompositeRoutingTable(self.routing_tables)
+            self.routing_tables = [PrefixDecoratedRoutingTable(composite_table, prefix)]
+        else:
+            self.LOGGER.error("Configuring prefix for an empty router. Create routing tables first.")
+
+        return self
+
+    def decorate_filters(self, filters: Union[Filter, Type[Filter]]) -> "RouterBuilder":
+        for table in self.routing_tables:
+            table.set_filters(filters)
         return self
 
     def build(self, registry: Registry, service_locator: ServiceLocator) -> Router:

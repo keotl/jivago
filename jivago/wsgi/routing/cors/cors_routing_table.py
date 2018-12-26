@@ -52,5 +52,9 @@ class CorsRoutingTable(RoutingTable):
         return self.decorated_routing_table.get_filters(http_primitive, path)
 
     @Override
+    def set_filters(self, filters: List[Union[Filter, Type[Filter]]]):
+        self.decorated_routing_table.set_filters(filters)
+
+    @Override
     def add_filter(self, filter: Union[Filter, Type[Filter]]):
         self.decorated_routing_table.add_filter(filter)
