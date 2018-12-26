@@ -6,47 +6,43 @@ from jivago.serialization.dto_serialization_handler import DtoSerializationHandl
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.invocation.missing_route_invocation_argument import MissingRouteInvocationArgument
-from jivago.wsgi.methods import to_method
+from jivago.wsgi.invocation.url_encoded_form_parser import parse_urlencoded_form
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
 from jivago.wsgi.routing.route_registration import RouteRegistration
-from jivago.wsgi.routing.routing_table import RoutingTable
 
 ALLOWED_URL_PARAMETER_TYPES = (str, int, float)
 
 
-class ResourceInvocator(object):
+class ResourceInvoker(object):
 
-    def __init__(self, service_locator: ServiceLocator, routing_table: RoutingTable,
-                 dto_serialization_handler: DtoSerializationHandler, query_parser: UrlEncodedQueryParser):
-        self.routing_table = routing_table
-        self.dto_serialization_handler = dto_serialization_handler
+    def __init__(self, route_registration: RouteRegistration, service_locator: ServiceLocator,
+                 dto_serialization_handler: DtoSerializationHandler):
+        self.route_registration = route_registration
         self.service_locator = service_locator
-        self.query_parser = query_parser
+        self.dto_serialization_handler = dto_serialization_handler
 
     def invoke(self, request: Request) -> Response:
-        method = to_method(request.method)
+        resource = self.get_resource_instance()
+        try:
+            parameters = self.format_parameters(request, self.route_registration)
+            function_return = self.route_registration.routeFunction(resource, *parameters)
+        except (MissingRouteInvocationArgument, AttributeError):
+            raise IncorrectResourceParametersException()
 
-        for route_registration in self.routing_table.get_route_registrations(method, request.path):
-            resource = self.service_locator.get(route_registration.resourceClass) if isinstance(
-                route_registration.resourceClass, type) else route_registration.resourceClass
-            try:
-                parameters = self.format_parameters(request, route_registration)
-                function_return = route_registration.routeFunction(resource, *parameters)
-            except (MissingRouteInvocationArgument, AttributeError):
-                continue
+        if isinstance(function_return, Response):
+            return function_return
+        return Response(200, {}, function_return)
 
-            if isinstance(function_return, Response):
-                return function_return
-            return Response(200, {}, function_return)
-        raise IncorrectResourceParametersException()
+    def get_resource_instance(self):
+        return self.service_locator.get(self.route_registration.resourceClass) if isinstance(
+            self.route_registration.resourceClass, type) else self.route_registration.resourceClass
 
     def format_parameters(self, request: Request, route_registration: RouteRegistration) -> list:
         parameter_declaration = route_registration.routeFunction.__annotations__.items()
         path_parameters = route_registration.parse_path_parameters(request.path)
-        query_parameters = self.query_parser.parse_urlencoded_query(request.queryString)
+        query_parameters = parse_urlencoded_form(request.queryString)
 
         parameters = []
         for name, clazz in parameter_declaration:

@@ -4,7 +4,7 @@ from jivago.lang.registry import Annotation
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 
-PATH_PARAMETER = '{param}'
+PATH_PARAMETER = object()
 
 
 class RouteNode(object):

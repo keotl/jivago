@@ -5,7 +5,7 @@ from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
+from jivago.wsgi.invocation.resource_invocator import ResourceInvoker
 
 A_REQUEST = Request('GET', "/path", {}, "", "")
 A_RESPONSE = Response.empty()
@@ -14,7 +14,7 @@ A_RESPONSE = Response.empty()
 class FilterChainTest(unittest.TestCase):
 
     def setUp(self):
-        self.resourceInvocatorMock: ResourceInvocator = mock.create_autospec(ResourceInvocator)
+        self.resourceInvocatorMock: ResourceInvoker = mock.create_autospec(ResourceInvoker)
         self.filterMock: Filter = mock.create_autospec(Filter)
         self.secondFilterMock: Filter = mock.create_autospec(Filter)
         self.filterChain = FilterChain([self.filterMock, self.secondFilterMock], self.resourceInvocatorMock)

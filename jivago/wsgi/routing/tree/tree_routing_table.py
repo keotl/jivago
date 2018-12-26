@@ -1,18 +1,20 @@
-from typing import List, Callable, Union
+from typing import List, Callable, Union, Type
 
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Annotation
 from jivago.lang.stream import Stream
+from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.routing_exception import RoutingException
-from jivago.wsgi.routing.route_node import RouteNode
+from jivago.wsgi.routing.tree.route_node import RouteNode
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
 
 
 class TreeRoutingTable(RoutingTable):
 
-    def __init__(self):
+    def __init__(self, filters: List[Union[Filter, Type[Filter]]]):
+        super().__init__(filters)
         self.root_node = RouteNode()
 
     def register_route(self, primitive: Annotation, path: str, resource_class: Union[type, object], route_method: Callable):

@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Union, Type
 
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Annotation
+from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
@@ -24,3 +25,11 @@ class PrefixDecoratedRoutingTable(RoutingTable):
     @Override
     def can_handle(self, http_primitive: Annotation, path: str) -> bool:
         return path.startswith(self.prefix) and self.routing_table.can_handle(http_primitive, path[len(self.prefix)::])
+
+    @Override
+    def get_filters(self) -> List[Union[Filter, Type[Filter]]]:
+        return self.routing_table.filters
+
+    @Override
+    def add_filter(self, filter: Union[Filter, Type[Filter]]):
+        self.routing_table.add_filter(filter)

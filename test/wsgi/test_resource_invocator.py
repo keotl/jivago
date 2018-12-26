@@ -11,13 +11,13 @@ from jivago.serialization.dto_serialization_handler import DtoSerializationHandl
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
-from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
+from jivago.wsgi.invocation.resource_invocator import ResourceInvoker
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
-from jivago.wsgi.routing.reflective_routing_table import ReflectiveRoutingTable
+from jivago.wsgi.routing.tree.reflective_routing_table import ReflectiveRoutingTable
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from test_utils.request_builder import RequestBuilder
 
@@ -39,8 +39,8 @@ class ResourceInvocatorTest(unittest.TestCase):
         self.routingTable = ReflectiveRoutingTable(registry,
                                                    [Registration(ResourceClass, arguments={"value": PATH})])
         self.dto_serialization_handler = DtoSerializationHandler(registry)
-        self.resource_invocator = ResourceInvocator(self.serviceLocator, self.routingTable,
-                                                    self.dto_serialization_handler, UrlEncodedQueryParser())
+        self.resource_invocator = ResourceInvoker(self.serviceLocator, self.routingTable,
+                                                  self.dto_serialization_handler, UrlEncodedQueryParser())
         self.request = Request('GET', PATH, {}, "", "")
         ResourceClass.has_been_called = False
 

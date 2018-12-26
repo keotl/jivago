@@ -56,7 +56,7 @@ class JivagoApplication(object):
         self.LOGGER.info("Running PreInit hooks")
         self.call_startup_hook(PreInit)
 
-        self.router = self.context.create_router()
+        self.router = self.context.create_router_config().build(self.registry, self.serviceLocator)
 
         self.LOGGER.info("Running Init hooks")
         self.call_startup_hook(Init)
