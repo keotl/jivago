@@ -4,17 +4,22 @@ from unittest import mock
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Serializable
+from jivago.lang.registration import Registration
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.annotations import Resource, Path
+from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
-from jivago.wsgi.invocation.resource_invoker import ResourceInvoker
+from jivago.wsgi.invocation.resource_invoker_factory import ResourceInvokerFactory
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.routing.routing_table import RoutingTable
+from jivago.wsgi.routing.tree.reflective_routing_table import ReflectiveRoutingTable
 from test_utils.request_builder import RequestBuilder
 
 BODY = {"key": "value"}
@@ -25,18 +30,44 @@ A_PATH_PARAM = "a-param"
 
 HTTP_METHOD = GET
 
+# TODO Remove this integrated test class when rewriting resource invoker
 
-class ResourceInvokerTest(unittest.TestCase):
+class TestIntegratedResourceInvoker(object):
+    def __init__(self, service_locator: ServiceLocator, routing_table: RoutingTable,
+                 dto_serialization_handler: DtoSerializationHandler):
+        self.service_locator = service_locator
+        self.routing_table = routing_table
+        self.dto_serialization_handler = dto_serialization_handler
+
+    def invoke(self, request: Request) -> Response:
+        response = ResourceClass.the_response
+        FilterChain([], ResourceInvokerFactory(self.service_locator, self.dto_serialization_handler,
+                                               self.routing_table)).doFilter(request, response)
+
+        return response
+
+
+class IntegratedResourceInvokerTest(unittest.TestCase):
 
     def setUp(self):
         self.serviceLocator = ServiceLocator()
         self.serviceLocator.bind(ResourceClass, ResourceClass)
+        registry = Registry()
+        self.routingTable = ReflectiveRoutingTable(registry,
+                                                   [Registration(ResourceClass, arguments={"value": PATH})], [])
+        self.dto_serialization_handler = DtoSerializationHandler(registry)
+        self.resource_invocator = TestIntegratedResourceInvoker(self.serviceLocator, self.routingTable,
+                                                                self.dto_serialization_handler)
+        self.request = Request('GET', PATH, {}, "", "")
         ResourceClass.has_been_called = False
+
+    def test_whenInvoking_thenGetsCorrespondingResourceInRoutingTable(self):
+        self.resource_invocator.invoke(self.request)
+
+        self.assertTrue(ResourceClass.has_been_called)
 
     def test_givenRouteWhichRequiresARequestObject_whenInvoking_thenInvokeTheRouteWithTheRequestObject(self):
         self.request.path += "/request"
-        resource_invoker = ResourceInvoker(RouteRegistration(ResourceClass, ResourceClass.a_method_which_requires_a_dto),
-                                           self.serviceLocator, )
         self.resource_invocator.invoke(self.request)
 
         # Assert is done in the route method below
