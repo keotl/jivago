@@ -14,8 +14,8 @@ class MyApplicationContext(ProductionJivagoContext):
     def scopes(self) -> List[type]:
         return super().scopes()
 
-    def get_filters(self, path: str) -> List[Type[Filter]]:
-        return super().get_filters(path)
+    def get_default_filters(self, path: str) -> List[Type[Filter]]:
+        return super().get_default_filters(path)
 
     def get_views_folder_path(self) -> str:
         return super().get_views_folder_path()

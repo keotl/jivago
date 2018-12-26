@@ -21,7 +21,7 @@ class DtoSerializationHandler(object):
     def is_serializable(self, dto: object) -> bool:
         if self.is_a_registered_dto_type(type(dto)):
             return True
-        if isinstance(dto, list):
+        if isinstance(dto, list) or isinstance(dto, tuple):
             return Stream(dto).allMatch(lambda x: self.is_serializable(x))
         if isinstance(dto, dict):
             return Stream(dto.items()).allMatch(
@@ -53,7 +53,7 @@ class DtoSerializationHandler(object):
             return self.__inject_constructor(clazz, constructor, body)
 
     def serialize(self, dto):
-        if isinstance(dto, list):
+        if isinstance(dto, list) or isinstance(dto, tuple):
             return [self.serialize(x) for x in dto]
         if self.is_a_registered_dto_type(type(dto)):
             return self.serialize(dto.__dict__)

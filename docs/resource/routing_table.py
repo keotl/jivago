@@ -1,5 +1,5 @@
 from jivago.wsgi.methods import GET, POST
-from jivago.wsgi.routing.tree_routing_table import TreeRoutingTable
+from jivago.wsgi.routing.table.tree_routing_table import TreeRoutingTable
 
 my_routing_table = TreeRoutingTable()
 

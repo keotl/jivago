@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from jivago.wsgi.methods import GET
-from jivago.wsgi.routing.composite_routing_table import CompositeRoutingTable
+from jivago.wsgi.routing.table.composite_routing_table import CompositeRoutingTable
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 from jivago.wsgi.routing.routing_table import RoutingTable

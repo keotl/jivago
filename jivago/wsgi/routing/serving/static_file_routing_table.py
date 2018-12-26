@@ -10,6 +10,7 @@ from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathExce
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
 from jivago.wsgi.routing.serving.static_file_serving_resource import StaticFileServingResource
+from jivago.wsgi.routing.table.path_util import split_path
 
 
 class StaticFileRoutingTable(RoutingTable):
@@ -26,9 +27,10 @@ class StaticFileRoutingTable(RoutingTable):
             raise UnknownPathException()
         if http_primitive != GET:
             raise MethodNotAllowedException()
-        split_path = Stream(path.split("/")).filter(lambda x: x != '').toList()
-        return [
-            RouteRegistration(StaticFileServingResource(filepath), StaticFileServingResource.serve_file, split_path)]
+        return [RouteRegistration(StaticFileServingResource(filepath),
+                                  StaticFileServingResource.serve_file,
+                                  split_path(path),
+                                  GET)]
 
     @Override
     def can_handle(self, http_primitive: Annotation, path: str) -> bool:
@@ -40,3 +42,9 @@ class StaticFileRoutingTable(RoutingTable):
         if self.allowed_extensions is None:
             return False
         return Stream(self.allowed_extensions).noneMatch(lambda extension: path.endswith(extension))
+
+    @Override
+    def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
+        return self.get_route_registrations(GET, path)
+
+

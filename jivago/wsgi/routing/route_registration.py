@@ -1,10 +1,14 @@
 from typing import Callable, List, Union
 
+from jivago.lang.registry import Annotation
 from jivago.lang.stream import Stream
 
 
 class RouteRegistration(object):
-    def __init__(self, resource_class: Union[type, object], route_function: Callable, registered_path: List[str]):
+
+    def __init__(self, resource_class: Union[type, object], route_function: Callable, registered_path: List[str],
+                 http_method: Annotation):
+        self.http_method = http_method
         self.resourceClass = resource_class
         self.routeFunction = route_function
         self.registeredPath = registered_path

@@ -3,9 +3,11 @@ from unittest import mock
 
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.filter.filter_chain import FilterChain
+from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
+from jivago.wsgi.invocation.resource_invoker import ResourceInvoker
+from jivago.wsgi.invocation.resource_invoker_factory import ResourceInvokerFactory
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.invocation.resource_invocator import ResourceInvocator
 
 A_REQUEST = Request('GET', "/path", {}, "", "")
 A_RESPONSE = Response.empty()
@@ -14,17 +16,19 @@ A_RESPONSE = Response.empty()
 class FilterChainTest(unittest.TestCase):
 
     def setUp(self):
-        self.resourceInvocatorMock: ResourceInvocator = mock.create_autospec(ResourceInvocator)
+        self.resourceInvokerFactoryMock: ResourceInvokerFactory = mock.create_autospec(ResourceInvokerFactory)
+        self.resourceInvokerMock: ResourceInvoker = mock.create_autospec(ResourceInvoker)
         self.filterMock: Filter = mock.create_autospec(Filter)
         self.secondFilterMock: Filter = mock.create_autospec(Filter)
-        self.filterChain = FilterChain([self.filterMock, self.secondFilterMock], self.resourceInvocatorMock)
+        self.filterChain = FilterChain([self.filterMock, self.secondFilterMock], self.resourceInvokerFactoryMock)
+        self.resourceInvokerFactoryMock.create_resource_invokers.return_value = [self.resourceInvokerMock]
 
     def test_givenEmptyFilterChain_whenApplyingFilterChain_thenInvokeResourceInvocator(self):
-        self.filterChain = FilterChain([], self.resourceInvocatorMock)
+        self.filterChain = FilterChain([], self.resourceInvokerFactoryMock)
 
         self.filterChain.doFilter(A_REQUEST, A_RESPONSE)
 
-        self.resourceInvocatorMock.invoke.assert_called_with(A_REQUEST)
+        self.resourceInvokerFactoryMock.create_resource_invokers.assert_called_with(A_REQUEST)
 
     def test_givenNonEmptyFilterChain_whenGettingNextChain_thenReturnANewChainWithOneFewerFilter(self):
         next_chain = self.filterChain.getNextChain()
@@ -37,3 +41,14 @@ class FilterChainTest(unittest.TestCase):
 
         self.filterMock.doFilter.assert_called_once()
         self.secondFilterMock.doFilter.assert_not_called()
+
+    def test_givenExceptionInOneOfTheResourceInvokers_whenInvoking_thenSilenceTheException(self):
+        self.second_resource_invoker_mock: ResourceInvoker = mock.create_autospec(ResourceInvoker)
+        self.second_resource_invoker_mock.invoke.side_effect = IncorrectResourceParametersException()
+        self.resourceInvokerFactoryMock.create_resource_invokers.return_value = [self.second_resource_invoker_mock, self.resourceInvokerMock]
+        self.filterChain.filters = []
+
+        self.filterChain.doFilter(A_REQUEST, A_RESPONSE)
+
+        self.resourceInvokerMock.invoke.assert_called_with(A_REQUEST)
+

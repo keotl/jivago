@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Union, Type
 
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Annotation
 from jivago.lang.stream import Stream
+from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.routing_exception import RoutingException
 from jivago.wsgi.routing.route_registration import RouteRegistration
@@ -33,3 +34,21 @@ class CompositeRoutingTable(RoutingTable):
 
     def add_routing_table(self, routing_table: RoutingTable):
         self.routing_tables.append(routing_table)
+
+    @Override
+    def get_filters(self, http_primitive: Annotation, path: str) -> List[Union[Filter, Type[Filter]]]:
+        return Stream(self.routing_tables) \
+            .firstMatch(lambda table: table.can_handle(http_primitive, path)) \
+            .get_filters(http_primitive, path)
+
+    @Override
+    def add_filter(self, filter: Union[Filter, Type[Filter]]):
+        Stream(self.routing_tables).forEach(lambda table: table.add_filter(filter))
+
+    @Override
+    def set_filters(self, filters: List[Union[Filter, Type[Filter]]]):
+        Stream(self.routing_tables).forEach(lambda table: table.set_filters(filters))
+
+    @Override
+    def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
+        return list(Stream(self.routing_tables).map(lambda table: table._get_all_routes_for_path(path)).flat().toSet())

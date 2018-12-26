@@ -1,17 +1,18 @@
-from typing import List
+from typing import List, Union, Type
 
 from jivago.lang.registration import Registration
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Path
+from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.methods import http_methods
-from jivago.wsgi.routing.tree_routing_table import TreeRoutingTable
+from jivago.wsgi.routing.table.tree_routing_table import TreeRoutingTable
 
 
 class ReflectiveRoutingTable(TreeRoutingTable):
 
-    def __init__(self, registry: Registry, resources: List[Registration]):
-        super().__init__()
+    def __init__(self, registry: Registry, resources: List[Registration], filters: List[Union[Filter, Type[Filter]]]):
+        super().__init__(filters)
         for resource in resources:
             for primitive in http_methods:
                 routable_functions = registry.get_annotated_in_package(primitive, resource.registered.__module__)

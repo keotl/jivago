@@ -1,8 +1,9 @@
 import os
-from typing import List, Type
+from typing import List, Type, Union
 
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.exception_mapper_binder import ExceptionMapperBinder
+from jivago.config.router_builder import RouterBuilder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.event.annotations import EventHandlerClass
 from jivago.event.async_event_bus import AsyncEventBus
@@ -31,10 +32,7 @@ from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeseria
 from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
 from jivago.wsgi.request.partial_content_handler import PartialContentHandler
-from jivago.wsgi.request.request_factory import RequestFactory
-from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
-from jivago.wsgi.routing.auto_discovering_routing_table import AutoDiscoveringRoutingTable
-from jivago.wsgi.routing.router import Router
+from jivago.wsgi.routing.table.auto_discovering_routing_table import AutoDiscoveringRoutingTable
 
 
 class ProductionJivagoContext(AbstractContext):
@@ -64,13 +62,12 @@ class ProductionJivagoContext(AbstractContext):
             cache = ScopeCache(scope, scoped_classes)
             self.serviceLocator.register_scope(cache)
 
-        Stream(self.get_filters("")).forEach(lambda f: self.serviceLocator.bind(f, f))
+        Stream(self.get_default_filters()).forEach(lambda f: self.serviceLocator.bind(f, f))
 
         # TODO better way to handle Jivago Dependencies
         self.serviceLocator.bind(TaskScheduler, TaskScheduler(self.serviceLocator))
         self.serviceLocator.bind(DtoSerializationHandler, DtoSerializationHandler(Registry.INSTANCE))
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))
-        self.serviceLocator.bind(UrlEncodedQueryParser, UrlEncodedQueryParser)
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
@@ -85,12 +82,6 @@ class ProductionJivagoContext(AbstractContext):
         return [Singleton, BackgroundWorker]
 
     @Override
-    def get_filters(self, path: str) -> List[Type[Filter]]:
-        filters = [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter, HttpFormDeserializationFilter,
-                   BodySerializationFilter, ApplicationExceptionFilter]
-        return [JivagoBannerFilter] + filters if self.banner else filters
-
-    @Override
     def get_views_folder_path(self) -> str:
         return os.path.join(os.path.dirname(self.root_package.__file__), "views") if self.root_package else ''
 
@@ -99,9 +90,19 @@ class ProductionJivagoContext(AbstractContext):
         return ["application.yml", "application.json", "properties.yml", "properties.json"]
 
     @Override
-    def create_router(self) -> Router:
-        routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name)
-        return Router(self.registry, self.root_package_name, self.serviceLocator, self, RequestFactory(), routing_table)
+    def create_router_config(self) -> RouterBuilder:
+        routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name, self.get_default_filters())
+
+        return RouterBuilder().add_routing_table(routing_table)
+
+    def get_default_filters(self) -> List[Union[Filter, Type[Filter]]]:
+        default_filters = [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter,
+                           HttpFormDeserializationFilter,
+                           BodySerializationFilter, ApplicationExceptionFilter]
+        if self.banner:
+            default_filters.append(JivagoBannerFilter)
+
+        return default_filters
 
     def create_event_bus(self) -> EventBus:
         return ReflectiveEventBusInitializer(self.service_locator(), self.registry,

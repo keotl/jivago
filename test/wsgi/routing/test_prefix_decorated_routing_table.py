@@ -3,9 +3,14 @@ from unittest import mock
 
 from jivago.wsgi.methods import GET
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
-from jivago.wsgi.routing.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
+from jivago.wsgi.routing.table.prefix_decorated_routing_table import PrefixDecoratedRoutingTable
+from jivago.wsgi.routing.table.tree_routing_table import TreeRoutingTable
+
+RESOURCE_CLASS = object()
+
+ROUTE_FUNCTION = object()
 
 PREFIX = "/prefix"
 
@@ -33,3 +38,12 @@ class PrefixDecoratedRoutingTableTest(unittest.TestCase):
         routing_table = PrefixDecoratedRoutingTable(self.decorated_routing_table, "prefix/")
 
         self.assertEqual("/prefix", routing_table.prefix)
+
+    def test_whenGettingAllRegisteredPaths_thenAddPrefixToDecoratedTableRoutes(self):
+        self.routing_table.routing_table = TreeRoutingTable([])
+        self.routing_table.routing_table.register_route(GET, "path", RESOURCE_CLASS, ROUTE_FUNCTION)
+
+        routes = self.routing_table._get_all_routes_for_path("/prefix/path")
+
+        self.assertEqual(1, len(routes))
+        self.assertEqual(["/prefix", "path"], routes[0].registeredPath)
