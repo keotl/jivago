@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Union, Type
 
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Annotation
 from jivago.lang.stream import Stream
+from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.methods import OPTIONS
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.routing.cors.cors_preflight_resource import CorsPreflightResource
@@ -29,7 +30,7 @@ class CorsRoutingTable(RoutingTable):
 
         if len(routes) > 0:
             return [RouteRegistration(self.preflight_resource,
-                                      self.preflight_resource.preflight,
+                                      CorsPreflightResource.preflight,
                                       split_path(path),
                                       OPTIONS)]
 
@@ -45,3 +46,11 @@ class CorsRoutingTable(RoutingTable):
     @Override
     def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
         return self.decorated_routing_table._get_all_routes_for_path(path)
+
+    @Override
+    def get_filters(self, http_primitive: Annotation, path: str) -> List[Union[Filter, Type[Filter]]]:
+        return self.decorated_routing_table.get_filters(http_primitive, path)
+
+    @Override
+    def add_filter(self, filter: Union[Filter, Type[Filter]]):
+        self.decorated_routing_table.add_filter(filter)
