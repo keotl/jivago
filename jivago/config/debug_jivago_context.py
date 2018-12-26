@@ -15,7 +15,7 @@ class DebugJivagoContext(ProductionJivagoContext):
         super().__init__(root_package, registry, banner=banner)
 
     @Override
-    def get_default_filters(self, path: str) -> List[Type[Filter]]:
-        production_filters = super().get_default_filters(path)
+    def get_default_filters(self) -> List[Type[Filter]]:
+        production_filters = super().get_default_filters()
         production_filters.remove(UnknownExceptionFilter)
         return [NoCorsFilter, DebugExceptionFilter] + production_filters

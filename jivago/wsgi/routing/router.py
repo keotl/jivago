@@ -28,10 +28,10 @@ class Router(object):
     def route(self, env, start_response):
         request = self.request_factory.build_request(env)
 
-        filter_insances = Stream(self.routing_table.get_filters()).map(
+        filter_insances = Stream(self.routing_table.get_filters(request.method_annotation, request.path)).map(
             lambda filter: filter if isinstance(filter, Filter) else self.serviceLocator.get(filter)).toList()
 
-        filter_chain = FilterChain(filter_insances, self.resource_invoker_factory.create_resource_invokers(request))
+        filter_chain = FilterChain(filter_insances, self.resource_invoker_factory)
 
         response = Response.empty()
 

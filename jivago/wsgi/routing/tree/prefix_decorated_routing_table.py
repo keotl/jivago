@@ -27,7 +27,7 @@ class PrefixDecoratedRoutingTable(RoutingTable):
         return path.startswith(self.prefix) and self.routing_table.can_handle(http_primitive, path[len(self.prefix)::])
 
     @Override
-    def get_filters(self) -> List[Union[Filter, Type[Filter]]]:
+    def get_filters(self, http_primitive: Annotation, path: str) -> List[Union[Filter, Type[Filter]]]:
         return self.routing_table.filters
 
     @Override
