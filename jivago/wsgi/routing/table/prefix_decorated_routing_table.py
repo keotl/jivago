@@ -2,6 +2,7 @@ from typing import List, Union, Type
 
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Annotation
+from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 from jivago.wsgi.routing.route_registration import RouteRegistration
@@ -33,3 +34,11 @@ class PrefixDecoratedRoutingTable(RoutingTable):
     @Override
     def add_filter(self, filter: Union[Filter, Type[Filter]]):
         self.routing_table.add_filter(filter)
+
+    @Override
+    def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
+        return Stream(self.routing_table._get_all_routes_for_path(path[len(self.prefix)::])).map(
+            lambda route: RouteRegistration(route.resourceClass,
+                                            route.routeFunction,
+                                            [self.prefix] + route.registeredPath,
+                                            route.http_method)).toList()

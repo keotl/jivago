@@ -21,3 +21,6 @@ class RoutingTable(object):
 
     def add_filter(self, filter: Union[Filter, Type[Filter]]):
         self.filters.append(filter)
+
+    def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
+        raise NotImplementedError

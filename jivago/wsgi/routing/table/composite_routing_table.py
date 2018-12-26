@@ -44,3 +44,7 @@ class CompositeRoutingTable(RoutingTable):
     @Override
     def add_filter(self, filter: Union[Filter, Type[Filter]]):
         super().add_filter(filter)
+
+    @Override
+    def _get_all_routes_for_path(self, path: str) -> List[RouteRegistration]:
+        return list(Stream(self.routing_tables).map(lambda table: table._get_all_routes_for_path(path)).flat().toSet())

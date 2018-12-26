@@ -310,4 +310,4 @@ class ResourceClass(object):
         return headers.items()
 
 
-ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""])
+ROUTE_REGISTRATION = RouteRegistration(ResourceClass, ResourceClass.a_method, [""], GET)
