@@ -13,7 +13,7 @@ HTTP_PRIMITIVE = GET
 class TreeRoutingTableTest(unittest.TestCase):
 
     def setUp(self):
-        self.routing_table = TreeRoutingTable()
+        self.routing_table = TreeRoutingTable([])
         self.routing_table.register_route(HTTP_PRIMITIVE, PATH, A_Resource, A_Resource.get_hello)
 
     def test_whenRegisteringRoute_thenRouteRegistrationIsSaved(self):
@@ -35,6 +35,7 @@ class TreeRoutingTableTest(unittest.TestCase):
 
     def test_givenInexistentRoute_whenCheckingCanHandle_thenTableCannotHandleRoute(self):
         self.assertFalse(self.routing_table.can_handle(HTTP_PRIMITIVE, "/bar/baz"))
+
 
 class A_Resource(object):
 

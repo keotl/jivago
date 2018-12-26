@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.wsgi.request.url_encoded_query_parser import UrlEncodedQueryParser
+from jivago.wsgi.invocation.url_encoded_form_parser import parse_urlencoded_form
 
 A_METHOD = "GET"
 A_PATH = "/hello"
@@ -11,17 +11,14 @@ BODY = ""
 
 class UrlEncodedQueryParserTest(unittest.TestCase):
 
-    def setUp(self):
-        self.queryParser = UrlEncodedQueryParser()
-
     def test_whenParsingQueryParameters_thenReturnQueryKeyPairsInADictionary(self):
-        parameters = self.queryParser.parse_urlencoded_query(QUERY_STRING)
+        parameters = parse_urlencoded_form(QUERY_STRING)
 
         self.assertEqual(2, len(parameters))
         self.assertEqual("foobar", parameters['query'])
         self.assertEqual("barbaz", parameters['query2'])
 
     def test_givenRequestWithoutQueryParameters_whenParsingQueryParameters_thenReturnEmptyDictionary(self):
-        parameters = self.queryParser.parse_urlencoded_query("")
+        parameters = parse_urlencoded_form("")
 
         self.assertEqual(0, len(parameters))
