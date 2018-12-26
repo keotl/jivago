@@ -8,6 +8,7 @@ from jivago.event.annotations import EventHandlerClass
 from jivago.event.async_event_bus import AsyncEventBus
 from jivago.event.event_bus import EventBus
 from jivago.event.reflective_event_bus_initializer import ReflectiveEventBusInitializer
+from jivago.event.synchronous_event_bus import SynchronousEventBus
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
 from jivago.inject.scope_cache import ScopeCache
@@ -75,6 +76,7 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
         self.serviceLocator.bind(ObjectMapper, ObjectMapper)
         self.serviceLocator.bind(EventBus, self.create_event_bus())
+        self.serviceLocator.bind(SynchronousEventBus, self.serviceLocator.get(EventBus))
         self.serviceLocator.bind(AsyncEventBus, AsyncEventBus(self.serviceLocator.get(EventBus)))
 
         ExceptionMapperBinder().bind(self.serviceLocator)
