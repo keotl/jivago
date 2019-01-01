@@ -1,10 +1,10 @@
 import anachronos
-from anachronos.test.boot.test_runner import RunWith
+from anachronos.test.boot.test_runner import RunTest
 from e2e_test.testing_messages import SIMPLE_GET
-from e2e_test.tests.runner import http, AppRunner
+from e2e_test.tests.runner import http
 
 
-@RunWith(AppRunner)
+@RunTest
 class SimpleResourceTest(anachronos.TestCase):
 
     def test_simple_get(self):
@@ -16,7 +16,7 @@ class SimpleResourceTest(anachronos.TestCase):
         response = http.post("/", json={'name': 'Paul Atreides', 'age': 17}).json()
 
         self.assertEqual('Paul Atreides', response['name'])
-        
+
 
 if __name__ == '__main__':
     anachronos.run_tests()
