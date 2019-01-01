@@ -1,10 +1,8 @@
 import anachronos
-from anachronos.test.boot.test_runner import RunTest
 from e2e_test.testing_messages import SIMPLE_GET
 from e2e_test.tests.runner import http
 
 
-@RunTest
 class SimpleResourceTest(anachronos.TestCase):
 
     def test_simple_get(self):

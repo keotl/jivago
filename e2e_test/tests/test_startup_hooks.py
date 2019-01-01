@@ -1,10 +1,7 @@
 import anachronos
-from anachronos.test.boot.test_runner import RunWith
 from e2e_test.testing_messages import PREINIT, INIT, POSTINIT
-from e2e_test.tests.runner import AppRunner
 
 
-@RunWith(AppRunner)
 class StartupHooksTest(anachronos.TestCase):
 
     def test_hook_order(self):
