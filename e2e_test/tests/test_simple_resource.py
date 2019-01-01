@@ -12,6 +12,11 @@ class SimpleResourceTest(anachronos.TestCase):
 
         self.assertThat(SIMPLE_GET).is_stored()
 
+    def test_post_dto(self):
+        response = http.post("/", json={'name': 'Paul Atreides', 'age': 17}).json()
+
+        self.assertEqual('Paul Atreides', response['name'])
+        
 
 if __name__ == '__main__':
     anachronos.run_tests()
