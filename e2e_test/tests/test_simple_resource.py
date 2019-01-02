@@ -1,6 +1,6 @@
 import anachronos
+from e2e_test.runner import http
 from e2e_test.testing_messages import SIMPLE_GET
-from e2e_test.tests.runner import http
 
 
 class SimpleResourceTest(anachronos.TestCase):
