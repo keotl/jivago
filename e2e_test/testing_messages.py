@@ -2,6 +2,7 @@
 SIMPLE_GET = "Resource:GET"
 SIMPLE_POST_DTO = "Resource:Got RequestDto"
 DIFFERENT_POST_DTO = "Resource:Got AuthenticatedRequestDto(RequestDto)"
+GET_WITH_PARAMETERS = "Resource:Got Query Parameters"
 
 # Runnable
 PREINIT = "Hooks:PreInit"

@@ -4,7 +4,7 @@ from e2e_test.app.components.dtos.request_dto import RequestDto, AuthenticatedRe
 from e2e_test.app.components.dtos.response_dto import ResponseDto
 from e2e_test.testing_messages import *
 from jivago.lang.annotations import Inject
-from jivago.wsgi.annotations import Resource
+from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.methods import GET, POST
 
 
@@ -29,3 +29,9 @@ class SimpleResource(object):
     def post_different_body(self, request: AuthenticatedRequestDto) -> ResponseDto:
         self.anachronos.store(DIFFERENT_POST_DTO)
         return ResponseDto(request.name, True)
+
+    @GET
+    @Path("/params")
+    def get_with_parameters(self, query: str, age: int) -> str:
+        self.anachronos.store(GET_WITH_PARAMETERS + f" {query} {age}")
+        return "OK"
