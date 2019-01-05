@@ -1,7 +1,8 @@
 import anachronos
 
 from e2e_test.runner import http
-from e2e_test.testing_messages import SIMPLE_GET, SIMPLE_POST_DTO, DIFFERENT_POST_DTO, GET_WITH_PARAMETERS
+from e2e_test.testing_messages import SIMPLE_GET, SIMPLE_POST_DTO, DIFFERENT_POST_DTO, GET_WITH_PARAMETERS, \
+    GET_WITH_PATH_PARAMETER
 
 
 class SimpleResourceTest(anachronos.TestCase):
@@ -39,6 +40,11 @@ class SimpleResourceTest(anachronos.TestCase):
 
         self.assertEqual(400, response.status_code)
         self.assertThat(GET_WITH_PARAMETERS + " foo a").is_never_stored()
+
+    def test_withPathParameter(self):
+        http.get("/path/foobar")
+
+        self.assertThat(GET_WITH_PATH_PARAMETER).is_contained()
 
 
 if __name__ == '__main__':

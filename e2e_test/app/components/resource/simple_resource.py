@@ -35,3 +35,9 @@ class SimpleResource(object):
     def get_with_parameters(self, query: str, age: int) -> str:
         self.anachronos.store(GET_WITH_PARAMETERS + f" {query} {age}")
         return "OK"
+
+    @GET
+    @Path("/path/{param}")
+    def get_with_path_param(self, param: str) -> str:
+        self.anachronos.store(GET_WITH_PATH_PARAMETER + f" param")
+        return "OK"
