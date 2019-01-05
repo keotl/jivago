@@ -1,7 +1,8 @@
 from anachronos import Anachronos
-from e2e_test.app.components.dtos.request_dto import RequestDto
+
+from e2e_test.app.components.dtos.request_dto import RequestDto, AuthenticatedRequestDto
 from e2e_test.app.components.dtos.response_dto import ResponseDto
-from e2e_test.testing_messages import SIMPLE_GET
+from e2e_test.testing_messages import *
 from jivago.lang.annotations import Inject
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.methods import GET, POST
@@ -21,4 +22,10 @@ class SimpleResource(object):
 
     @POST
     def post_body(self, request: RequestDto) -> ResponseDto:
+        self.anachronos.store(SIMPLE_POST_DTO)
+        return ResponseDto(request.name, True)
+
+    @POST
+    def post_different_body(self, request: AuthenticatedRequestDto) -> ResponseDto:
+        self.anachronos.store(DIFFERENT_POST_DTO)
         return ResponseDto(request.name, True)
