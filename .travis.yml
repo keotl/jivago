@@ -13,6 +13,7 @@ install:
 - pip install -r requirements.txt
 script:
 - sh run_tests.sh
+- sh run_e2e_tests.sh
 branches:
   only:
   - master
