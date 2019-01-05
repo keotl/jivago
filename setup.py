@@ -38,7 +38,7 @@ setup(
     ],
 
     packages=find_packages(
-        exclude=['contrib', 'docs', 'tests', 'tests.*', 'example_app', 'example_app.*', 'test_data', 'test_data.*', 'test_utils', 'test_utils.*']),
+        exclude=['contrib', 'docs', 'tests', 'tests.*', 'example_app', 'example_app.*', 'test_data', 'test_data.*', 'test_utils', 'test_utils.*', 'e2e_test', 'e2e_test.*']),
 
     install_requires=['Jinja2', 'MarkupSafe', 'croniter', 'pyyaml', 'werkzeug'],
 )
