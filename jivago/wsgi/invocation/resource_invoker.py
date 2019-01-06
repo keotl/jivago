@@ -68,10 +68,13 @@ class ResourceInvoker(object):
         elif parameter_type == Headers:
             return request.headers
         elif parameter_type in ALLOWED_URL_PARAMETER_TYPES:
-            if parameter_name in path_parameters:
-                return parameter_type(self._url_parameter_unescape(path_parameters[parameter_name]))
-            elif parameter_name in query_parameters:
-                return parameter_type(self._url_parameter_unescape(query_parameters[parameter_name]))
+            try:
+                if parameter_name in path_parameters:
+                    return parameter_type(self._url_parameter_unescape(path_parameters[parameter_name]))
+                elif parameter_name in query_parameters:
+                    return parameter_type(self._url_parameter_unescape(query_parameters[parameter_name]))
+            except ValueError:
+                raise MissingRouteInvocationArgument(parameter_name, parameter_type)
         elif self.dto_serialization_handler.is_deserializable_into(parameter_type):
             try:
                 return self.dto_serialization_handler.deserialize(request.body, parameter_type)

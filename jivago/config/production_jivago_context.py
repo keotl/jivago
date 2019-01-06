@@ -26,7 +26,7 @@ from jivago.wsgi.annotations import Resource
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.filter.filtering_rule import FilteringRule
 from jivago.wsgi.filter.system_filters.body_serialization_filter import BodySerializationFilter
-from jivago.wsgi.filter.system_filters.error_handling import ApplicationExceptionFilter
+from jivago.wsgi.filter.system_filters.error_handling.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filter.system_filters.error_handling.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filter.system_filters.jivago_banner_filter import JivagoBannerFilter
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter

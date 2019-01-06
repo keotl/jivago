@@ -1,6 +1,8 @@
 import re
 from typing import List, Union, Type
 
+from jivago.inject.service_locator import ServiceLocator
+from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter import Filter
 
 
@@ -13,3 +15,6 @@ class FilteringRule(object):
 
     def matches(self, path: str) -> bool:
         return self.regex_matcher.search(path) is not None
+
+    def get_filters(self, service_locator: ServiceLocator) -> List[Filter]:
+        return Stream(self.filters).map(lambda f: f if isinstance(f, Filter) else service_locator.get(f)).toList()
