@@ -4,8 +4,8 @@ from jivago.config.production_jivago_context import ProductionJivagoContext
 from jivago.config.router_builder import RouterBuilder
 from jivago.lang.annotations import Override
 from jivago.lang.registry import Registry
-from jivago.wsgi.filter.error_handling.debug_exception_filter import DebugExceptionFilter
-from jivago.wsgi.filter.error_handling.unknown_exception_filter import UnknownExceptionFilter
+from jivago.wsgi.filter.system_filters.error_handling.debug_exception_filter import DebugExceptionFilter
+from jivago.wsgi.filter.system_filters.error_handling.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.request.headers import Headers
 

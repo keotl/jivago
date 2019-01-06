@@ -2,7 +2,7 @@ import unittest
 from unittest import mock
 
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.filter.body_serialization_filter import BodySerializationFilter
+from jivago.wsgi.filter.system_filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filter.filter_chain import FilterChain
 from test_utils.request_builder import RequestBuilder
 from test_utils.response_builder import ResponseBuilder

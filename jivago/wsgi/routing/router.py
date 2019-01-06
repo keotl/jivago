@@ -2,10 +2,8 @@ import logging
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
-from jivago.lang.stream import Stream
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.filter.filter import Filter
-from jivago.wsgi.filter.filter_chain import FilterChain
+from jivago.wsgi.filter.filter_chain_factory import FilterChainFactory
 from jivago.wsgi.invocation.resource_invoker_factory import ResourceInvokerFactory
 from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.request_factory import RequestFactory
@@ -17,7 +15,9 @@ class Router(object):
     LOGGER = logging.getLogger("Jivago").getChild("Router")
 
     def __init__(self, registry: Registry, service_locator: ServiceLocator,
-                 request_factory: RequestFactory, routing_table: RoutingTable):
+                 request_factory: RequestFactory, routing_table: RoutingTable,
+                 filter_chain_factory: FilterChainFactory):
+        self.filter_chain_factory = filter_chain_factory
         self.request_factory = request_factory
         self.serviceLocator = service_locator
         self.routing_table = routing_table
@@ -28,10 +28,7 @@ class Router(object):
     def route(self, env, start_response):
         request = self.request_factory.build_request(env)
 
-        filter_instances = Stream(self.routing_table.get_filters(request.method_annotation, request.path)).map(
-            lambda filter: filter if isinstance(filter, Filter) else self.serviceLocator.get(filter)).toList()
-
-        filter_chain = FilterChain(filter_instances, self.resource_invoker_factory)
+        filter_chain = self.filter_chain_factory.create_filter_chain(request.method_annotation, request.path)
 
         response = Response.empty()
 

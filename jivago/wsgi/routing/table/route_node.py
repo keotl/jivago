@@ -1,8 +1,8 @@
 from typing import List
 
-from jivago.lang.registry import Annotation
-from jivago.wsgi.routing.route_registration import RouteRegistration
+from jivago.wsgi.methods import HttpMethod
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
+from jivago.wsgi.routing.route_registration import RouteRegistration
 
 PATH_PARAMETER = object()
 
@@ -12,7 +12,7 @@ class RouteNode(object):
         self.children = {}
         self.invocators = {}
 
-    def register_child(self, path: List[str], http_primitive: Annotation, route_registration: RouteRegistration):
+    def register_child(self, path: List[str], http_primitive: HttpMethod, route_registration: RouteRegistration):
         if len(path) == 0:
             if http_primitive in self.invocators:
                 self.invocators[http_primitive].append(route_registration)

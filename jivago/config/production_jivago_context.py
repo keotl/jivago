@@ -23,15 +23,17 @@ from jivago.serialization.object_mapper import ObjectMapper
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
-from jivago.wsgi.filter.body_serialization_filter import BodySerializationFilter
-from jivago.wsgi.filter.error_handling.application_exception_filter import ApplicationExceptionFilter
-from jivago.wsgi.filter.error_handling.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filter.filter import Filter
-from jivago.wsgi.filter.jivago_banner_filter import JivagoBannerFilter
+from jivago.wsgi.filter.filtering_rule import FilteringRule
+from jivago.wsgi.filter.system_filters.body_serialization_filter import BodySerializationFilter
+from jivago.wsgi.filter.system_filters.error_handling import ApplicationExceptionFilter
+from jivago.wsgi.filter.system_filters.error_handling.unknown_exception_filter import UnknownExceptionFilter
+from jivago.wsgi.filter.system_filters.jivago_banner_filter import JivagoBannerFilter
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
 from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
 from jivago.wsgi.request.partial_content_handler import PartialContentHandler
+from jivago.wsgi.routing.routing_rule import RoutingRule
 from jivago.wsgi.routing.table.auto_discovering_routing_table import AutoDiscoveringRoutingTable
 
 
@@ -91,9 +93,9 @@ class ProductionJivagoContext(AbstractContext):
 
     @Override
     def create_router_config(self) -> RouterBuilder:
-        routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name, self.get_default_filters())
-
-        return RouterBuilder().add_routing_table(routing_table)
+        return RouterBuilder() \
+            .add_rule(FilteringRule("*", self.get_default_filters())) \
+            .add_rule(RoutingRule("/", AutoDiscoveringRoutingTable(self.registry, self.root_package_name)))
 
     def get_default_filters(self) -> List[Union[Filter, Type[Filter]]]:
         default_filters = [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter,

@@ -1,5 +1,5 @@
 from jivago.lang.annotations import Override
-from jivago.wsgi.filter.error_handling.exception_mapper import ExceptionMapper
+from jivago.wsgi.filter.system_filters.error_handling.exception_mapper import ExceptionMapper
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response

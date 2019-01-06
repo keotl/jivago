@@ -2,7 +2,7 @@ from typing import List
 
 from jivago.lang.annotations import Override, Inject
 from jivago.lang.stream import Stream
-from jivago.wsgi.filter.error_handling.exception_mapper import ExceptionMapper
+from jivago.wsgi.filter.system_filters.error_handling.exception_mapper import ExceptionMapper
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.request.request import Request
