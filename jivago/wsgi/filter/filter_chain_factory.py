@@ -11,8 +11,8 @@ class FilterChainFactory(object):
 
     def __init__(self, filtering_rules: List[FilteringRule],
                  service_locator: ServiceLocator,
-                 resource_invoker_factory: RouteHandlerFactory):
-        self.resource_invoker_factory = resource_invoker_factory
+                 route_handler_factory: RouteHandlerFactory):
+        self.route_handler_factory = route_handler_factory
         self.service_locator = service_locator
         self.filtering_rules = filtering_rules
 
@@ -23,4 +23,4 @@ class FilterChainFactory(object):
             .flat() \
             .toList()
 
-        return FilterChain(filters, self.resource_invoker_factory)
+        return FilterChain(filters, self.route_handler_factory)

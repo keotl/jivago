@@ -21,6 +21,12 @@ class FilteringRuleTest(unittest.TestCase):
         self.assertTrue(rule.matches("/users/foo/bar"))
         self.assertFalse(rule.matches("/users"))
 
+    def test_givenSpecificPath_whenMatchingRule_thenPathMustMatchRuleExactly(self):
+        rule = FilteringRule("/users", [])
+
+        self.assertTrue(rule.matches("/users"))
+        self.assertFalse(rule.matches("/users/foobar"))
+
     def test_givenRegexString_whenMatchingRule_thenUseRegexpAsIs(self):
         rule = FilteringRule("", [], regex_pattern=r"^/users/.*/delete$")
 
@@ -46,3 +52,5 @@ class FilteringRuleTest(unittest.TestCase):
 
         self.assertEqual(1, len(filters))
         self.assertEqual(instance, filters[0])
+
+
