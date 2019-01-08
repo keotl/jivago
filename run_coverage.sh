@@ -10,7 +10,7 @@ rm -rf temp
 for dir in $(find test/ -type d)
 do
     dir=${dir%*/}
-    cd ${dir}; coverage run --omit "${startingDir}/venv*" -p -m unittest discover .; cd ${startingDir}
+    cd ${dir}; coverage run --source=jivago --omit "${startingDir}/venv*" -p -m unittest discover .; cd ${startingDir}
 done
 
 mkdir -p temp
