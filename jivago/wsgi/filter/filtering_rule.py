@@ -1,12 +1,13 @@
 import re
 from typing import List, Union, Type
 
+from jivago.config.router_config_rule import RouterConfigRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter import Filter
 
 
-class FilteringRule(object):
+class FilteringRule(RouterConfigRule):
 
     def __init__(self, url_pattern: str, filters: List[Union[Filter, Type[Filter]]], regex_pattern: str = None):
         self.filters = filters

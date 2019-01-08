@@ -2,10 +2,12 @@ import urllib.parse
 
 from jivago.inject import typing_meta_helper
 from jivago.inject.service_locator import ServiceLocator
+from jivago.lang.annotations import Override
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
 from jivago.wsgi.invocation.missing_route_invocation_argument import MissingRouteInvocationArgument
+from jivago.wsgi.invocation.route_handler import RouteHandler
 from jivago.wsgi.invocation.url_encoded_form_parser import parse_urlencoded_form
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
@@ -15,7 +17,7 @@ from jivago.wsgi.routing.route_registration import RouteRegistration
 ALLOWED_URL_PARAMETER_TYPES = (str, int, float)
 
 
-class ResourceInvoker(object):
+class ResourceInvoker(RouteHandler):
 
     def __init__(self, route_registration: RouteRegistration, service_locator: ServiceLocator,
                  dto_serialization_handler: DtoSerializationHandler):
@@ -23,6 +25,7 @@ class ResourceInvoker(object):
         self.service_locator = service_locator
         self.dto_serialization_handler = dto_serialization_handler
 
+    @Override
     def invoke(self, request: Request) -> Response:
         resource = self.get_resource_instance()
         try:
