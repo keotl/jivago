@@ -3,6 +3,9 @@ from typing import List, Type, Union
 
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.exception_mapper_binder import ExceptionMapperBinder
+from jivago.config.router.filtering.annotation import RequestFilter
+from jivago.config.router.filtering.auto_discovering_filtering_rule import AutoDiscoveringFilteringRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.config.router.router_builder import RouterBuilder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.event.annotations import EventHandlerClass
@@ -10,11 +13,12 @@ from jivago.event.async_event_bus import AsyncEventBus
 from jivago.event.event_bus import EventBus
 from jivago.event.reflective_event_bus_initializer import ReflectiveEventBusInitializer
 from jivago.event.synchronous_event_bus import SynchronousEventBus
+from jivago.inject.annotation import Component, Singleton
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
-from jivago.lang.registry import Singleton, Component, Registry
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.scheduling.annotations import Scheduled
 from jivago.scheduling.task_scheduler import TaskScheduler
@@ -24,7 +28,6 @@ from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.filter.filter import Filter
-from jivago.config.router.filtering_rule import FilteringRule
 from jivago.wsgi.filter.system_filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filter.system_filters.error_handling.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filter.system_filters.error_handling.unknown_exception_filter import UnknownExceptionFilter
@@ -56,6 +59,7 @@ class ProductionJivagoContext(AbstractContext):
         AnnotatedClassBinder(self.root_package_name, self.registry, PreInit).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, PostInit).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, EventHandlerClass).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.root_package_name, self.registry, RequestFilter).bind(self.serviceLocator)
 
         ProviderBinder(self.root_package_name, self.registry).bind(self.serviceLocator)
         for scope in self.scopes():
@@ -95,6 +99,7 @@ class ProductionJivagoContext(AbstractContext):
     def create_router_config(self) -> RouterBuilder:
         return RouterBuilder() \
             .add_rule(FilteringRule("*", self.get_default_filters())) \
+            .add_rule(AutoDiscoveringFilteringRule("*", self.registry, self.root_package_name)) \
             .add_rule(RoutingRule("/", AutoDiscoveringRoutingTable(self.registry, self.root_package_name)))
 
     def get_default_filters(self) -> List[Union[Filter, Type[Filter]]]:

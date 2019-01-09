@@ -4,7 +4,7 @@ from unittest import mock
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.filter.filter_chain_factory import FilterChainFactory
-from jivago.config.router.filtering_rule import FilteringRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 
 DEFAULT_FILTER: Filter = mock.create_autospec(Filter)

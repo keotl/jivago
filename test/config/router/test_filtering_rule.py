@@ -3,7 +3,7 @@ from unittest import mock
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.wsgi.filter.filter import Filter
-from jivago.config.router.filtering_rule import FilteringRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
 
 
 class FilteringRuleTest(unittest.TestCase):

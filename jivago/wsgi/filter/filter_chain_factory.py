@@ -3,7 +3,7 @@ from typing import List
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter_chain import FilterChain
-from jivago.config.router.filtering_rule import FilteringRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 
 
