@@ -12,4 +12,4 @@ class CorsRule(RouterConfigRule):
         return path.startswith(self.path)
 
     def takes_precedence_over(self, other: "CorsRule") -> bool:
-        return len(self.path) > len(other.path)
+        return len(self.path) >= len(other.path)

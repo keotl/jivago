@@ -33,6 +33,12 @@ class FilteringRuleTest(unittest.TestCase):
         self.assertTrue(rule.matches("/users/foo/delete"))
         self.assertFalse(rule.matches("/users/foo"))
 
+    def test_givenRuleWithPeriod_whenMatchingRule_thenTreatAsLiteralPeriod(self):
+        rule = FilteringRule("/users.hello", [])
+
+        self.assertTrue(rule.matches("/users.hello"))
+        self.assertFalse(rule.matches("/users_hello"))
+
     def test_givenSavedFilterClass_whenGettingFilters_thenGetInstanceFromServiceLocator(self):
         rule = FilteringRule("/*", [Filter])
         service_locator = ServiceLocator()
@@ -52,5 +58,3 @@ class FilteringRuleTest(unittest.TestCase):
 
         self.assertEqual(1, len(filters))
         self.assertEqual(instance, filters[0])
-
-

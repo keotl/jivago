@@ -1,5 +1,3 @@
-import logging
-
 from jivago.config.router_config_rule import RouterConfigRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
@@ -15,7 +13,6 @@ from jivago.wsgi.routing.routing_rule import RoutingRule
 
 
 class RouterBuilder(object):
-    LOGGER = logging.getLogger("Jivago").getChild("RouterBuilder")
 
     def __init__(self):
         self.filtering_rules = []

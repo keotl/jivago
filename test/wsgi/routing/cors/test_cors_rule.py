@@ -18,3 +18,8 @@ class CorsRuleTest(unittest.TestCase):
         takes_precedence = self.longer_rule.takes_precedence_over(self.rule)
 
         self.assertTrue(takes_precedence)
+
+    def test_givenSameLengthRule_whenComparingCorsRules_thenPriorityIsGivenToMostRecentRule(self):
+        takes_precedence = self.rule.takes_precedence_over(self.rule)
+
+        self.assertTrue(takes_precedence)
