@@ -2,7 +2,7 @@ from typing import List
 
 from jivago.lang.stream import Stream
 from jivago.wsgi.routing.cors.cors_request_handler import CorsRequestHandler
-from jivago.wsgi.routing.cors.cors_rule import CorsRule
+from jivago.config.router.cors_rule import CorsRule
 from jivago.wsgi.routing.cors.no_matching_cors_rule_exception import NoMatchingCorsRuleException
 
 

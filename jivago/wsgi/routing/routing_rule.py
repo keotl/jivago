@@ -1,6 +1,6 @@
 from typing import List
 
-from jivago.config.router_config_rule import RouterConfigRule
+from jivago.config.router.router_config_rule import RouterConfigRule
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_table import RoutingTable
 

@@ -3,7 +3,7 @@ from typing import List, Type, Union
 
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.exception_mapper_binder import ExceptionMapperBinder
-from jivago.config.router_builder import RouterBuilder
+from jivago.config.router.router_builder import RouterBuilder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.event.annotations import EventHandlerClass
 from jivago.event.async_event_bus import AsyncEventBus
@@ -24,7 +24,7 @@ from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
 from jivago.wsgi.filter.filter import Filter
-from jivago.wsgi.filter.filtering_rule import FilteringRule
+from jivago.config.router.filtering_rule import FilteringRule
 from jivago.wsgi.filter.system_filters.body_serialization_filter import BodySerializationFilter
 from jivago.wsgi.filter.system_filters.error_handling.application_exception_filter import ApplicationExceptionFilter
 from jivago.wsgi.filter.system_filters.error_handling.unknown_exception_filter import UnknownExceptionFilter

@@ -9,7 +9,7 @@ from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.methods import GET
 from jivago.wsgi.routing.cors.cors_request_handler import CorsRequestHandler
 from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsRequestHandlerFactory
-from jivago.wsgi.routing.cors.cors_rule import CorsRule
+from jivago.config.router.cors_rule import CorsRule
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 from jivago.wsgi.routing.routing_rule import RoutingRule

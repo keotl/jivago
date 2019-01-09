@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.wsgi.routing.cors.cors_rule import CorsRule
+from jivago.config.router.cors_rule import CorsRule
 
 
 class CorsRuleTest(unittest.TestCase):

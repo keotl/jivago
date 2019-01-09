@@ -1,7 +1,7 @@
 import re
 from typing import List, Union, Type
 
-from jivago.config.router_config_rule import RouterConfigRule
+from jivago.config.router.router_config_rule import RouterConfigRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter import Filter

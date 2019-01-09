@@ -1,4 +1,4 @@
-from jivago.config.router_config_rule import RouterConfigRule
+from jivago.config.router.router_config_rule import RouterConfigRule
 from jivago.wsgi.request.headers import Headers
 
 
