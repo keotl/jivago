@@ -1,6 +1,6 @@
 from typing import List
 
-from jivago.config.router_builder import RouterBuilder
+from jivago.config.router.router_builder import RouterBuilder
 from jivago.inject.service_locator import ServiceLocator
 
 

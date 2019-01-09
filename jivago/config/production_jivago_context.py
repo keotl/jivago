@@ -3,18 +3,22 @@ from typing import List, Type, Union
 
 from jivago.config.abstract_context import AbstractContext
 from jivago.config.exception_mapper_binder import ExceptionMapperBinder
-from jivago.config.router_builder import RouterBuilder
+from jivago.config.router.filtering.annotation import RequestFilter
+from jivago.config.router.filtering.auto_discovering_filtering_rule import AutoDiscoveringFilteringRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
+from jivago.config.router.router_builder import RouterBuilder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
 from jivago.event.annotations import EventHandlerClass
 from jivago.event.async_event_bus import AsyncEventBus
 from jivago.event.event_bus import EventBus
 from jivago.event.reflective_event_bus_initializer import ReflectiveEventBusInitializer
 from jivago.event.synchronous_event_bus import SynchronousEventBus
+from jivago.inject.annotation import Component, Singleton
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
-from jivago.lang.registry import Singleton, Component, Registry
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.scheduling.annotations import Scheduled
 from jivago.scheduling.task_scheduler import TaskScheduler
@@ -23,15 +27,16 @@ from jivago.serialization.object_mapper import ObjectMapper
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
-from jivago.wsgi.filter.body_serialization_filter import BodySerializationFilter
-from jivago.wsgi.filter.error_handling.application_exception_filter import ApplicationExceptionFilter
-from jivago.wsgi.filter.error_handling.unknown_exception_filter import UnknownExceptionFilter
 from jivago.wsgi.filter.filter import Filter
-from jivago.wsgi.filter.jivago_banner_filter import JivagoBannerFilter
+from jivago.wsgi.filter.system_filters.body_serialization_filter import BodySerializationFilter
+from jivago.wsgi.filter.system_filters.error_handling.application_exception_filter import ApplicationExceptionFilter
+from jivago.wsgi.filter.system_filters.error_handling.unknown_exception_filter import UnknownExceptionFilter
+from jivago.wsgi.filter.system_filters.jivago_banner_filter import JivagoBannerFilter
 from jivago.wsgi.request.http_form_deserialization_filter import HttpFormDeserializationFilter
 from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.json_serialization_filter import JsonSerializationFilter
 from jivago.wsgi.request.partial_content_handler import PartialContentHandler
+from jivago.wsgi.routing.routing_rule import RoutingRule
 from jivago.wsgi.routing.table.auto_discovering_routing_table import AutoDiscoveringRoutingTable
 
 
@@ -54,6 +59,7 @@ class ProductionJivagoContext(AbstractContext):
         AnnotatedClassBinder(self.root_package_name, self.registry, PreInit).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, PostInit).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, EventHandlerClass).bind(self.serviceLocator)
+        AnnotatedClassBinder(self.root_package_name, self.registry, RequestFilter).bind(self.serviceLocator)
 
         ProviderBinder(self.root_package_name, self.registry).bind(self.serviceLocator)
         for scope in self.scopes():
@@ -91,9 +97,10 @@ class ProductionJivagoContext(AbstractContext):
 
     @Override
     def create_router_config(self) -> RouterBuilder:
-        routing_table = AutoDiscoveringRoutingTable(self.registry, self.root_package_name, self.get_default_filters())
-
-        return RouterBuilder().add_routing_table(routing_table)
+        return RouterBuilder() \
+            .add_rule(FilteringRule("*", self.get_default_filters())) \
+            .add_rule(AutoDiscoveringFilteringRule("*", self.registry, self.root_package_name)) \
+            .add_rule(RoutingRule("/", AutoDiscoveringRoutingTable(self.registry, self.root_package_name)))
 
     def get_default_filters(self) -> List[Union[Filter, Type[Filter]]]:
         default_filters = [UnknownExceptionFilter, TemplateFilter, JsonSerializationFilter,

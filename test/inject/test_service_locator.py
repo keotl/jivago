@@ -1,10 +1,11 @@
 import unittest
 from typing import List
 
-from jivago.lang.registry import Singleton, Registry
+from jivago.inject.annotation import Singleton
 from jivago.inject.scope_cache import ScopeCache
 from jivago.inject.service_locator import ServiceLocator, InstantiationException, NonInjectableConstructorException
 from jivago.lang.annotations import Inject
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 
 

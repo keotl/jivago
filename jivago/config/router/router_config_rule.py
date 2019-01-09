@@ -1,0 +1,2 @@
+class RouterConfigRule(object):
+    pass

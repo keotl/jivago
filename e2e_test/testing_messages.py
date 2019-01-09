@@ -11,3 +11,6 @@ INIT = "Hooks:Init"
 POSTINIT = "Hooks:PostInit"
 
 SCHEDULED = "Scheduled:EverySecond"
+
+# Filters
+FILTER = "Filtering:Entering Filter"

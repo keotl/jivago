@@ -1,3 +1,5 @@
+from typing import List
+
 import anachronos
 from anachronos import Anachronos
 from anachronos.configuration import DefaultRunner
@@ -17,13 +19,18 @@ class TestingContext(DebugJivagoContext):
         super().configure_service_locator()
         self.service_locator().bind(Anachronos, anachronos.get_instance)
 
+    def get_banner(self) -> List[str]:
+        return []
+
 
 @DefaultRunner
 class AppRunner(ApplicationRunner):
 
     @Override
     def app_run_function(self):
-        return lambda: run_wsgi(JivagoApplication(components, context=TestingContext))
+        import logging
+        logging.getLogger().setLevel(logging.CRITICAL)
+        run_wsgi(JivagoApplication(components, context=TestingContext))
 
 
 http = HttpRequester("http://localhost", 4000)
