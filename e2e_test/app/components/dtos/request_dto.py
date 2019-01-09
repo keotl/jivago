@@ -8,5 +8,6 @@ class RequestDto(object):
 
 
 @Serializable
-class AuthenticatedRequestDto(RequestDto):
+class AuthenticatedRequestDto(object):
+    name: str
     role: str

@@ -19,7 +19,7 @@ class SimpleResourceTest(anachronos.TestCase):
         self.assertEqual('Paul Atreides', response['name'])
 
     def test_selectRightResourceMethodBasedOnPayloadDtoType(self):
-        response = http.post("/", json={'name': 'Paul Atreides', 'age': 17, 'role': "foobar"}).json()
+        response = http.post("/", json={'name': 'Paul Atreides', 'role': "foobar"}).json()
 
         self.assertThat(DIFFERENT_POST_DTO).is_stored()
         self.assertEqual('Paul Atreides', response['name'])
@@ -45,7 +45,6 @@ class SimpleResourceTest(anachronos.TestCase):
         http.get("/path/foobar")
 
         self.assertThat(GET_WITH_PATH_PARAMETER + " foobar").is_stored()
-
 
 
 if __name__ == '__main__':
