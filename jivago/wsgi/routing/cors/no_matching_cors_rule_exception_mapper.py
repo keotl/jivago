@@ -2,13 +2,14 @@ from jivago.lang.annotations import Override
 from jivago.wsgi.filter.system_filters.error_handling.exception_mapper import ExceptionMapper
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
+from jivago.wsgi.routing.cors.no_matching_cors_rule_exception import NoMatchingCorsRuleException
 
 
 class NoMatchingCorsRuleExceptionMapper(ExceptionMapper):
 
     @Override
     def handles(self, exception: Exception) -> bool:
-        return isinstance(exception, NoMatchingCorsRuleExceptionMapper)
+        return isinstance(exception, NoMatchingCorsRuleException)
 
     @Override
     def create_response(self, request: Request) -> Response:
