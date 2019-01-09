@@ -31,7 +31,7 @@ class ResourceInvoker(RouteHandler):
         try:
             parameters = self.format_parameters(request, self.route_registration)
             function_return = self.route_registration.routeFunction(resource, *parameters)
-        except (MissingRouteInvocationArgument, AttributeError):
+        except MissingRouteInvocationArgument:
             raise IncorrectResourceParametersException()
 
         if isinstance(function_return, Response):

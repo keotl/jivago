@@ -44,7 +44,8 @@ class SimpleResourceTest(anachronos.TestCase):
     def test_withPathParameter(self):
         http.get("/path/foobar")
 
-        self.assertThat(GET_WITH_PATH_PARAMETER).is_contained()
+        self.assertThat(GET_WITH_PATH_PARAMETER + " foobar").is_stored()
+
 
 
 if __name__ == '__main__':

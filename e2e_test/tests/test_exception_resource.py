@@ -24,5 +24,11 @@ class ExceptionResourceTest(anachronos.TestCase):
         self.assertEqual(405, response.status_code)
 
 
+    def test_givenNullPointerException_thenReturn500InternalServerError(self):
+        response = self.http.get("/none")
+
+        self.assertEqual(500, response.status_code)
+
+
 if __name__ == '__main__':
     anachronos.run_tests()

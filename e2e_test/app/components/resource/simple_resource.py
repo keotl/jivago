@@ -39,5 +39,5 @@ class SimpleResource(object):
     @GET
     @Path("/path/{param}")
     def get_with_path_param(self, param: str) -> str:
-        self.anachronos.store(GET_WITH_PATH_PARAMETER + f" param")
+        self.anachronos.store(GET_WITH_PATH_PARAMETER + f" {param}")
         return "OK"
