@@ -1,15 +1,15 @@
 import unittest
 from typing import List
 
+from jivago.config.router.cors_rule import CorsRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.invocation.resource_invoker import ResourceInvoker
+from jivago.wsgi.invocation.rewrite.path_rewriting_route_handler_decorator import PathRewritingRouteHandlerDecorator
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.methods import GET
 from jivago.wsgi.routing.cors.cors_request_handler import CorsRequestHandler
 from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsRequestHandlerFactory
-from jivago.config.router.cors_rule import CorsRule
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 from jivago.wsgi.routing.routing_rule import RoutingRule
@@ -47,14 +47,17 @@ class RouteHandlerFactoryTest(unittest.TestCase):
         with self.assertRaises(MethodNotAllowedException):
             self.route_handler_factory.create_route_handlers(request)
 
-    def test_whenCreatingRouteHandlers_thenCreateResourceInvokerForEveryRegisteredResource(self):
-        request = self.request_builder.build()
+    def test_givenPrefixedRule_whenCreatingRouteHandlers_thenCreateResourceInvokerWithTruncatedPathForEveryRoute(self):
+        request = self.request_builder.path("/prefix" + PATH).build()
+        rule = RoutingRule("/prefix", self.routing_table)
+        self.route_handler_factory = RouteHandlerFactory(ServiceLocator(), DtoSerializationHandler(Registry()),
+                                                         [rule], CorsRequestHandlerFactory([CorsRule("/", {})]))
 
-        handlers: List[ResourceInvoker] = [x for x in self.route_handler_factory.create_route_handlers(request)]
+        handlers: List[PathRewritingRouteHandlerDecorator] = [x for x in
+                                                              self.route_handler_factory.create_route_handlers(request)]
 
         self.assertEqual(1, len(handlers))
-        self.assertEqual(RESOURCE_CLASS, handlers[0].route_registration.resourceClass)
-        self.assertEqual(ROUTE_METHOD, handlers[0].route_registration.routeFunction)
+        self.assertEqual(PATH, handlers[0].new_path)
 
     def test_givenCorsRequestOnUnknownPath_whenCreatingRouteHandlers_thenRaiseUnknownPathException(self):
         request = self.request_builder.method("OPTIONS").path("/unknown").build()
