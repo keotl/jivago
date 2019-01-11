@@ -1,7 +1,7 @@
+import os
 from typing import List
 
 import anachronos
-import os
 from anachronos import Anachronos
 from anachronos.configuration import DefaultRunner
 from anachronos.setup import run_wsgi
@@ -12,11 +12,14 @@ import e2e_test.app.static
 from e2e_test import tests
 from e2e_test.app import components
 from jivago.config.debug_jivago_context import DebugJivagoContext
+from jivago.config.router.filtering.auto_discovering_filtering_rule import AutoDiscoveringFilteringRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.config.router.router_builder import RouterBuilder
 from jivago.jivago_application import JivagoApplication
 from jivago.lang.annotations import Override
 from jivago.wsgi.routing.routing_rule import RoutingRule
 from jivago.wsgi.routing.serving.static_file_routing_table import StaticFileRoutingTable
+from jivago.wsgi.routing.table.auto_discovering_routing_table import AutoDiscoveringRoutingTable
 
 
 class TestingContext(DebugJivagoContext):
@@ -26,7 +29,10 @@ class TestingContext(DebugJivagoContext):
         self.service_locator().bind(Anachronos, anachronos.get_instance)
 
     def create_router_config(self) -> RouterBuilder:
-        return super().create_router_config() \
+        return RouterBuilder() \
+            .add_rule(FilteringRule("*", self.get_default_filters())) \
+            .add_rule(AutoDiscoveringFilteringRule("*", self.registry, self.root_package_name)) \
+            .add_rule(RoutingRule("/api", AutoDiscoveringRoutingTable(self.registry, self.root_package_name))) \
             .add_rule(RoutingRule("/static", StaticFileRoutingTable(os.path.dirname(e2e_test.app.static.__file__),
                                                                     allowed_extensions=['.txt'])))
 
@@ -44,7 +50,7 @@ class AppRunner(ApplicationRunner):
         run_wsgi(JivagoApplication(components, context=TestingContext))
 
 
-http = HttpRequester("http://localhost", 4000)
+http = HttpRequester("http://localhost", 4000, "/api")
 
 if __name__ == '__main__':
     anachronos.discover_tests(tests)

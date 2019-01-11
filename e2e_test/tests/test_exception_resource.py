@@ -6,7 +6,7 @@ from e2e_test.runner import http
 class ExceptionResourceTest(anachronos.TestCase):
 
     def setUp(self):
-        self.http = http.with_path("/error")
+        self.http = http.with_path("/api/error")
 
     def test_got500OnInternalServerError(self):
         response = self.http.get("")
@@ -22,7 +22,6 @@ class ExceptionResourceTest(anachronos.TestCase):
         response = self.http.post("")
 
         self.assertEqual(405, response.status_code)
-
 
     def test_givenNullPointerException_thenReturn500InternalServerError(self):
         response = self.http.get("/none")
