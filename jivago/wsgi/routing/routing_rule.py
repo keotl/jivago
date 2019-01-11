@@ -14,7 +14,8 @@ from jivago.wsgi.routing.routing_table import RoutingTable
 
 class RoutingRule(RouterConfigRule):
 
-    def __init__(self, prefix_path: str, routing_table: RoutingTable):
+    def __init__(self, prefix_path: str, routing_table: RoutingTable, rewrite_path: bool = True):
+        self.should_rewrite_path = rewrite_path
         self.prefix_path = prefix_path.rstrip("/")
         self.routing_table = routing_table
 
@@ -33,10 +34,13 @@ class RoutingRule(RouterConfigRule):
     def create_route_handlers(self, request: Request,
                               service_locator: ServiceLocator,
                               dto_serialization_handler: DtoSerializationHandler) -> Iterable[RouteHandler]:
-
-        return Stream(self.get_route_registrations(request.path)) \
+        resource_invokers = Stream(self.get_route_registrations(request.path)) \
             .filter(lambda route: route.http_method == request.method_annotation) \
-            .map(lambda route: PathRewritingRouteHandlerDecorator(ResourceInvoker(route,
-                                                                                  service_locator,
-                                                                                  dto_serialization_handler),
-                                                                  self._truncate_path(request.path)))
+            .map(lambda route: ResourceInvoker(route,
+                                               service_locator,
+                                               dto_serialization_handler))
+        if self.should_rewrite_path:
+            return resource_invokers \
+                .map(lambda invoker: PathRewritingRouteHandlerDecorator(invoker, self._truncate_path(request.path)))
+        else:
+            return resource_invokers
