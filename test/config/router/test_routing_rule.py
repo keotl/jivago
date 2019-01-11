@@ -18,3 +18,9 @@ class RoutingRuleTest(unittest.TestCase):
         self.assertTrue(rule.matches("/users/foo/bar/delete"))
         self.assertFalse(rule.matches("/admin"))
 
+    def test_givenPathWhichDoesNotMatchRule_whenGettingRouteRegistrations_thenReturnEmptyList(self):
+        rule = RoutingRule("/users", None)
+
+        routes = rule.get_route_registrations("/foobar")
+
+        self.assertEqual(0, len(routes))

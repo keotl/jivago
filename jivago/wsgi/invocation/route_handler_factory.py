@@ -3,8 +3,6 @@ from typing import Iterable, List
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.invocation.rewrite.path_rewriting_route_handler_decorator import PathRewritingRouteHandlerDecorator
-from jivago.wsgi.invocation.resource_invoker import ResourceInvoker
 from jivago.wsgi.invocation.route_handler import RouteHandler
 from jivago.wsgi.methods import OPTIONS
 from jivago.wsgi.request.request import Request
@@ -43,16 +41,8 @@ class RouteHandlerFactory(object):
             raise MethodNotAllowedException()
 
         return Stream(self.routing_rules) \
-            .map(lambda rule: self.create_invokers_for_rule(request, rule)) \
+            .map(lambda rule: rule.create_route_handlers(request, self.service_locator, self.dto_serialization_handler)) \
             .flat()
 
     def is_cors_request(self, request: Request) -> bool:
         return request.method_annotation == OPTIONS
-
-    def create_invokers_for_rule(self, request: Request, rule: RoutingRule) -> Iterable[ResourceInvoker]:
-        return Stream(rule.get_route_registrations(request.path)) \
-            .filter(lambda route: route.http_method == request.method_annotation) \
-            .map(lambda route: PathRewritingRouteHandlerDecorator(ResourceInvoker(route,
-                                                                                  self.service_locator,
-                                                                                  self.dto_serialization_handler),
-                                                                  rule.truncate_path(request.path)))
