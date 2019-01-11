@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Callable
 
-from jivago.event.annotations import EventHandler, EventHandlerClass
+from jivago.event.config.annotations import EventHandler, EventHandlerClass
 from jivago.event.dispatch.jit_message_dispatcher_class import JitMessageDispatcherClass
 from jivago.event.dispatch.message_dispatcher import MessageDispatcher
 from jivago.event.dispatch.message_dispatcher_function import MessageDispatcherFunction
@@ -10,6 +10,7 @@ from jivago.event.synchronous_event_bus import SynchronousEventBus
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.lang.runnable import Runnable
+from jivago.lang.stream import Stream
 
 EVENT_NAME_PARAMETER = 'event_name'
 
@@ -44,9 +45,13 @@ class ReflectiveEventBusInitializer(object):
             registered_class = registration.registered
 
             for handler_function in registry.get_annotated_in_package(EventHandler, registered_class.__module__):
-                dispatchers.append(JitMessageDispatcherClass(handler_function.arguments[EVENT_NAME_PARAMETER],
-                                                             registered_class,
-                                                             handler_function.registered,
-                                                             service_locator))
+                if self._is_function_defined_inside_class(handler_function.registered, registered_class):
+                    dispatchers.append(JitMessageDispatcherClass(handler_function.arguments[EVENT_NAME_PARAMETER],
+                                                                 registered_class,
+                                                                 handler_function.registered,
+                                                                 service_locator))
 
         return dispatchers
+
+    def _is_function_defined_inside_class(self, function: Callable, clazz: type) -> bool:
+        return function.__qualname__.startswith(clazz.__qualname__)

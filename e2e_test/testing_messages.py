@@ -14,3 +14,8 @@ SCHEDULED = "Scheduled:EverySecond"
 
 # Filters
 FILTER = "Filtering:Entering Filter"
+
+# Event
+RUNNABLE_EVENT_HANDLER = "Event:Got Event in runnable"
+INSTANTIATED_EVENT_HANDLER = "Event: Got Event in instantiated handler"
+FUNCTION_EVENT_HANDLER = "Event: Got Event in simple function"

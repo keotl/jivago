@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from jivago.event.annotations import EventHandler
+from jivago.event.config.annotations import EventHandler
 from jivago.event.dispatch.message_dispatcher_runnable import MessageDispatcherRunnable
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Override, Inject

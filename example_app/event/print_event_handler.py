@@ -1,7 +1,7 @@
 import logging
 from time import sleep
 
-from jivago.event.annotations import EventHandlerClass, EventHandler
+from jivago.event.config.annotations import EventHandlerClass, EventHandler
 
 
 @EventHandlerClass

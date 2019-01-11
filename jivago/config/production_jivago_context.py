@@ -8,10 +8,11 @@ from jivago.config.router.filtering.auto_discovering_filtering_rule import AutoD
 from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.config.router.router_builder import RouterBuilder
 from jivago.config.startup_hooks import Init, PreInit, PostInit
-from jivago.event.annotations import EventHandlerClass
 from jivago.event.async_event_bus import AsyncEventBus
+from jivago.event.config.annotations import EventHandlerClass
+from jivago.event.config.reflective_event_bus_initializer import ReflectiveEventBusInitializer
+from jivago.event.config.runnable_event_handler_binder import RunnableEventHandlerBinder
 from jivago.event.event_bus import EventBus
-from jivago.event.reflective_event_bus_initializer import ReflectiveEventBusInitializer
 from jivago.event.synchronous_event_bus import SynchronousEventBus
 from jivago.inject.annotation import Component, Singleton
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
@@ -81,6 +82,8 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(EventBus, self.create_event_bus())
         self.serviceLocator.bind(SynchronousEventBus, self.serviceLocator.get(EventBus))
         self.serviceLocator.bind(AsyncEventBus, AsyncEventBus(self.serviceLocator.get(EventBus)))
+
+        RunnableEventHandlerBinder(self.root_package_name, self.registry).bind(self.service_locator())
 
         ExceptionMapperBinder().bind(self.serviceLocator)
 

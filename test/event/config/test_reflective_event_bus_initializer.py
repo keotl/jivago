@@ -1,7 +1,7 @@
 import unittest
 
-from jivago.event.annotations import EventHandler, EventHandlerClass
-from jivago.event.reflective_event_bus_initializer import ReflectiveEventBusInitializer
+from jivago.event.config.annotations import EventHandler, EventHandlerClass
+from jivago.event.config.reflective_event_bus_initializer import ReflectiveEventBusInitializer
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.lang.runnable import Runnable

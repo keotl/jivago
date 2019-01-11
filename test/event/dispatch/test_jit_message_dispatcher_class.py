@@ -1,6 +1,6 @@
 import unittest
 
-from jivago.event.annotations import EventHandler
+from jivago.event.config.annotations import EventHandler
 from jivago.event.dispatch.jit_message_dispatcher_class import JitMessageDispatcherClass
 from jivago.inject.service_locator import ServiceLocator
 
