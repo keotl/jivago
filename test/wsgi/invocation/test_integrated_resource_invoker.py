@@ -12,6 +12,7 @@ from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
+from jivago.wsgi.invocation.parameters import PathParam, QueryParam
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.headers import Headers
@@ -230,6 +231,9 @@ class ResourceClass(object):
 
     the_response = Response(402, {}, "a response")
 
+    def __init__(self):
+        print("instantiated resource class")
+
     @GET
     def a_method(self):
         ResourceClass.has_been_called = True
@@ -270,32 +274,32 @@ class ResourceClass(object):
 
     @GET
     @Path("/path-param/{name}")
-    def with_path_param(self, name: str) -> str:
+    def with_path_param(self, name: PathParam[str]) -> str:
         assert isinstance(name, str)
         return name
 
     @GET
     @Path("/numeric-param/{number}")
-    def with_numeric_path_param(self, number: int) -> int:
+    def with_numeric_path_param(self, number: PathParam[int]) -> int:
         assert isinstance(number, int)
         return number
 
     @GET
     @Path("/query-param")
-    def with_query_param(self, name: str) -> str:
+    def with_query_param(self, name: QueryParam[str]) -> str:
         assert isinstance(name, str)
         return name
 
     @GET
     @Path("/overloaded")
-    def overloaded_param(self, name: str) -> int:
+    def overloaded_param(self, name: QueryParam[str]) -> int:
         return 5
 
     OVERLOADED_RETURN = 6
 
     @GET
     @Path("/overloaded")
-    def overloaded_without_name_parameter(self, query: str) -> int:
+    def overloaded_without_name_parameter(self, query: QueryParam[str]) -> int:
         return self.OVERLOADED_RETURN
 
     @GET
