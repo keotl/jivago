@@ -1,5 +1,5 @@
+from jivago.inject.annotation import Component
 from jivago.lang.annotations import Inject
-from jivago.lang.registry import Component
 from jivago.wsgi.annotations import Resource
 
 

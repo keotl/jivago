@@ -10,7 +10,7 @@ Additionnal URL routes can be registered by creating a new ``RoutingTable`` whic
 .. literalinclude:: routing_table.py
    :language: python
 
-This new ``RoutingTable`` can then be used to configure the ``Router`` object, which is used to serve all requests. The recommended way of configuring your application is by inheriting from the ``ProductionJivagoContext`` class, and then overriding the ``create_router`` method.
+This new ``RoutingTable`` can then be used to configure the ``Router`` object, which is used to serve all requests. The recommended way of configuring your application is by inheriting from the ``ProductionJivagoContext`` class, and then overriding the ``create_router_config`` method.
 
 .. literalinclude:: router_config.py
    :language: python
@@ -24,9 +24,8 @@ While it is not generally recommended to serve static files from a WSGI applicat
 
 The ``StaticFileRoutingTable`` can also be used with a ``allowed_extensions`` parameter to explicitly allow or disallow specific file types.
 
-Defining path prefixes
-----------------------
-When registering a new routing table, using the ``path_prefix`` parameter maps the new routing table to part of the path hierarchy. For instance, static files can be served from ``/static/my_file.html``.
 
-.. literalinclude:: path_prefix.py
-   :language: python
+
+Additional router configuration options, including specific filter and CORS rules, can be found at `Router Configuration`_.
+
+.. _Router Configuration: ../configuration/router/index.html

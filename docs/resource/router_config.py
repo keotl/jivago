@@ -1,17 +1,14 @@
 from jivago.config.production_jivago_context import ProductionJivagoContext
+from jivago.config.router.router_builder import RouterBuilder
 from jivago.jivago_application import JivagoApplication
-from jivago.lang.annotations import Override
-from jivago.lang.registry import Registry
-from jivago.wsgi.routing.router import Router
+from jivago.wsgi.routing.routing_rule import RoutingRule
 
 
 class MyApplicationContext(ProductionJivagoContext):
 
-    @Override
-    def create_router(self) -> Router:
-        router = super().create_router()
-        router.add_routing_table(my_routing_table)
-        return router
+    def create_router_config(self) -> RouterBuilder:
+        return super().create_router_config() \
+            .add_rule(RoutingRule("/", my_routing_table))
 
 
-app = JivagoApplication(my_package,context=MyApplicationContext)
+app = JivagoApplication(my_package, context=MyApplicationContext)
