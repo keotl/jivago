@@ -38,7 +38,7 @@ While additional request filters can be added to all requests by using the ``@Re
 .. literalinclude:: filter_rules.py
    :language: python
 
-Note that the simple url pattern parameter is ignore when a regular expression is supplied.
+Note that the simple URL pattern parameter is ignore when a regular expression is supplied.
 
 CORS rules
 -----------
@@ -46,3 +46,5 @@ CORS preflight behaviour can be tuned using CORS rules. The supplied prefix is u
 
 .. Literalinclude:: cors_rules.py
    :language: python
+
+**By default, using the ``DebugJivagoContext`` adds a** ``Access-Control-Allow-Origin: *`` **rule at the root of the route hierarchy.**
