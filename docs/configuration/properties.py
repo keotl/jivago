@@ -1,6 +1,6 @@
 from jivago.config.properties.application_properties import ApplicationProperties
+from jivago.inject.annotation import Component
 from jivago.lang.annotations import Inject
-from jivago.lang.registry import Component
 
 
 @Component

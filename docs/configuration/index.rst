@@ -27,12 +27,23 @@ get_views_folder_path()
 get_config_file_locations()
   Defines a list of files which should be tried when importing the application properties. The ``ApplicationProperties`` is creating using the first existent file in this rule. Defaults to ``["application.yml", "application.json", "properties.yml", "properties.json"]``.
 
-create_router()
-  This method is used to configure the ``Router`` object which is used to resolve requests.
+create_router_config()
+  This method is used to configure the ``Router`` object which is used to resolve requests. See `Router Configuration`_ for details.
+
+.. _Router Configuration: router/index.html
+
+get_default_filters()
+  Used only on subclasses of ``ProductionJivagoFilter``. This method is called from ``create_router_config`` to define the default ``FilteringRule``.
+
+create_event_bus()
+  Used to register event handlers.
 
 get_banner()
   Defines the ASCII-art banner which is printed in the console at every startup.
 
+.. toctree::
+   ../dependency_injection/index
+   router/index
 
 ApplicationProperties and SystemEnvironmentProperties
 -----------------------------------------------------
@@ -48,7 +59,6 @@ Both the ``ApplicationProperties`` and ``SystemEnvironmentProperties`` dictionar
 
 .. literalinclude:: properties.py
    :language: python
-
 
 
 

@@ -1,8 +1,8 @@
 import random
 from typing import List
 
+from jivago.inject.annotation import Component
 from jivago.lang.annotations import Override, Inject
-from jivago.lang.registry import Component
 
 
 class Calculator(object):
