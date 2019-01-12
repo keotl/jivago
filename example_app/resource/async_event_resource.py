@@ -3,6 +3,7 @@ from jivago.event.event_bus import EventBus
 from jivago.lang.annotations import Inject
 from jivago.lang.stream import Stream
 from jivago.wsgi.annotations import Resource, Path
+from jivago.wsgi.invocation.parameters import QueryParam
 from jivago.wsgi.methods import GET
 
 
@@ -16,11 +17,11 @@ class AsyncEventResource(object):
 
     @GET
     @Path("/emit")
-    def emit_print_async(self, message: str) -> str:
+    def emit_print_async(self, message: QueryParam[str]) -> str:
         Stream.range().take(100).forEach(lambda x: self.async_event_bus.emit("print", message))
         return "OK"
 
     @GET
     @Path("/await")
-    def await_print_async(self, message: str) -> str:
+    def await_print_async(self, message: QueryParam[str]) -> str:
         return self.event_bus.emit("print", message)
