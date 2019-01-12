@@ -1,6 +1,8 @@
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.invocation.parameters import PathParam, QueryParam
-from jivago.wsgi.methods import GET, POST
+from jivago.wsgi.methods import GET, POST, PUT
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
 
 
 @Resource("/hello")
@@ -24,3 +26,8 @@ class HelloWorldResource(object):
     @Path("/query")
     def with_query(self, name: QueryParam[str]) -> str:
         return "Hello {}!".format(name)
+
+    @GET
+    @Path("/request/raw")
+    def read_raw_request(self, request: Request) -> Response:
+        return Response(200, {}, "body")

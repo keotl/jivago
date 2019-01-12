@@ -1,5 +1,25 @@
+The HTTP Resource Class
+=========================
+Jivago uses *Resource* classes to define HTTP routes. Routable classes should be annotated with the ``@Resource`` decorator with an URL path on which it should be mounted. Each routing *method* should then be annotated with one of the HTTP verbs (``@GET``, ``@POST``, etc.) to make them known to the framework, and can optionally define a subpath using the ``@Path`` annotation. 
+
+.. literalinclude:: ../quickstart/complex_resource.py
+   :language: python
+
+Allowed Parameter Types
+-------------------------
+When handling a specific request, Jivago reads declared parameter types before invoking the routing function. Passed arguments can come from the query itself, from the body, from the raw request or a combination. Below are all the allowed parameter types :
+
+* *QueryParam[T]* : Reads the parameter *matching the variable name* from the query string. *T* should be either ``str``, ``int`` or ``float``.
+* *OptionalQueryParam[T]* : Identical to the above, except that it allows ``None`` values to be passed in place of a missing one.
+* *PathParam[T]* : Reads the parameter from the url path. The variable name should match the declared name in the ``@Path`` or the ``@Resource`` annotation. Route definitions use the ``{path-parameter-name}`` to declare these parameters.
+* *dict* : The request body which has been deserialized to a dictionary. Requires the body to be deserializable to a dictionary. (e.g. JSON).
+* A user-defined DTO : Any declared ``@Serializable`` class will be instantiated before invoking. This effectively acts as a JSON-schema validation.
+* *Request* : The raw ``Request`` object, as handled by Jivago. Useful when direct access to headers, query strings or the body is required.
+* *Headers* : The raw ``Headers`` object, containing all request headers. This class is simply a case-insensitive dictionary.
+  
+
 Manual Route Registration
-==================
+---------------------------
 
 .. toctree::
    :maxdepth: 2
