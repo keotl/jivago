@@ -35,6 +35,9 @@ create_router_config()
 get_default_filters()
   Used only on subclasses of ``ProductionJivagoFilter``. This method is called from ``create_router_config`` to define the default ``FilteringRule``.
 
+create_event_bus()
+  Used to register event handlers.
+
 get_banner()
   Defines the ASCII-art banner which is printed in the console at every startup.
 
