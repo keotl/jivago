@@ -12,7 +12,7 @@ from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.filter.filter_chain import FilterChain
 from jivago.wsgi.invocation.incorrect_resource_parameters_exception import IncorrectResourceParametersException
-from jivago.wsgi.invocation.parameters import PathParam, QueryParam
+from jivago.wsgi.invocation.parameters import PathParam, QueryParam, OptionalQueryParam
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.headers import Headers
@@ -231,9 +231,6 @@ class ResourceClass(object):
 
     the_response = Response(402, {}, "a response")
 
-    def __init__(self):
-        print("instantiated resource class")
-
     @GET
     def a_method(self):
         ResourceClass.has_been_called = True
@@ -304,7 +301,7 @@ class ResourceClass(object):
 
     @GET
     @Path("/nullable-query")
-    def nullable_query(self, query: Optional[str]) -> Optional[str]:
+    def nullable_query(self, query: OptionalQueryParam[str]) -> Optional[str]:
         return query
 
     @GET

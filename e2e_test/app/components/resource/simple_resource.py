@@ -5,6 +5,7 @@ from e2e_test.app.components.dtos.response_dto import ResponseDto
 from e2e_test.testing_messages import *
 from jivago.lang.annotations import Inject
 from jivago.wsgi.annotations import Resource, Path
+from jivago.wsgi.invocation.parameters import QueryParam, PathParam
 from jivago.wsgi.methods import GET, POST
 
 
@@ -32,12 +33,12 @@ class SimpleResource(object):
 
     @GET
     @Path("/params")
-    def get_with_parameters(self, query: str, age: int) -> str:
+    def get_with_parameters(self, query: QueryParam[str], age: QueryParam[int]) -> str:
         self.anachronos.store(GET_WITH_PARAMETERS + f" {query} {age}")
         return "OK"
 
     @GET
     @Path("/path/{param}")
-    def get_with_path_param(self, param: str) -> str:
+    def get_with_path_param(self, param: PathParam[str]) -> str:
         self.anachronos.store(GET_WITH_PATH_PARAMETER + f" {param}")
         return "OK"

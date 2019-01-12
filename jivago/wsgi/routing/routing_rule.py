@@ -4,6 +4,7 @@ from jivago.config.router.router_config_rule import RouterConfigRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.wsgi.invocation.parameter_selection.parameter_selector_chain import ParameterSelectorChain
 from jivago.wsgi.invocation.resource_invoker import ResourceInvoker
 from jivago.wsgi.invocation.rewrite.path_rewriting_route_handler_decorator import PathRewritingRouteHandlerDecorator
 from jivago.wsgi.invocation.route_handler import RouteHandler
@@ -34,11 +35,12 @@ class RoutingRule(RouterConfigRule):
     def create_route_handlers(self, request: Request,
                               service_locator: ServiceLocator,
                               dto_serialization_handler: DtoSerializationHandler) -> Iterable[RouteHandler]:
+        
         resource_invokers = Stream(self.get_route_registrations(request.path)) \
             .filter(lambda route: route.http_method == request.method_annotation) \
             .map(lambda route: ResourceInvoker(route,
                                                service_locator,
-                                               dto_serialization_handler))
+                                               ParameterSelectorChain(route, dto_serialization_handler)))
         if self.should_rewrite_path:
             return resource_invokers \
                 .map(lambda invoker: PathRewritingRouteHandlerDecorator(invoker, self._truncate_path(request.path)))

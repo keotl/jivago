@@ -2,6 +2,7 @@ from example_app.comp.beans import SomeBean
 from example_app.model.my_dto import MyDto
 from jivago.lang.annotations import Inject
 from jivago.wsgi.annotations import Resource, Path
+from jivago.wsgi.invocation.parameters import PathParam, QueryParam
 from jivago.wsgi.methods import GET, POST, DELETE
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
@@ -20,7 +21,7 @@ class HelloWorldResource(object):
 
     @POST
     @Path("/{name}")
-    def post_hello(self, name: str) -> str:
+    def post_hello(self, name: PathParam[str]) -> str:
         print("name: {}".format(name))
         return self.some_bean.say_hello()
 
@@ -48,7 +49,7 @@ class HelloWorldResource(object):
 
     @GET
     @Path("/query")
-    def with_query(self, name: str) -> str:
+    def with_query(self, name: QueryParam[str]) -> str:
         return "Hello {}!".format(name)
 
     @GET
