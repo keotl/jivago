@@ -38,7 +38,7 @@ While additional request filters can be added to all requests by using the ``@Re
 .. literalinclude:: filter_rules.py
    :language: python
 
-Note that the simple URL pattern parameter is ignore when a regular expression is supplied.
+Note that the simple URL pattern parameter is ignored when a regular expression is supplied.
 
 CORS rules
 -----------
