@@ -7,7 +7,7 @@ from jivago.wsgi.request.response import Response
 ALLOW_ORIGIN_HEADER = 'Access-Control-Allow-Origin'
 
 
-class CorsRequestHandler(RouteHandler):
+class CorsPreflightRequestHandler(RouteHandler):
 
     def __init__(self, cors_headers: Headers):
         self.cors_headers = cors_headers

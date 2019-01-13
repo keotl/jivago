@@ -13,3 +13,7 @@ class CorsRule(RouterConfigRule):
 
     def takes_precedence_over(self, other: "CorsRule") -> bool:
         return len(self.path) >= len(other.path)
+
+    def inject_headers(self, headers: Headers) -> None:
+        for key, value in self.cors_headers.items():
+            headers[key] = value

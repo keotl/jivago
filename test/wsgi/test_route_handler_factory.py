@@ -8,7 +8,7 @@ from jivago.serialization.dto_serialization_handler import DtoSerializationHandl
 from jivago.wsgi.invocation.rewrite.path_rewriting_route_handler_decorator import PathRewritingRouteHandlerDecorator
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.methods import GET
-from jivago.wsgi.routing.cors.cors_request_handler import CorsRequestHandler
+from jivago.wsgi.routing.cors.cors_preflight_request_handler import CorsPreflightRequestHandler
 from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsRequestHandlerFactory
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
@@ -57,7 +57,8 @@ class RouteHandlerFactoryTest(unittest.TestCase):
                                                               self.route_handler_factory.create_route_handlers(request)]
 
         self.assertEqual(1, len(handlers))
-        self.assertEqual(PATH, handlers[0].new_path)
+        # TODO do assertion which does not imply internal structure
+        self.assertEqual(PATH, handlers[0].route_handler.new_path)
 
     def test_givenCorsRequestOnUnknownPath_whenCreatingRouteHandlers_thenRaiseUnknownPathException(self):
         request = self.request_builder.method("OPTIONS").path("/unknown").build()
@@ -71,4 +72,4 @@ class RouteHandlerFactoryTest(unittest.TestCase):
         handlers = [x for x in self.route_handler_factory.create_route_handlers(request)]
 
         self.assertEqual(1, len(handlers))
-        self.assertIsInstance(handlers[0], CorsRequestHandler)
+        self.assertIsInstance(handlers[0], CorsPreflightRequestHandler)

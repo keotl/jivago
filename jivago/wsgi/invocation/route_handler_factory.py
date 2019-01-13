@@ -35,14 +35,15 @@ class RouteHandlerFactory(object):
             raise UnknownPathException(request.path)
 
         if self.is_cors_request(request) and OPTIONS not in routable_http_methods:
-            return Stream.of(self.cors_handler_factory.create_cors_handler(request.path))
+            return Stream.of(self.cors_handler_factory.create_cors_preflight_handler(request.path))
 
         if request.method_annotation not in routable_http_methods:
             raise MethodNotAllowedException()
 
         return Stream(self.routing_rules) \
             .map(lambda rule: rule.create_route_handlers(request, self.service_locator, self.dto_serialization_handler)) \
-            .flat()
+            .flat() \
+            .map(lambda route_handler: self.cors_handler_factory.apply_cors_rules(request.path, route_handler))
 
     def is_cors_request(self, request: Request) -> bool:
         return request.method_annotation == OPTIONS

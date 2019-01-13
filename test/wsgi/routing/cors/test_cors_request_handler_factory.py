@@ -16,7 +16,7 @@ class CorsRequestHandlerFactoryTest(unittest.TestCase):
         self.cors_request_handler_factory = CorsRequestHandlerFactory(self.rules)
 
     def test_givenMultipleMatchingRules_whenCreatingCorsRequestHandler_thenCreateBasedOnLongestRule(self):
-        handler = self.cors_request_handler_factory.create_cors_handler("/foo/bar")
+        handler = self.cors_request_handler_factory.create_cors_preflight_handler("/foo/bar")
 
         self.assertEqual("specialized_rule", handler.cors_headers['value'])
 
@@ -24,4 +24,4 @@ class CorsRequestHandlerFactoryTest(unittest.TestCase):
         self.cors_request_handler_factory = CorsRequestHandlerFactory([])
 
         with self.assertRaises(NoMatchingCorsRuleException):
-            self.cors_request_handler_factory.create_cors_handler("/baz")
+            self.cors_request_handler_factory.create_cors_preflight_handler("/baz")
