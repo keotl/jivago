@@ -1,4 +1,4 @@
-from jivago.lang.registry import Provider
+from jivago.inject.annotation import Provider
 
 
 class DatabaseConnection(object):

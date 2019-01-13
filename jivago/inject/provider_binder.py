@@ -1,7 +1,8 @@
 from jivago.config.abstract_binder import AbstractBinder
-from jivago.lang.registry import Registry, Provider
+from jivago.inject.annotation import Provider
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Override
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from jivago.lang.registry import Component, Singleton
+from jivago.inject.annotation import Component, Singleton
 
 
 @Component

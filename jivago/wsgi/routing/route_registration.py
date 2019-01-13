@@ -1,14 +1,21 @@
 from typing import Callable, List, Union
 
+from jivago.lang.annotations import Override
 from jivago.lang.stream import Stream
+from jivago.wsgi.methods import HttpMethod
+from jivago.wsgi.routing.path_parameter_parser import PathParameterParser
 
 
-class RouteRegistration(object):
-    def __init__(self, resource_class: Union[type, object], route_function: Callable, registered_path: List[str]):
+class RouteRegistration(PathParameterParser):
+
+    def __init__(self, resource_class: Union[type, object], route_function: Callable, registered_path: List[str],
+                 http_method: HttpMethod):
+        self.http_method = http_method
         self.resourceClass = resource_class
         self.routeFunction = route_function
         self.registeredPath = registered_path
 
+    @Override
     def parse_path_parameters(self, gotten_path: str) -> dict:
         path = Stream(gotten_path.split('/')).filter(lambda x: x != "").toList()
 

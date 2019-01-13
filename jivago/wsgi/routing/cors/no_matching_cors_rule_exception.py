@@ -1,0 +1,2 @@
+class NoMatchingCorsRuleException(Exception):
+    pass

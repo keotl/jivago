@@ -1,9 +1,7 @@
-from typing import List, Type
+from typing import List
 
+from jivago.config.router.router_builder import RouterBuilder
 from jivago.inject.service_locator import ServiceLocator
-from jivago.lang.stream import Stream
-from jivago.wsgi.filter.filter import Filter
-from jivago.wsgi.routing.router import Router
 
 
 class AbstractContext(object):
@@ -20,16 +18,13 @@ class AbstractContext(object):
     def service_locator(self) -> ServiceLocator:
         return self.serviceLocator
 
-    def get_filters(self, path: str) -> List[Type[Filter]]:
-        raise NotImplementedError
-
     def get_views_folder_path(self) -> str:
         raise NotImplementedError
 
     def get_config_file_locations(self) -> List[str]:
         raise NotImplementedError
 
-    def create_router(self) -> Router:
+    def create_router_config(self) -> RouterBuilder:
         raise NotImplementedError
 
     def get_banner(self) -> List[str]:

@@ -9,21 +9,21 @@ Jivago – The highly-reflective object-oriented Python framework
 Jivago is an object-oriented, highly-reflective Python framework for building web applications. It relies heavily on type annotations and decorators to enforce typing, providing package auto-discovery and dependency injection out of the box. This leads to less boilerplate code, while maintaining loose-coupling across components.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Documentation
 
    installation/index
    quickstart/index
-   dependency_infection/index
+   deployment/index
+   dependency_injection/index
    reflection/index
    runnable/index
    serialization/index
    resource/index
    configuration/index
-   deployment/index
-
+   exception_mapper/index
+   event_bus/index
 
 .. * :ref:`genindex`
 .. * :ref:`modindex`
 .. * :ref:`search`
-

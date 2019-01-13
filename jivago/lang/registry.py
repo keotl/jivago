@@ -1,7 +1,6 @@
 from typing import Callable, List
 
 from jivago.inject import typing_meta_helper
-from jivago.inject.provider_function import ProviderFunction
 from jivago.lang.registration import Registration
 from jivago.lang.stream import Stream
 
@@ -72,21 +71,6 @@ class SimpleSaveDecorator(object):
     def __call__(self, target):
         self.registry.register(self.saveTarget, target, arguments=self.arguments)
         return target
-
-
-@Annotation
-def Singleton(wrapped_class: type) -> type:
-    return wrapped_class
-
-
-@Annotation
-def Component(wrapped_class: type) -> type:
-    return wrapped_class
-
-
-@Annotation
-def Provider(wrapped_function: Callable) -> Callable:
-    return ProviderFunction(wrapped_function)
 
 
 class MissingAnnotationParameterException(Exception):

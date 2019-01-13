@@ -54,9 +54,9 @@ The Resource Class
 --------------------
 The resource class is the fundamental way of declaring API routes. To define a route, simply declare the path inside the ``@Resource`` decorator on the class. Sub-paths can be defined on any of the class' methods using the ``@Path`` decorator. Allowed HTTP methods have to be explicitly defined for each routing function. Use ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, etc.
 
-Unlike other Python web framework, method invocation relies heavily on type annotations, which resemble the static typing present in other languages like C++ and Java. Given missing parameters, a method will not be invoked and simply be rejected at the framework level. For instance, declaring a route receiving a ``dict`` as a parameter matches a JSON-encoded request body. ``Request`` and ``Response`` objects can be requested/returned, when having direct control over low-level HTTP elements is required. 
+Unlike other Python web frameworks, method invocation relies heavily on type annotations, which resemble the static typing present in other languages like C++ and Java. Given missing parameters, a method will not be invoked and simply be rejected at the framework level. For instance, declaring a route receiving a ``dict`` as a parameter matches a JSON-encoded request body. ``Request`` and ``Response`` objects can be requested/returned, when having direct control over low-level HTTP elements is required. 
 
-When resolving string and numeric parameters, path parameters and query parameters are tried. In that case, the key should match the parameter variable name.
+To use query or path parameters, parameters should be declared using the ``QueryParam[T]``, ``OptionalQueryParam[T]`` or ``PathParam[T]`` typing generics. In this case, *T* should either be ``str``, ``int`` or ``float``. 
 
 *A complex resource example*
 

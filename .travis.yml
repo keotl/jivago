@@ -13,12 +13,16 @@ install:
 - pip install -r requirements.txt
 script:
 - sh run_tests.sh
+- sh run_e2e_tests.sh
 branches:
   only:
   - master
+  - develop
   - /^\d+\.\d+(\.\d+)?(-\S*)?$/
 deploy:
   provider: pypi
+  skip_existing: true
+  skip_cleanup: true
   user: keotl
   password:
     secure: FK6a+U5UEiDCvBYFqAYmMzkeJ1CqsdyfURrZ8R+VpZn6f/Y+41Gf5kV+vyCbNnO/2oBd1dSf0Udyo1aJzyl7uZSmqIiEDD6D/Mcdupc8HLv1f4mr1aWYaoRVVV7cGt2+AVpFg+wm9rPKjUE3DOHn4vVEizrys6Zd8fkRC9udBNiQiujDb/OCkWHIPoa3/4aBJ8qgy2+WNKiebVoHCQb5JUJwo4TUedyleBgvYcK52hUjFfTh1B8fzkzM1EqYb0le6H0lX5pgS2TSkvfslyfIOJqWyB2uiAZG+2GhRHFa7UC8gBmp4HoGwJMvPfZGUQoujTkaSKS+xpy9LZ3UMFVvYlyn5WcSkEaugbFOgfHp8l/0xx3UeSCGzp6sosfeLuIJi8OuT+Xv2BORmGq6WmUj2DS6toiTBJEc2L1M8tOWmEzM0uNIvYmqTqYLWYlBD11kZdWrmdyywMYoM4u5p8/2wpLLwh27NQr+PJipXVPtmcRTN7i6LCOTIotKa7e/a6iA5WYfQd2fDPesP9YA4bgP6Knt7RTfr6RzO9TbENpcaZfLB02A/tuONjGBTcixIqFuibx8xOBfUJQyeolvyV+S4l5dovesic6vzVTecdQRJuLpRjQZywdLcf5CBxt8w/NRbvM+PwfMtjtzPkEnINcJo58wb8I6eV+B41K7QWqjYOc=

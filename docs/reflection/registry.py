@@ -1,4 +1,5 @@
-from jivago.lang.registry import Registry, Component
+from jivago.inject.annotation import Component
+from jivago.lang.registry import Registry
 
 registry = Registry.INSTANCE
 

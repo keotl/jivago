@@ -25,6 +25,9 @@ class Headers(object):
     def items(self):
         return self.content.items()
 
+    def __contains__(self, item):
+        return _format_camel_case(item) in self.content
+
 
 def _format_camel_case(message: str) -> str:
     return message.replace("_", "-").title()

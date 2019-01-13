@@ -1,9 +1,10 @@
 import unittest
 
+from jivago.inject.annotation import Provider
 from jivago.inject.exception.undefined_return_provider_function import UndefinedReturnProviderFunction
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.lang.registry import Provider, Registry
 from jivago.inject.service_locator import ServiceLocator
+from jivago.lang.registry import Registry
 
 
 class ProviderBinderTest(unittest.TestCase):

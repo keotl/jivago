@@ -1,7 +1,7 @@
 from jivago.config.abstract_binder import AbstractBinder
-from jivago.lang.registry import Registry, Annotation
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Override
+from jivago.lang.registry import Registry, Annotation
 
 
 class AnnotatedClassBinder(AbstractBinder):

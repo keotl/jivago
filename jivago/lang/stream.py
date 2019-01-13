@@ -1,3 +1,4 @@
+import inspect
 import itertools
 from typing import Iterable, Callable, Iterator, Optional, Tuple, Any
 
@@ -63,16 +64,13 @@ class Stream(object):
         return tuple(self)
 
     def __should_expand(self, fun: Callable) -> bool:
-        if self.__is_builtin_function(fun):
+        if inspect.isbuiltin(fun):
             return False
-        if type(fun) == type and hasattr(fun.__init__, "__code__"):
-            return fun.__init__.__code__.co_argcount > 2
-        if hasattr(fun, "__code__"):
-            return fun.__code__.co_argcount > 1
-        return False
-
-    def __is_builtin_function(self, fun: Callable) -> bool:
-        return type(fun) == type(abs)
+        if inspect.isclass(fun):
+            return len(inspect.signature(fun.__init__).parameters) > 2
+        else:
+            sig = inspect.signature(fun)
+        return len(sig.parameters) > 1
 
     def count(self) -> int:
         if hasattr(self.iterable, '__len__'):
@@ -118,3 +116,6 @@ class Stream(object):
             return Stream(itertools.count())
         else:
             return Stream(range(*args))
+
+    def first(self) -> Optional:
+        return next(self.iterable, None)

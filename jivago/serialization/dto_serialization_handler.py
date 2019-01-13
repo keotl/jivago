@@ -21,7 +21,7 @@ class DtoSerializationHandler(object):
     def is_serializable(self, dto: object) -> bool:
         if self.is_a_registered_dto_type(type(dto)):
             return True
-        if isinstance(dto, list):
+        if isinstance(dto, list) or isinstance(dto, tuple):
             return Stream(dto).allMatch(lambda x: self.is_serializable(x))
         if isinstance(dto, dict):
             return Stream(dto.items()).allMatch(
@@ -53,7 +53,7 @@ class DtoSerializationHandler(object):
             return self.__inject_constructor(clazz, constructor, body)
 
     def serialize(self, dto):
-        if isinstance(dto, list):
+        if isinstance(dto, list) or isinstance(dto, tuple):
             return [self.serialize(x) for x in dto]
         if self.is_a_registered_dto_type(type(dto)):
             return self.serialize(dto.__dict__)
@@ -93,7 +93,7 @@ class DtoSerializationHandler(object):
                 elif typing_meta_helper.is_typing_meta_collection(declared_type, DESERIALIZABLE_TO_TUPLE_METAS):
                     result[attribute] = Stream(body[attribute]).map(
                         lambda x: self.deserialize(x, declared_type.__args__[0])).toTuple()
-                elif type(body.get(attribute)) in allowed_attribute_types:
+                elif isinstance(body, dict) and type(body.get(attribute)) in allowed_attribute_types:
                     result[attribute] = body.get(attribute)
                 elif self.is_a_registered_dto_type(declared_type):
                     result[attribute] = self.deserialize(body.get(attribute), declared_type)

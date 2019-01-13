@@ -1,7 +1,7 @@
 from jivago.config.abstract_context import AbstractContext
+from jivago.inject.annotation import Component
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.annotations import Inject
-from jivago.lang.registry import Component
 
 
 @Component

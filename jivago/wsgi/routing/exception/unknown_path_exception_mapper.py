@@ -1,6 +1,5 @@
 from jivago.lang.annotations import Override
-from jivago.wsgi.filter.error_handling.exception_mapper import ExceptionMapper
-from jivago.wsgi.request.request import Request
+from jivago.wsgi.filter.system_filters.error_handling.exception_mapper import ExceptionMapper
 from jivago.wsgi.request.response import Response
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 
@@ -12,5 +11,5 @@ class UnknownPathExceptionMapper(ExceptionMapper):
         return isinstance(exception, UnknownPathException)
 
     @Override
-    def create_response(self, request: Request) -> Response:
+    def create_response(self, exception: Exception) -> Response:
         return Response(404, {}, {"message": "Resource Not Found"})
