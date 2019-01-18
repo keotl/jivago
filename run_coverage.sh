@@ -3,21 +3,19 @@
 export PYTHONPATH=$(pwd):$PYTHONPATH
 find test/ -name "__pycache__" -type d -exec rm -rf {} \;
 find test/ -name "*.pyc" -type f -exec rm -rf {} \;
-find test/ -name ".coverage*" -type f -exec rm -rf {} \;
+find -name ".coverage.*" -type f -exec rm -rf {} \;
+rm -rf htmlcov
+rm .coverage
 
 startingDir=$(pwd)
-rm -rf temp
-for dir in $(find test/ -type d)
-do
-    dir=${dir%*/}
-    cd ${dir}; coverage run --source=jivago --omit "${startingDir}/venv*" -p -m unittest discover .; cd ${startingDir}
-done
 
-mkdir -p temp
-find test/ -name ".coverage*" -exec cp {} temp/ \;
-cd temp && coverage combine && coverage html --rcfile=${startingDir}/.coveragerc && cd ${startingDir}
+coverage run -m unittest discover test
 
-xdg-open temp/htmlcov/index.html 
+coverage run --concurrency=multiprocessing e2e_test/runner.py
+
+coverage combine
+coverage html
+xdg-open htmlcov/index.html
 
 exit 0
 
