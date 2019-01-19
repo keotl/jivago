@@ -12,6 +12,6 @@ All available functions are documented in `jivago.lang.stream`_.
 .. _jivago.lang.stream: ../source/jivago.lang.html#module-jivago.lang.stream
 
 Other examples
-================
+---------------
 .. literalinclude:: other_examples.py
    :language: python

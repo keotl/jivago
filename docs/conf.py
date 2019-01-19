@@ -28,7 +28,6 @@ version = ''
 # The full version, including alpha/beta/rc tags
 release = ''
 
-
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -73,7 +72,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -108,7 +106,6 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'jivagodoc'
 
-
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
@@ -137,7 +134,6 @@ latex_documents = [
      'Kento A. Lauzon', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -147,7 +143,6 @@ man_pages = [
      [author], 1)
 ]
 
-
 # -- Options for Texinfo output ----------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
@@ -155,9 +150,26 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'jivago', 'jivago Documentation',
-     author, 'jivago', 'One line description of project.',
+     author, 'jivago', 'The highly-reflective object-oriented Python web framework',
      'Miscellaneous'),
 ]
 
 
-# -- Extension configuration -------------------------------------------------
+def run_apidoc(_):
+    import os, subprocess, sys
+    modules = ['../jivago']
+    for module in modules:
+        cur_dir = os.path.abspath(os.path.dirname(__file__))
+        output_path = os.path.join(cur_dir, 'source')
+        cmd_path = 'sphinx-apidoc'
+        if hasattr(sys, 'real_prefix'):  # Check to see if we are in a virtualenv
+            # If we are, assemble the path manually
+            cmd_path = os.path.abspath(os.path.join(sys.prefix, 'bin', 'sphinx-apidoc'))
+        print(output_path)
+        print(module)
+        subprocess.check_call([cmd_path, '-o', output_path, module, '--force'],
+                              env={"PYTHONPATH": os.path.dirname(cur_dir)}, shell=True)
+
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
