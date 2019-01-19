@@ -1,4 +1,4 @@
-from typing import Any, Union, Dict, Tuple
+from typing import Any, Union
 
 from jivago.inject import typing_meta_helper
 from jivago.lang.annotations import Serializable

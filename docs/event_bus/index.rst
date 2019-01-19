@@ -1,6 +1,6 @@
 Global Event Bus
 =================
-For simple event-driven programming purposes, Jivago provides a simple ``EventBus`` interface which can be used from anywhere to trigger events and dispatch messages. This approach has the benefit of completely decoupling the *caller* from the *callee(s)*, which can be beneficial in some large-scale applications. Take a look at the following code snippet :
+For event-driven programming purposes, Jivago provides a simple ``EventBus`` interface which can be used from anywhere to trigger events and dispatch messages. This approach has the benefit of completely decoupling the *caller* from the *callee(s)*, which can be beneficial in some large-scale applications. Take a look at the following code snippet :
 
 .. literalinclude:: event_bus.py
    :language: python

@@ -23,6 +23,13 @@ Jivago is an object-oriented, highly-reflective Python framework for building we
    configuration/index
    exception_mapper/index
    event_bus/index
+   streams/index
+
+
+The automatically generated documentation is available at `Automatically-generated documentation`_.
+
+.. _Automatically-generated documentation: source_home.html
+
 
 .. * :ref:`genindex`
 .. * :ref:`modindex`
