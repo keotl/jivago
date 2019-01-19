@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
 
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
@@ -165,10 +165,8 @@ def run_apidoc(_):
         if hasattr(sys, 'real_prefix'):  # Check to see if we are in a virtualenv
             # If we are, assemble the path manually
             cmd_path = os.path.abspath(os.path.join(sys.prefix, 'bin', 'sphinx-apidoc'))
-        print(output_path)
-        print(module)
-        subprocess.check_call([cmd_path, '-o', output_path, module, '--force'],
-                              env={"PYTHONPATH": os.path.dirname(cur_dir)}, shell=True)
+
+        subprocess.check_call([cmd_path, '-e', '-o', output_path, module, '--force'])
 
 
 def setup(app):

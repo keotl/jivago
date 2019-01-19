@@ -9,7 +9,7 @@ In the previous example, the usual *filter* and *map* operations are used in a s
 
 All available functions are documented in `jivago.lang.stream`_.
 
-.. _jivago.lang.stream: ../source/jivago.lang.html#module-jivago.lang.stream
+.. _jivago.lang.stream: ../source/jivago.lang.stream.html
 
 Other examples
 ---------------
