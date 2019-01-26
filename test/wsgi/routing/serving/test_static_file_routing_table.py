@@ -29,3 +29,8 @@ class StaticFileRoutingTableTest(unittest.TestCase):
         routes = self.routing_table.get_route_registrations(FILENAME)
 
         self.assertEqual(0, len(routes))
+
+    def test_givenDirectory_whenGettingRouteRegistrations_thenReturnEmptyList(self):
+        routes = self.routing_table.get_route_registrations("")
+
+        self.assertEqual(0, len(routes))

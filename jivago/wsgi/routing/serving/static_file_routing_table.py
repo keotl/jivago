@@ -20,7 +20,7 @@ class StaticFileRoutingTable(RoutingTable):
     @Override
     def get_route_registrations(self, path: str) -> List[RouteRegistration]:
         filepath = os.path.join(self.folder_root, path.lstrip("/"))
-        if not os.path.exists(filepath) or self.__is_disallowed_extension(path):
+        if not os.path.exists(filepath) or self.__is_disallowed_extension(path) or os.path.isdir(filepath):
             return []
         return [RouteRegistration(StaticFileServingResource(filepath),
                                   StaticFileServingResource.serve_file,
