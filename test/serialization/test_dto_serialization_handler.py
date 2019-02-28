@@ -1,22 +1,42 @@
 import unittest
 from typing import Optional, List, Dict, Tuple, Iterable
 
-from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
+from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
+from jivago.serialization.deserializer import Deserializer
 from jivago.serialization.serialization_exception import SerializationException
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 OBJECT_WITH_UNKNOWN_PROPERTY = {"name": "a_name", "unknown-property": "foobar"}
 
 OBJECT_WITH_MISSING_VALUES = {}
 
 
+class DtoSerializationHandler(object):
+    def __init__(self, registry: Registry):
+        self.deserializer = Deserializer(registry)
+
+    def deserialize(self, object, type):
+        return self.deserializer.deserialize(object, type)
+
+
 class DtoSerializationHandlerTest(unittest.TestCase):
 
     def setUp(self):
         self.serialization_handler = DtoSerializationHandler(Registry())
+
+    def test_whenDeserializing_thenCreateDtoMatchingDictionaryItems(self):
+        a_dto = self.serialization_handler.deserialize({"name": "a name"}, ADto)
+
+        self.assertIsInstance(a_dto, ADto)
+        self.assertEqual("a name", a_dto.name)
+
+    def test_givenDtoWithDefinedConstructor_whenDeserializing_thenInstantiateByInvokingInitializer(self):
+        a_dto = self.serialization_handler.deserialize({"name": "a name"}, ADtoWithAConstructor)
+
+        self.assertIsInstance(a_dto, ADtoWithAConstructor)
+        self.assertEqual("a name", a_dto.name)
 
     def test_givenUnknownProperty_whenDeserializing_thenIgnoreTheUnknownProperty(self):
         dto = self.serialization_handler.deserialize(OBJECT_WITH_UNKNOWN_PROPERTY, ADto)
@@ -168,9 +188,16 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertTrue(self.serialization_handler.is_serializable(tuple_response))
         self.assertEqual(['foo'], serialized)
 
+
 @Serializable
 class ADto(object):
     name: str
+
+
+@Serializable
+class ADtoWithAConstructor(object):
+    def __init__(self, name: str):
+        self.name = name
 
 
 @Serializable
