@@ -5,6 +5,7 @@ from jivago.lang.annotations import Override, Serializable
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.serialization.deserialization_object_hook import DeserializationObjectHook, T
+from jivago.serialization.exceptions import MissingKeyException
 
 
 class RegisteredSerializableTypeDeserializationHook(DeserializationObjectHook):
@@ -19,12 +20,11 @@ class RegisteredSerializableTypeDeserializationHook(DeserializationObjectHook):
 
     @Override
     def deserialize(self, obj, declared_type: Type[T]) -> T:
-
         if _has_defined_initializer(declared_type):
             initializer_signature = inspect.signature(declared_type)
             return declared_type(**Stream(initializer_signature.parameters.items()) \
                                  .map(lambda name, parameter:
-                                      (name, self.deserializer.deserialize(obj[name], parameter.annotation))) \
+                                      (name, self.deserializer.deserialize(obj.get(name), parameter.annotation))) \
                                  .toDict())
 
         else:
@@ -32,7 +32,7 @@ class RegisteredSerializableTypeDeserializationHook(DeserializationObjectHook):
             attributes = declared_type.__annotations__
             Stream(attributes.items()) \
                 .map(lambda name, attribute_type:
-                     (name, self.deserializer.deserialize(obj[name], attribute_type))) \
+                     (name, self.deserializer.deserialize(obj.get(name), attribute_type))) \
                 .forEach(lambda name, attribute: instance.__setattr__(name, attribute))
 
             return instance
