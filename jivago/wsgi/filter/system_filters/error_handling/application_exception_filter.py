@@ -21,7 +21,7 @@ class ApplicationExceptionFilter(Filter):
             chain.doFilter(request, response)
         except Exception as e:
             exception_mapper = Stream(self.exception_mappers).firstMatch(lambda mapper: mapper.handles(e))
-            if exception_mapper is not None:
-                response.copy(exception_mapper.create_response(e))
+            if exception_mapper.isPresent():
+                response.copy(exception_mapper.get().create_response(e))
             else:
                 raise e

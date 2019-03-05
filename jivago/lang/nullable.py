@@ -40,6 +40,9 @@ class Nullable(Generic[T]):
             return Nullable(callable(self._item))
         return Nullable.empty()
 
+    def __bool__(self) -> bool:
+        return self.isPresent()
+
     @staticmethod
     def empty() -> "Nullable":
         return _empty

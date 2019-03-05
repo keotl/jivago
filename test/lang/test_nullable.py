@@ -84,3 +84,7 @@ class NullableTest(unittest.TestCase):
         self.null.map(mapping_function)
 
         self.assertFalse(mapping_function.called)
+
+    def test_whenEvaluatingToBoolean_thenReturnIfItemIsPresent(self):
+        self.assertTrue(self.non_null)
+        self.assertFalse(self.null)
