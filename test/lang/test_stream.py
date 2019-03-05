@@ -101,7 +101,7 @@ class StreamTest(unittest.TestCase):
     def test_givenFunctionWithTwoParameters_whenFindingFirstMatch_thenExpandTuplesWhenCallingFunction(self):
         result = self.stream.map(lambda x: (x, x)).firstMatch(lambda x, y: x == y)
 
-        self.assertEqual((self.COLLECTION[0], self.COLLECTION[0]), result)
+        self.assertEqual((self.COLLECTION[0], self.COLLECTION[0]), result.get())
 
     def test_givenFunctionWithTwoParameters_whenIteratingOverScalars_thenThrowTypeError(self):
         with self.assertRaises(TypeError):
@@ -236,15 +236,15 @@ class StreamTest(unittest.TestCase):
 
         self.assertEqual([x for x in range(0, 5)], first5)
 
-    def test_whenGettingFirst_thenReturnFirstElementInIterable(self):
-        first = Stream.range().first()
+    def test_whenGettingFirst_thenReturnNullableContainingFirstElementInIterable(self):
+        first = Stream.range().first().get()
 
         self.assertEqual(0, first)
 
-    def test_givenEmptyStream_whenGettingFirst_thenReturnNone(self):
+    def test_givenEmptyStream_whenGettingFirst_thenReturnEmptyNullable(self):
         first = Stream([]).first()
 
-        self.assertIsNone(first)
+        self.assertFalse(first.isPresent())
 
 
 class AClassWithAMethod(object):
