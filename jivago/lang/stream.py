@@ -2,8 +2,11 @@ import inspect
 import itertools
 from typing import Iterable, Callable, Iterator, Optional, Tuple, Any, TypeVar, Generic, Set, List
 
+from jivago.lang.nullable import Nullable
+
 T = TypeVar('T')
 S = TypeVar('S')
+
 
 class Stream(Generic[T]):
     """Stream class to perform functional-style operations in an aesthetically-pleasing manner.
@@ -50,17 +53,17 @@ class Stream(Generic[T]):
         """Returns True if no element of the stream matches the criteria."""
         return not self.anyMatch(fun)
 
-    def firstMatch(self, fun: Callable[[T], bool]) -> Optional[T]:
-        """Returns the first element matching the criteria. If none exist, returns None."""
+    def firstMatch(self, fun: Callable[[T], bool]) -> Nullable[T]:
+        """Returns a Nullable of the first element matching the criteria. If none exist, returns an empty Nullable."""
         if self.__should_expand(fun):
             for i in self:
                 if fun(*i):
-                    return i
+                    return Nullable(i)
         else:
             for i in self:
                 if fun(i):
-                    return i
-        return None
+                    return Nullable(i)
+        return Nullable.empty()
 
     def flat(self) -> "Stream[T]":
         """When iterating over lists, flattens the stream by concatenating all lists."""
@@ -163,6 +166,6 @@ class Stream(Generic[T]):
         else:
             return Stream(range(*args))
 
-    def first(self) -> Optional[T]:
-        """Returns the first element of the stream. If the stream is empty, returns None."""
-        return next(self.iterable, None)
+    def first(self) -> Nullable[T]:
+        """Returns a nullable containing the first element of the stream. If the stream is empty, returns an empty nullable."""
+        return Nullable(next(self.iterable, None))
