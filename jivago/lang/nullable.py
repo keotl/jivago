@@ -32,6 +32,10 @@ class Nullable(Generic[T]):
             return self._item
         return supplier()
 
+    def ifPresent(self, consumer: Callable[[T], None]) -> None:
+        if self.isPresent():
+            consumer(self._item)
+
     def filter(self, predicate: Callable[[Optional[T]], bool]) -> "Nullable[T]":
         return Nullable(self._item) if predicate(self._item) else Nullable.empty()
 

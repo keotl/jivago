@@ -88,3 +88,12 @@ class NullableTest(unittest.TestCase):
     def test_whenEvaluatingToBoolean_thenReturnIfItemIsPresent(self):
         self.assertTrue(self.non_null)
         self.assertFalse(self.null)
+
+    def test_whenUsingIfPresent_thenInvokeOnlyWhenItemIsPresent(self):
+        callback = MagicMock()
+
+        self.null.ifPresent(callback)
+        self.assertFalse(callback.called)
+
+        self.non_null.ifPresent(callback)
+        self.assertTrue(callback.called)
