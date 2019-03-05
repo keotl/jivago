@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, Optional, Callable
+from typing import Generic, TypeVar, Optional, Callable, Union
 
 T = TypeVar('T')
 S = TypeVar('S')
@@ -13,15 +13,19 @@ class Nullable(Generic[T]):
         return self._item is not None
 
     def get(self) -> Optional[T]:
-        return self._item
+        if self.isPresent():
+            return self._item
+        raise EmptyNullableException()
 
     def orElse(self, default_value: T) -> T:
         return self._item if self.isPresent() else default_value
 
-    def orElseThrow(self, exception: Exception) -> T:
+    def orElseThrow(self, exception: Union[Exception, Callable[[], Exception]]) -> T:
         if self.isPresent():
             return self._item
-        raise exception
+        if isinstance(exception, Exception):
+            raise exception
+        raise exception()
 
     def orElseFetch(self, supplier: Callable[[], T]) -> T:
         if self.isPresent():
@@ -38,4 +42,11 @@ class Nullable(Generic[T]):
 
     @staticmethod
     def empty() -> "Nullable":
-        return Nullable(None)
+        return _empty
+
+
+_empty = Nullable(None)
+
+
+class EmptyNullableException(Exception):
+    pass
