@@ -21,11 +21,11 @@ class ReflectiveRoutingTable(TreeRoutingTable):
                     route_sub_path = Stream(sub_paths).firstMatch(lambda r: r.registered == route_function.registered)
                     resource_path = resource.arguments['value']
 
-                    if route_sub_path is None:
+                    if not route_sub_path.isPresent():
                         self.register_route(primitive, resource_path, resource.registered,
                                             route_function.registered)
                     else:
-                        sub_path = route_sub_path.arguments['value']
+                        sub_path = route_sub_path.get().arguments['value']
                         path = resource_path + sub_path if \
                             resource_path.endswith('/') or sub_path.startswith('/') \
                             else resource_path + '/' + sub_path

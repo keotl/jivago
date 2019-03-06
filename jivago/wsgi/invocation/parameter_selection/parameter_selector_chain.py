@@ -1,6 +1,7 @@
 import inspect
 from typing import Callable, Optional
 
+from jivago.lang.nullable import Nullable
 from jivago.lang.stream import Stream
 from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
 from jivago.wsgi.invocation.missing_route_invocation_argument import MissingRouteInvocationArgument
@@ -33,12 +34,12 @@ class ParameterSelectorChain(object):
         parameters = []
         for name, parameter in inspect.signature(method).parameters.items():
             parameter_type = parameter._annotation
-            selector: Optional[ParameterSelector] = Stream(self.parameter_selectors) \
+            selector: Nullable[ParameterSelector] = Stream(self.parameter_selectors) \
                 .filter(lambda s: s.matches(parameter_type)) \
                 .first()
 
-            if selector:
-                parameters.append(selector.format_parameter(name, parameter_type, request))
+            if selector.isPresent():
+                parameters.append(selector.get().format_parameter(name, parameter_type, request))
             else:
                 raise MissingRouteInvocationArgument(name)
 
