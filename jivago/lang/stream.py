@@ -1,6 +1,6 @@
 import inspect
 import itertools
-from typing import Iterable, Callable, Iterator, Optional, Tuple, Any, TypeVar, Generic, Set, List
+from typing import Iterable, Callable, Iterator, Tuple, Any, TypeVar, Generic, Set, List
 
 from jivago.lang.nullable import Nullable
 
