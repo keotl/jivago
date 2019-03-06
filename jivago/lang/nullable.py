@@ -8,7 +8,7 @@ class Nullable(Generic[T]):
     """Nullable class which wraps Optional types.
 
     Args:
-        nullable (Optional[object)) : Item which can be None.
+        nullable (Optional) : Item which can be None.
     """
 
     def __init__(self, nullable: Optional[T]):
