@@ -11,6 +11,14 @@ All available functions are documented in `jivago.lang.stream`_.
 
 .. _jivago.lang.stream: ../source/jivago.lang.stream.html
 
+Wrapping None values using Nullables
+------------------------------------
+Jivago provides ``Nullable`` objects which are used to wrap None items. This class follows the same structure as *Java*'s ``Optional`` class. Terminal ``Stream`` operations which return a single item use this mechanism.
+
+All available functions are documented in `jivago.lang.nullable`_.
+
+.. _jivago.lang.nullable: ../source/jivago.lang.nullable.html
+
 Other examples
 ---------------
 .. literalinclude:: other_examples.py
