@@ -12,7 +12,7 @@ class Nullable(Generic[T]):
     """
 
     def __init__(self, nullable: Optional[T]):
-        self._item: Optional[T] = nullable
+        self._item = nullable
 
     def isPresent(self) -> bool:
         """Returns True if item is not None."""
