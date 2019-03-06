@@ -30,6 +30,7 @@ class Nullable(Generic[T]):
 
     def orElse(self, default_value: T) -> T:
         """Returns the item if present, else return the supplied default value.
+
         Args:
             default_value : Value to return instead of a None value.
             """
@@ -37,6 +38,7 @@ class Nullable(Generic[T]):
 
     def orElseThrow(self, exception: Union[Exception, Callable[[], Exception]]) -> T:
         """Returns if present, raises exception if missing.
+
         Args:
             exception : Either an exception, or a callable which returns an exception.
         """
@@ -48,6 +50,7 @@ class Nullable(Generic[T]):
 
     def orElseFetch(self, supplier: Callable[[], T]) -> T:
         """Returns if present, invoke callable if missing.
+
         Args:
             supplier (Callable) : Supplied return value will be return in place of a None value. Should not require parameters.
         """
@@ -57,6 +60,7 @@ class Nullable(Generic[T]):
 
     def ifPresent(self, consumer: Callable[[T], None]) -> None:
         """Invoke function if value is present; otherwise does nothing.
+
         Args:
             consumer (Callable) : Function to be invoked with a non-nil parameter.
         """
@@ -65,6 +69,7 @@ class Nullable(Generic[T]):
 
     def filter(self, predicate: Callable[[T], bool]) -> "Nullable[T]":
         """Filters item given a criterion.
+
         Args:
             predicate (Callable) : Invoked with a non-nil parameter. Should return a boolean.
 
@@ -75,6 +80,7 @@ class Nullable(Generic[T]):
 
     def map(self, callable: Callable[[T], S]) -> "Nullable[S]":
         """Maps the item when present.
+
         Args:
             callable (Callable) : Invoked with a non-nil parameter.
         """
