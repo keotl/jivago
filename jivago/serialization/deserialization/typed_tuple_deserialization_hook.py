@@ -3,12 +3,12 @@ from typing import Type, Tuple
 from jivago.inject import typing_meta_helper
 from jivago.lang.annotations import Override
 from jivago.lang.stream import Stream
-from jivago.serialization.deserialization_object_hook import DeserializationObjectHook, T
+from jivago.serialization.deserialization_strategy import DeserializationStrategy, T
 
 TYPES_WHICH_DESERIALIZE_TO_TUPLE = ('Tuple',)
 
 
-class TypedTupleDeserializationHook(DeserializationObjectHook):
+class TypedTupleDeserializationStrategy(DeserializationStrategy):
 
     def __init__(self, deserializer: "Deserializer"):
         self.deserializer = deserializer

@@ -4,11 +4,10 @@ from typing import Type
 from jivago.lang.annotations import Override, Serializable
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
-from jivago.serialization.deserialization_object_hook import DeserializationObjectHook, T
-from jivago.serialization.exceptions import MissingKeyException
+from jivago.serialization.deserialization_strategy import DeserializationStrategy, T
 
 
-class RegisteredSerializableTypeDeserializationHook(DeserializationObjectHook):
+class RegisteredSerializableTypeDeserializationStrategy(DeserializationStrategy):
 
     def __init__(self, registry: Registry, deserializer: "Deserializer"):
         self.deserializer = deserializer

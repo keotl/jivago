@@ -3,7 +3,7 @@ from typing import Type, TypeVar
 T = TypeVar('T')
 
 
-class DeserializationObjectHook(object):
+class DeserializationStrategy(object):
 
     def can_handle_deserialization(self, declared_type: type) -> bool:
         raise NotImplementedError

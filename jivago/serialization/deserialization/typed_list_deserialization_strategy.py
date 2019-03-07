@@ -3,12 +3,12 @@ from typing import Type, List
 from jivago.inject import typing_meta_helper
 from jivago.lang.annotations import Override
 from jivago.lang.stream import Stream
-from jivago.serialization.deserialization_object_hook import DeserializationObjectHook, T
+from jivago.serialization.deserialization_strategy import DeserializationStrategy, T
 
 TYPES_WHICH_DESERIALIZE_TO_LISTS = ('List', 'Iterable', 'Collection')
 
 
-class TypedListDeserializationHook(DeserializationObjectHook):
+class TypedListDeserializationStrategy(DeserializationStrategy):
 
     def __init__(self, deserializer: "Deserializer"):
         self.deserializer = deserializer

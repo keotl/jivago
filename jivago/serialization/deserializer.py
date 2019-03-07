@@ -2,16 +2,20 @@ from typing import TypeVar, Type
 
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
-from jivago.serialization.hooks.built_in_type_deserialization_object_hook import BuiltInTypeDeserializationObjectHook
-from jivago.serialization.hooks.dictionary_deserialization_object_hook import DictionaryDeserializationObjectHook
-from jivago.serialization.hooks.list_deserialization_hook import ListDeserializationHook
-from jivago.serialization.hooks.optional_attribute_deserialization_hook import OptionalAttributeDeserializationHook
-from jivago.serialization.hooks.registered_serializable_type_deserialization_hook import \
-    RegisteredSerializableTypeDeserializationHook
-from jivago.serialization.hooks.tuple_deserialization_hook import TupleDeserializationHook
-from jivago.serialization.hooks.typed_dictionary_deserialization_hook import TypedDictionaryDeserializationHook
-from jivago.serialization.hooks.typed_list_deserialization_hook import TypedListDeserializationHook
-from jivago.serialization.hooks.typed_tuple_deserialization_hook import TypedTupleDeserializationHook
+from jivago.serialization.deserialization.built_in_type_deserialization_strategy import \
+    BuiltInTypeDeserializationStrategy
+from jivago.serialization.deserialization.dictionary_deserialization_strategy import DictionaryDeserializationStrategy
+from jivago.serialization.deserialization.list_deserialization_strategy import ListDeserializationStrategy
+from jivago.serialization.deserialization.optional_attribute_deserialization_strategy import \
+    OptionalAttributeDeserializationStrategy
+from jivago.serialization.deserialization.registered_serializable_type_deserialization_strategy import \
+    RegisteredSerializableTypeDeserializationStrategy
+from jivago.serialization.deserialization.tuple_deserialization_strategy import TupleDeserializationStrategy
+from jivago.serialization.deserialization.typed_dictionary_deserialization_hook import \
+    TypedDictionaryDeserializationStrategy
+from jivago.serialization.deserialization.typed_list_deserialization_strategy import TypedListDeserializationStrategy
+from jivago.serialization.deserialization.typed_tuple_deserialization_hook import TypedTupleDeserializationStrategy
+from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 T = TypeVar('T')
@@ -20,22 +24,23 @@ T = TypeVar('T')
 class Deserializer(object):
 
     def __init__(self, registry: Registry):
-        self.hooks = [
-            BuiltInTypeDeserializationObjectHook(),
-            RegisteredSerializableTypeDeserializationHook(registry, self),
-            TypedDictionaryDeserializationHook(self),
-            OptionalAttributeDeserializationHook(self),
-            TypedListDeserializationHook(self),
-            TypedTupleDeserializationHook(self),
-            DictionaryDeserializationObjectHook(),
-            ListDeserializationHook(),
-            TupleDeserializationHook()
+        self.deserialization_strategies = [
+            BuiltInTypeDeserializationStrategy(),
+            RegisteredSerializableTypeDeserializationStrategy(registry, self),
+            TypedDictionaryDeserializationStrategy(self),
+            OptionalAttributeDeserializationStrategy(self),
+            TypedListDeserializationStrategy(self),
+            TypedTupleDeserializationStrategy(self),
+            DictionaryDeserializationStrategy(),
+            ListDeserializationStrategy(),
+            TupleDeserializationStrategy()
         ]
 
     def deserialize(self, obj: dict, object_clazz: Type[T]) -> T:
         try:
-            return Stream(self.hooks). \
-                firstMatch(lambda hook: hook.can_handle_deserialization(object_clazz)) \
+            return Stream(self.deserialization_strategies). \
+                firstMatch(lambda s: s.can_handle_deserialization(object_clazz)) \
+                .orElseThrow(SerializationException) \
                 .deserialize(obj, object_clazz)
-        except AttributeError:
+        except (AttributeError, TypeError):
             raise IncorrectAttributeTypeException()
