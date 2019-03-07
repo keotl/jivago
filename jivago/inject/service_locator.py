@@ -5,6 +5,7 @@ from jivago.inject.exception.instantiation_exception import InstantiationExcepti
 from jivago.inject.exception.non_injectable_constructor_exception import NonInjectableConstructorException
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Inject
+from jivago.lang.nullable import Nullable
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 
@@ -109,4 +110,5 @@ class ServiceLocator(object):
             return True
 
     def __get_scope(self, component: type) -> Optional[ScopeCache]:
-        return Stream(self.scopeCaches).firstMatch(lambda scope: scope.handles_component(component))
+        found_scope = Stream(self.scopeCaches).firstMatch(lambda scope: scope.handles_component(component))
+        return found_scope.get() if found_scope.isPresent() else None

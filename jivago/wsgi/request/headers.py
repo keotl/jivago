@@ -13,7 +13,7 @@ class Headers(object):
         found_header = Stream(self.content.items()).firstMatch(
             lambda key, value: key == item or _format_camel_case(key) == _format_camel_case(item))
         if found_header:
-            return found_header[1]
+            return found_header.get()[1]
         return None
 
     def values(self):
