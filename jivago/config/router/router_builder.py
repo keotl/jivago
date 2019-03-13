@@ -1,7 +1,7 @@
 from jivago.config.router.router_config_rule import RouterConfigRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.deserializer import Deserializer
 from jivago.wsgi.filter.filter_chain_factory import FilterChainFactory
 from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
@@ -31,7 +31,7 @@ class RouterBuilder(object):
     def build(self, registry: Registry, service_locator: ServiceLocator) -> Router:
         filter_chain_factory = FilterChainFactory(self.filtering_rules, service_locator,
                                                   RouteHandlerFactory(service_locator,
-                                                                      DtoSerializationHandler(registry),
+                                                                      Deserializer(registry),
                                                                       self.routing_rules,
                                                                       CorsRequestHandlerFactory(self.cors_rules))
                                                   )

@@ -1,4 +1,4 @@
-from jivago.lang.registry import Component, Singleton
+from jivago.inject.annotation import Component, Singleton
 from jivago.lang.annotations import Override, Inject
 
 

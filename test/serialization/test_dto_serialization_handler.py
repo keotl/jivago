@@ -6,6 +6,7 @@ from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.serialization.deserializer import Deserializer
 from jivago.serialization.serialization_exception import SerializationException
+from jivago.serialization.serializer import Serializer
 from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 OBJECT_WITH_UNKNOWN_PROPERTY = {"name": "a_name", "unknown-property": "foobar"}
@@ -16,9 +17,13 @@ OBJECT_WITH_MISSING_VALUES = {}
 class DtoSerializationHandler(object):
     def __init__(self, registry: Registry):
         self.deserializer = Deserializer(registry)
+        self.serializer = Serializer()
 
     def deserialize(self, object, type):
         return self.deserializer.deserialize(object, type)
+
+    def serialize(self, obj):
+        return self.serializer.serialize(obj)
 
 
 class DtoSerializationHandlerTest(unittest.TestCase):
@@ -185,7 +190,6 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         serialized = self.serialization_handler.serialize(tuple_response)
 
-        self.assertTrue(self.serialization_handler.is_serializable(tuple_response))
         self.assertEqual(['foo'], serialized)
 
 

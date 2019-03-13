@@ -11,10 +11,11 @@ from jivago.serialization.deserialization.optional_attribute_deserialization_str
 from jivago.serialization.deserialization.registered_serializable_type_deserialization_strategy import \
     RegisteredSerializableTypeDeserializationStrategy
 from jivago.serialization.deserialization.tuple_deserialization_strategy import TupleDeserializationStrategy
-from jivago.serialization.deserialization.typed_dictionary_deserialization_hook import \
+from jivago.serialization.deserialization.typed_dictionary_deserialization_strategy import \
     TypedDictionaryDeserializationStrategy
 from jivago.serialization.deserialization.typed_list_deserialization_strategy import TypedListDeserializationStrategy
-from jivago.serialization.deserialization.typed_tuple_deserialization_hook import TypedTupleDeserializationStrategy
+from jivago.serialization.deserialization.typed_tuple_deserialization_strategy import TypedTupleDeserializationStrategy
+from jivago.serialization.deserialization_strategy import DeserializationStrategy
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
@@ -35,6 +36,10 @@ class Deserializer(object):
             ListDeserializationStrategy(),
             TupleDeserializationStrategy()
         ]
+
+    def is_deserializable_type(self, object_clazz: type) -> bool:
+        return Stream(self.deserialization_strategies) \
+            .anyMatch(lambda s: s.can_handle_deserialization(object_clazz))
 
     def deserialize(self, obj: dict, object_clazz: Type[T]) -> T:
         try:

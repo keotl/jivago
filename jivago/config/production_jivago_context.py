@@ -23,8 +23,9 @@ from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.scheduling.annotations import Scheduled
 from jivago.scheduling.task_scheduler import TaskScheduler
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.deserializer import Deserializer
 from jivago.serialization.object_mapper import ObjectMapper
+from jivago.serialization.serializer import Serializer
 from jivago.templating.template_filter import TemplateFilter
 from jivago.templating.view_template_repository import ViewTemplateRepository
 from jivago.wsgi.annotations import Resource
@@ -72,8 +73,10 @@ class ProductionJivagoContext(AbstractContext):
         Stream(self.get_default_filters()).forEach(lambda f: self.serviceLocator.bind(f, f))
 
         # TODO better way to handle Jivago Dependencies
+        self.serviceLocator.bind(Registry, Registry.INSTANCE)
         self.serviceLocator.bind(TaskScheduler, TaskScheduler(self.serviceLocator))
-        self.serviceLocator.bind(DtoSerializationHandler, DtoSerializationHandler(Registry.INSTANCE))
+        self.serviceLocator.bind(Deserializer, Deserializer(Registry.INSTANCE))
+        self.serviceLocator.bind(Serializer, Serializer())
         self.serviceLocator.bind(ViewTemplateRepository, ViewTemplateRepository(self.get_views_folder_path()))
         self.serviceLocator.bind(BodySerializationFilter, BodySerializationFilter)
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
