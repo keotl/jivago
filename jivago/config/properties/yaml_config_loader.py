@@ -14,4 +14,4 @@ class YamlConfigLoader(ApplicationConfigLoader):
     @Override
     def read(self, filepath: str) -> ApplicationProperties:
         with open(filepath, 'r') as f:
-            return ApplicationProperties(yaml.load(f))
+            return ApplicationProperties(yaml.safe_load(f))
