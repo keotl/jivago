@@ -1,6 +1,5 @@
 from typing import Callable
 
-from jivago.inject.provider_function import ProviderFunction
 from jivago.lang.registry import Annotation
 
 
@@ -16,5 +15,4 @@ def Component(wrapped_class: type) -> type:
 
 @Annotation
 def Provider(wrapped_function: Callable) -> Callable:
-    return ProviderFunction(wrapped_function)
-
+    return wrapped_function
