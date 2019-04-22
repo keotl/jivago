@@ -11,7 +11,7 @@ class DependencyInjectionTest(anachronos.TestCase):
         http.get("/dependency/lazybean")
 
         self.assertEqual(200, res.status_code)
-        self.assertThat(INSTANTIATED_LAZY_BEAN).is_stored()
+        self.assertThat(INSTANTIATED_LAZY_BEAN).is_stored_only_once()
 
 
 if __name__ == '__main__':

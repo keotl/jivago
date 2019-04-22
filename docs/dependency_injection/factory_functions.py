@@ -1,4 +1,4 @@
-from jivago.inject.annotation import Provider
+from jivago.inject.annotation import Provider, Singleton
 
 
 class DatabaseConnection(object):
@@ -21,3 +21,10 @@ def get_database_connection() -> DatabaseConnection:
     if connection is None:
         connection = DatabaseConnection()
     return connection
+
+
+@Provider
+@Singleton
+def get_singleton_bean(my_dependency: Dependency) -> MySingletonBean:
+    # Will only be called once
+    return Dependency(...)

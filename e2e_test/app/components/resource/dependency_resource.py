@@ -7,7 +7,6 @@ from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.methods import GET
 
 
-@Singleton
 class ALazyProvidedBean(object):
     pass
 
@@ -26,7 +25,7 @@ class DependencyResource(object):
 
 
 @Provider
-@Inject
+@Singleton
 def get_lazy_bean(anachronos: Anachronos) -> ALazyProvidedBean:
     anachronos.store(INSTANTIATED_LAZY_BEAN)
     return ALazyProvidedBean()

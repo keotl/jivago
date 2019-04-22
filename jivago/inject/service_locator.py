@@ -5,7 +5,6 @@ from jivago.inject.exception.instantiation_exception import InstantiationExcepti
 from jivago.inject.exception.non_injectable_constructor_exception import NonInjectableConstructorException
 from jivago.inject.scope_cache import ScopeCache
 from jivago.lang.annotations import Inject
-from jivago.lang.nullable import Nullable
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 
@@ -32,21 +31,24 @@ class ServiceLocator(object):
     def get(self, interface: type):
         if interface in self.literals.keys():
             return self.literals[interface]
-        if interface in self.providers.keys():
-            return self.__inject_function(self.providers[interface])
         if typing_meta_helper.is_typing_meta_collection(interface):
             return self.get_all(interface.__args__[0])
-        if interface not in self.components.keys():
-            raise InstantiationException("Could not instantiate {}.".format(interface))
 
-        stored_component = self.components[interface]
+        stored_component = Stream.of(self.components, self.providers) \
+            .firstMatch(lambda x: interface in x) \
+            .map(lambda x: x[interface]) \
+            .orElseThrow(InstantiationException("Could not instantiate {}.".format(interface)))
 
         scope = self.__get_scope(stored_component)
         if scope is not None and scope.is_stored(stored_component):
             return scope.get(stored_component)
-
-        constructor = stored_component.__init__
-        instance = self.__inject_constructor(stored_component, constructor)
+        instance = None
+        
+        if interface in self.providers.keys():
+            instance = self.__inject_function(self.providers[interface])
+        else:
+            constructor = stored_component.__init__
+            instance = self.__inject_constructor(stored_component, constructor)
 
         if scope:
             scope.store(stored_component, instance)
