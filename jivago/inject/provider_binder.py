@@ -19,11 +19,12 @@ class ProviderBinder(AbstractBinder):
     @Override
     def bind(self, service_locator: ServiceLocator):
         providers = self.registry.get_annotated_in_package(Provider, self.rootPackage)
-        Stream(providers).map(lambda r: r.registered).forEach(
-            lambda p: service_locator.bind(_function_return_type(p), p))
+        Stream(providers).map(lambda r: r.registered) \
+            .forEach(lambda p: service_locator.bind(_function_return_type(p), p))
 
 
 def _function_return_type(fun: Callable) -> type:
     return_type = inspect.signature(fun).return_annotation
     if return_type == inspect._empty:
         raise UndefinedReturnProviderFunction()
+    return return_type
