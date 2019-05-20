@@ -21,7 +21,7 @@ class Router(object):
     def route(self, env, start_response):
         request = self.request_factory.build_request(env)
 
-        filter_chain = self.filter_chain_factory.create_filter_chain(request.path)
+        filter_chain = self.filter_chain_factory.create_filter_chain(request)
 
         response = Response.empty()
 
