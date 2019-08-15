@@ -4,6 +4,7 @@ from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
 from jivago.serialization.deserialization.built_in_type_deserialization_strategy import \
     BuiltInTypeDeserializationStrategy
+from jivago.serialization.deserialization.datetime_deserialization_strategy import DatetimeDeserializationStrategy
 from jivago.serialization.deserialization.dictionary_deserialization_strategy import DictionaryDeserializationStrategy
 from jivago.serialization.deserialization.list_deserialization_strategy import ListDeserializationStrategy
 from jivago.serialization.deserialization.optional_attribute_deserialization_strategy import \
@@ -26,6 +27,7 @@ class Deserializer(object):
     def __init__(self, registry: Registry):
         self.deserialization_strategies = [
             BuiltInTypeDeserializationStrategy(),
+            DatetimeDeserializationStrategy(),
             RegisteredSerializableTypeDeserializationStrategy(registry, self),
             TypedDictionaryDeserializationStrategy(self),
             OptionalAttributeDeserializationStrategy(self),

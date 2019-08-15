@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 from typing import Optional, List, Dict, Tuple, Iterable
 
 from jivago.lang.annotations import Serializable
@@ -153,6 +154,20 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         serialized = self.serialization_handler.serialize(tuple_response)
 
         self.assertEqual(['foo'], serialized)
+
+    def test_givenDatetime_whenSerializing_thenSerializeToStringInJson(self):
+        date = datetime(year=1984, month=1, day=24)
+        result = self.serialization_handler.serialize({"date": date})
+
+        self.assertEqual(result["date"], str(date))
+
+    def test_givenDatetime_whenDeserializing_thenDeserializeFromString(self):
+        serialized = "1984-01-24"
+
+        result = self.serialization_handler.deserialize(serialized, datetime)
+
+        self.assertIsInstance(result, datetime)
+        self.assertEqual(datetime(1984, 1, 24), result)
 
 
 @Serializable
