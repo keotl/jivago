@@ -85,12 +85,11 @@ class JivagoApplication(object):
 
     def __load_application_properties(self, context: AbstractContext) -> ApplicationProperties:
         composite_config_loader = GlobalConfigLoader([YamlConfigLoader(), JsonConfigLoader()])
-        config_file_which_exists = Stream(context.get_config_file_locations()).firstMatch(
-            lambda filepath: os.path.exists(filepath))
-        if config_file_which_exists:
-            return composite_config_loader.read(config_file_which_exists)
-        else:
-            return ApplicationProperties()
+
+        return Stream(context.get_config_file_locations()) \
+            .firstMatch(lambda filepath: os.path.exists(filepath)) \
+            .map(lambda x: composite_config_loader.read(x)) \
+            .orElse(ApplicationProperties())
 
     def __load_system_environment_properties(self) -> SystemEnvironmentProperties:
         return SystemEnvironmentProperties(os.environ)

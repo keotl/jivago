@@ -19,3 +19,6 @@ FILTER = "Filtering:Entering Filter"
 RUNNABLE_EVENT_HANDLER = "Event:Got Event in runnable"
 INSTANTIATED_EVENT_HANDLER = "Event: Got Event in instantiated handler"
 FUNCTION_EVENT_HANDLER = "Event: Got Event in simple function"
+
+# Dependency injection
+INSTANTIATED_LAZY_BEAN = "Injection: Instantiated lazy component"

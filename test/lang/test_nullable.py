@@ -90,10 +90,19 @@ class NullableTest(unittest.TestCase):
         self.assertFalse(self.null)
 
     def test_whenUsingIfPresent_thenInvokeOnlyWhenItemIsPresent(self):
-        callback = MagicMock()
+        mock = MagicMock()
+        callback = lambda x: mock()
 
         self.null.ifPresent(callback)
-        self.assertFalse(callback.called)
+        self.assertFalse(mock.called)
 
         self.non_null.ifPresent(callback)
-        self.assertTrue(callback.called)
+        self.assertTrue(mock.called)
+
+    def test_givenACallableWhichTakesMoreThanOneParameter_whenMappingOrFiltering_thenExpandTupleToMultipleParameters(
+            self):
+        tupleNullable = Nullable((1, 2))
+
+        sum = tupleNullable.map(lambda x, y: x + y)
+
+        self.assertEqual(3, sum.get())

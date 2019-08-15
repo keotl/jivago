@@ -38,7 +38,7 @@ When complex scoping is required for a given component, for example when handlin
 .. literalinclude:: factory_functions.py
    :language: python
 
-The provider function can take any registered component as arguments.
+The provider function can take any registered component as arguments. By adding ``@Singleton`` to the provider function, it will be lazily instantiated only once, thereby exhibiting the same behaviour as components.
 
 Manual Component Registration
 --------------------------------

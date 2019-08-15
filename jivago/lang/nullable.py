@@ -1,3 +1,4 @@
+import inspect
 from typing import Generic, TypeVar, Optional, Callable, Union
 
 T = TypeVar('T')
@@ -58,16 +59,20 @@ class Nullable(Generic[T]):
             return self._item
         return supplier()
 
-    def ifPresent(self, consumer: Callable[[T], None]) -> None:
+    def ifPresent(self, consumer: Union[Callable[[T], None], Callable[..., None]]) -> "Nullable[T]":
         """Invoke function if value is present; otherwise does nothing.
 
         Args:
             consumer (Callable) : Function to be invoked with a non-nil parameter.
         """
         if self.isPresent():
-            consumer(self._item)
+            if self.__should_expand(consumer):
+                consumer(*self._item)
+            else:
+                consumer(self._item)
+        return self
 
-    def filter(self, predicate: Callable[[T], bool]) -> "Nullable[T]":
+    def filter(self, predicate: Union[Callable[[T], bool], Callable[..., bool]]) -> "Nullable[T]":
         """Filters item given a criterion.
 
         Args:
@@ -75,21 +80,33 @@ class Nullable(Generic[T]):
 
         """
         if self.isPresent():
+            if self.__should_expand(predicate):
+                return self if predicate(*self._item) else Nullable.empty()
             return self if predicate(self._item) else Nullable.empty()
         return Nullable.empty()
 
-    def map(self, callable: Callable[[T], S]) -> "Nullable[S]":
+    def map(self, callable: Union[Callable[[T], S], Callable[..., S]]) -> "Nullable[S]":
         """Maps the item when present.
 
         Args:
             callable (Callable) : Invoked with a non-nil parameter.
         """
         if self.isPresent():
+            if self.__should_expand(callable):
+                return Nullable(callable(*self._item))
             return Nullable(callable(self._item))
         return Nullable.empty()
 
     def __bool__(self) -> bool:
         return self.isPresent()
+
+    def __should_expand(self, fun: Callable) -> bool:
+        if inspect.isbuiltin(fun):
+            return False
+        if inspect.isclass(fun):
+            return len(inspect.signature(fun.__init__).parameters) > 2
+        sig = inspect.signature(fun)
+        return len(sig.parameters) > 1
 
     @staticmethod
     def empty() -> "Nullable":
