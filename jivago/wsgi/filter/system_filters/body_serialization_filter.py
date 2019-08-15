@@ -19,5 +19,5 @@ class BodySerializationFilter(Filter):
     def doFilter(self, request: Request, response: Response, chain: FilterChain):
         chain.doFilter(request, response)
 
-        if self.registry.is_annotated(response.body, Serializable) or type(response.body) in TYPES_TO_BE_SERIALIZED:
+        if self.registry.is_annotated(response.body.__class__, Serializable) or type(response.body) in TYPES_TO_BE_SERIALIZED:
             response.body = self.serializer.serialize(response.body)

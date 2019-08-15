@@ -2,7 +2,7 @@ from typing import Union
 
 from jivago.serialization.serialization_exception import SerializationException
 
-BUILTIN_TYPES = (str, float, int)
+BUILTIN_TYPES = (str, float, int, bool)
 
 
 class Serializer(object):
