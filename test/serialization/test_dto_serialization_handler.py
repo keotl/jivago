@@ -1,22 +1,47 @@
 import unittest
-from typing import Optional, List, Dict, Tuple, Iterable
+from datetime import datetime
+from typing import Optional, List, Dict, Tuple, Iterable, NamedTuple
 
-from jivago.lang.registry import Registry
 from jivago.lang.annotations import Serializable
-from jivago.lang.stream import Stream
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
-from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
+from jivago.lang.registry import Registry
+from jivago.serialization.deserializer import Deserializer
 from jivago.serialization.serialization_exception import SerializationException
+from jivago.serialization.serializer import Serializer
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 OBJECT_WITH_UNKNOWN_PROPERTY = {"name": "a_name", "unknown-property": "foobar"}
 
 OBJECT_WITH_MISSING_VALUES = {}
 
 
+class DtoSerializationHandler(object):
+    def __init__(self, registry: Registry):
+        self.deserializer = Deserializer(registry)
+        self.serializer = Serializer()
+
+    def deserialize(self, object, type):
+        return self.deserializer.deserialize(object, type)
+
+    def serialize(self, obj):
+        return self.serializer.serialize(obj)
+
+
 class DtoSerializationHandlerTest(unittest.TestCase):
 
     def setUp(self):
         self.serialization_handler = DtoSerializationHandler(Registry())
+
+    def test_whenDeserializing_thenCreateDtoMatchingDictionaryItems(self):
+        a_dto = self.serialization_handler.deserialize({"name": "a name"}, ADto)
+
+        self.assertIsInstance(a_dto, ADto)
+        self.assertEqual("a name", a_dto.name)
+
+    def test_givenDtoWithDefinedConstructor_whenDeserializing_thenInstantiateByInvokingInitializer(self):
+        a_dto = self.serialization_handler.deserialize({"name": "a name"}, ADtoWithAConstructor)
+
+        self.assertIsInstance(a_dto, ADtoWithAConstructor)
+        self.assertEqual("a name", a_dto.name)
 
     def test_givenUnknownProperty_whenDeserializing_thenIgnoreTheUnknownProperty(self):
         dto = self.serialization_handler.deserialize(OBJECT_WITH_UNKNOWN_PROPERTY, ADto)
@@ -60,43 +85,6 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(dto, ACollectionDto)
         self.assertEqual("a name", dto.children[1].name)
-
-    def test_givenDto_whenCheckingIsSerializable_thenReturnObjectIsSerializable(self):
-        is_serializable = self.serialization_handler.is_serializable(ADto())
-
-        self.assertTrue(is_serializable)
-
-    def test_givenNestedDto_whenCheckingIsSerializable_thenReturnObjectIsSerializable(self):
-        is_serializable = self.serialization_handler.is_serializable(A_NESTED_DTO)
-
-        self.assertTrue(is_serializable)
-
-    def test_givenAListOfDtos_whenCheckingIsSerializale_thenReturnCollectionIsSerializable(self):
-        dto_list = [ChildDto() for x in range(0, 2)]
-
-        is_serializable = self.serialization_handler.is_serializable(dto_list)
-
-        self.assertTrue(is_serializable)
-
-    def test_givenADictionaryOfDtos_whenCheckingIsSerializable_thenReturnDictionnaryIsSerializable(self):
-        dictionary_of_dtos = {"key": ChildDto()}
-
-        is_serializable = self.serialization_handler.is_serializable(dictionary_of_dtos)
-
-        self.assertTrue(is_serializable)
-
-    def test_givenADictionaryWithNonBaseTypeKeys_whenCheckingIsSerializable_thenDictionaryIsNotSerializable(self):
-        incorrect_dictionary = {ChildDto(): "foo"}
-
-        is_serializable = self.serialization_handler.is_serializable(incorrect_dictionary)
-
-        self.assertFalse(is_serializable)
-
-    def test_givenBaseType_whenCheckingIsSerializable_thenObjectIsSerializable(self):
-        base_objects = [1, "hello", 5.34]
-
-        Stream(base_objects).map(lambda x: self.serialization_handler.is_serializable(x)).forEach(
-            lambda x: self.assertTrue(x))
 
     def test_givenNonSerializableObject_whenSerializing_thenThrowSerializationException(self):
         non_serializable_object = object()
@@ -165,12 +153,39 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         serialized = self.serialization_handler.serialize(tuple_response)
 
-        self.assertTrue(self.serialization_handler.is_serializable(tuple_response))
         self.assertEqual(['foo'], serialized)
+
+    def test_givenDatetime_whenSerializing_thenSerializeToStringInJson(self):
+        date = datetime(year=1984, month=1, day=24)
+        result = self.serialization_handler.serialize({"date": date})
+
+        self.assertEqual(result["date"], str(date))
+
+    def test_givenDatetime_whenDeserializing_thenDeserializeFromString(self):
+        serialized = "1984-01-24"
+
+        result = self.serialization_handler.deserialize(serialized, datetime)
+
+        self.assertIsInstance(result, datetime)
+        self.assertEqual(datetime(1984, 1, 24), result)
+
+    def test_givenNamedTuple_whenDeserializing_thenDeserializeFromDictionary(self):
+        serialized = {"name": "paul atreides", "age": 17}
+
+        result = self.serialization_handler.deserialize(serialized, ANamedTuple)
+
+        self.assertIsInstance(result, ANamedTuple)
+
 
 @Serializable
 class ADto(object):
     name: str
+
+
+@Serializable
+class ADtoWithAConstructor(object):
+    def __init__(self, name: str):
+        self.name = name
 
 
 @Serializable
@@ -192,7 +207,7 @@ class ANestedDto(object):
 class ACollectionDto(object):
     children: List[ChildDto]
 
-    def __init__(self, children: List[ChildDto]) -> "ACollectionDto":
+    def __init__(self, children: List[ChildDto]):
         self.children = children
 
 
@@ -210,6 +225,10 @@ class NestedTypeDictDto(object):
 class DtoWithIterablesAndTuples(object):
     tuples: Tuple[str]
     iterables: Iterable[str]
+
+class ANamedTuple(NamedTuple):
+    name: str
+    age: int
 
 
 A_NESTED_DTO = ANestedDto()

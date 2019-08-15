@@ -2,7 +2,7 @@ from typing import Iterable, List
 
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.deserializer import Deserializer
 from jivago.wsgi.invocation.route_handler import RouteHandler
 from jivago.wsgi.methods import OPTIONS
 from jivago.wsgi.request.request import Request
@@ -15,13 +15,13 @@ from jivago.wsgi.routing.routing_rule import RoutingRule
 class RouteHandlerFactory(object):
 
     def __init__(self, service_locator: ServiceLocator,
-                 dto_serialization_handler: DtoSerializationHandler,
+                 deserializer: Deserializer,
                  routing_rules: List[RoutingRule],
                  cors_handler_factory: CorsRequestHandlerFactory):
 
         self.cors_handler_factory = cors_handler_factory
         self.routing_rules = routing_rules
-        self.dto_serialization_handler = dto_serialization_handler
+        self.deserializer = deserializer
         self.service_locator = service_locator
 
     def create_route_handlers(self, request: Request) -> Iterable[RouteHandler]:
@@ -41,7 +41,7 @@ class RouteHandlerFactory(object):
             raise MethodNotAllowedException()
 
         return Stream(self.routing_rules) \
-            .map(lambda rule: rule.create_route_handlers(request, self.service_locator, self.dto_serialization_handler)) \
+            .map(lambda rule: rule.create_route_handlers(request, self.service_locator, self.deserializer)) \
             .flat() \
             .map(lambda route_handler: self.cors_handler_factory.apply_cors_rules(request.path, route_handler))
 

@@ -4,7 +4,7 @@ from typing import List
 from jivago.config.router.cors_rule import CorsRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.deserializer import Deserializer
 from jivago.wsgi.invocation.rewrite.path_rewriting_route_handler_decorator import PathRewritingRouteHandlerDecorator
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.methods import GET
@@ -28,7 +28,7 @@ class RouteHandlerFactoryTest(unittest.TestCase):
     def setUp(self):
         self.routing_table = TreeRoutingTable()
         self.routing_table.register_route(GET, PATH, RESOURCE_CLASS, ROUTE_METHOD)
-        self.route_handler_factory = RouteHandlerFactory(ServiceLocator(), DtoSerializationHandler(Registry()),
+        self.route_handler_factory = RouteHandlerFactory(ServiceLocator(), Deserializer(Registry()),
                                                          [RoutingRule(
                                                              "/", self.routing_table
                                                          )], CorsRequestHandlerFactory([CorsRule("/", {})]))
@@ -50,7 +50,7 @@ class RouteHandlerFactoryTest(unittest.TestCase):
     def test_givenPrefixedRule_whenCreatingRouteHandlers_thenCreateResourceInvokerWithTruncatedPathForEveryRoute(self):
         request = self.request_builder.path("/prefix" + PATH).build()
         rule = RoutingRule("/prefix", self.routing_table)
-        self.route_handler_factory = RouteHandlerFactory(ServiceLocator(), DtoSerializationHandler(Registry()),
+        self.route_handler_factory = RouteHandlerFactory(ServiceLocator(), Deserializer(Registry()),
                                                          [rule], CorsRequestHandlerFactory([CorsRule("/", {})]))
 
         handlers: List[PathRewritingRouteHandlerDecorator] = [x for x in

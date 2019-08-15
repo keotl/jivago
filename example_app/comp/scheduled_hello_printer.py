@@ -1,7 +1,7 @@
 import logging
 
+from jivago.inject.annotation import Singleton
 from jivago.lang.annotations import Override
-from jivago.lang.registry import Singleton
 from jivago.lang.runnable import Runnable
 from jivago.scheduling.annotations import Scheduled, Duration
 
