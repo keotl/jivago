@@ -7,6 +7,7 @@ from jivago.serialization.deserialization.built_in_type_deserialization_strategy
 from jivago.serialization.deserialization.datetime_deserialization_strategy import DatetimeDeserializationStrategy
 from jivago.serialization.deserialization.dictionary_deserialization_strategy import DictionaryDeserializationStrategy
 from jivago.serialization.deserialization.list_deserialization_strategy import ListDeserializationStrategy
+from jivago.serialization.deserialization.named_tuple_deserialization_strategy import NamedTupleDeserializationStrategy
 from jivago.serialization.deserialization.optional_attribute_deserialization_strategy import \
     OptionalAttributeDeserializationStrategy
 from jivago.serialization.deserialization.registered_serializable_type_deserialization_strategy import \
@@ -28,6 +29,7 @@ class Deserializer(object):
         self.deserialization_strategies = [
             BuiltInTypeDeserializationStrategy(),
             DatetimeDeserializationStrategy(),
+            NamedTupleDeserializationStrategy(self),
             RegisteredSerializableTypeDeserializationStrategy(registry, self),
             TypedDictionaryDeserializationStrategy(self),
             OptionalAttributeDeserializationStrategy(self),

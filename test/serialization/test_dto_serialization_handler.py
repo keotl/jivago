@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from typing import Optional, List, Dict, Tuple, Iterable
+from typing import Optional, List, Dict, Tuple, Iterable, NamedTuple
 
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
@@ -169,6 +169,13 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertIsInstance(result, datetime)
         self.assertEqual(datetime(1984, 1, 24), result)
 
+    def test_givenNamedTuple_whenDeserializing_thenDeserializeFromDictionary(self):
+        serialized = {"name": "paul atreides", "age": 17}
+
+        result = self.serialization_handler.deserialize(serialized, ANamedTuple)
+
+        self.assertIsInstance(result, ANamedTuple)
+
 
 @Serializable
 class ADto(object):
@@ -218,6 +225,10 @@ class NestedTypeDictDto(object):
 class DtoWithIterablesAndTuples(object):
     tuples: Tuple[str]
     iterables: Iterable[str]
+
+class ANamedTuple(NamedTuple):
+    name: str
+    age: int
 
 
 A_NESTED_DTO = ANestedDto()
