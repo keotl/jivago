@@ -7,7 +7,7 @@ from jivago.lang.annotations import Serializable
 from jivago.lang.registration import Registration
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
-from jivago.serialization.dto_serialization_handler import DtoSerializationHandler
+from jivago.serialization.deserializer import Deserializer
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.wsgi.annotations import Resource, Path
 from jivago.wsgi.filter.filter_chain import FilterChain
@@ -38,14 +38,14 @@ HTTP_METHOD = GET
 
 class TestIntegratedResourceInvoker(object):
     def __init__(self, service_locator: ServiceLocator, routing_table: RoutingTable,
-                 dto_serialization_handler: DtoSerializationHandler):
+                 deserializer: Deserializer):
+        self.deserializer = deserializer
         self.service_locator = service_locator
         self.routing_table = routing_table
-        self.dto_serialization_handler = dto_serialization_handler
 
     def invoke(self, request: Request) -> Response:
         response = ResourceClass.the_response
-        FilterChain([], RouteHandlerFactory(self.service_locator, self.dto_serialization_handler,
+        FilterChain([], RouteHandlerFactory(self.service_locator, self.deserializer,
                                             [RoutingRule("", self.routing_table)],
                                             CorsRequestHandlerFactory([]))).doFilter(request, response)
 
@@ -60,9 +60,9 @@ class IntegratedResourceInvokerTest(unittest.TestCase):
         registry = Registry()
         self.routingTable = ReflectiveRoutingTable(registry,
                                                    [Registration(ResourceClass, arguments={"value": PATH})])
-        self.dto_serialization_handler = DtoSerializationHandler(registry)
+        self.deserializer = Deserializer(registry)
         self.resource_invocator = TestIntegratedResourceInvoker(self.serviceLocator, self.routingTable,
-                                                                self.dto_serialization_handler)
+                                                                self.deserializer)
         self.request = Request('GET', PATH, {}, "", "")
         ResourceClass.has_been_called = False
 
@@ -196,9 +196,8 @@ class IntegratedResourceInvokerTest(unittest.TestCase):
         self.assertEqual([("foo", "bar")], Stream(response.body).toList())
 
     def test_givenSerializationError_whenInvokingResource_thenRaiseException(self):
-        self.resource_invocator.dto_serialization_handler = mock.create_autospec(DtoSerializationHandler)
-        self.resource_invocator.dto_serialization_handler.deserialize.side_effect = SerializationException()
-        self.resource_invocator.dto_serialization_handler.is_deserializable_into.return_value = True
+        self.resource_invocator.deserializer = mock.create_autospec(Deserializer)
+        self.resource_invocator.deserializer.deserialize.side_effect = SerializationException()
         self.request = RequestBuilder().method("POST").path(PATH + "/dto").build()
 
         with self.assertRaises(IncorrectResourceParametersException):

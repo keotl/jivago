@@ -3,7 +3,6 @@ from typing import Optional, List, Dict, Tuple, Iterable
 
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
-from jivago.lang.stream import Stream
 from jivago.serialization.deserializer import Deserializer
 from jivago.serialization.serialization_exception import SerializationException
 from jivago.serialization.serializer import Serializer
@@ -85,43 +84,6 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(dto, ACollectionDto)
         self.assertEqual("a name", dto.children[1].name)
-
-    def test_givenDto_whenCheckingIsSerializable_thenReturnObjectIsSerializable(self):
-        is_serializable = self.serialization_handler.is_serializable(ADto())
-
-        self.assertTrue(is_serializable)
-
-    def test_givenNestedDto_whenCheckingIsSerializable_thenReturnObjectIsSerializable(self):
-        is_serializable = self.serialization_handler.is_serializable(A_NESTED_DTO)
-
-        self.assertTrue(is_serializable)
-
-    def test_givenAListOfDtos_whenCheckingIsSerializale_thenReturnCollectionIsSerializable(self):
-        dto_list = [ChildDto() for x in range(0, 2)]
-
-        is_serializable = self.serialization_handler.is_serializable(dto_list)
-
-        self.assertTrue(is_serializable)
-
-    def test_givenADictionaryOfDtos_whenCheckingIsSerializable_thenReturnDictionnaryIsSerializable(self):
-        dictionary_of_dtos = {"key": ChildDto()}
-
-        is_serializable = self.serialization_handler.is_serializable(dictionary_of_dtos)
-
-        self.assertTrue(is_serializable)
-
-    def test_givenADictionaryWithNonBaseTypeKeys_whenCheckingIsSerializable_thenDictionaryIsNotSerializable(self):
-        incorrect_dictionary = {ChildDto(): "foo"}
-
-        is_serializable = self.serialization_handler.is_serializable(incorrect_dictionary)
-
-        self.assertFalse(is_serializable)
-
-    def test_givenBaseType_whenCheckingIsSerializable_thenObjectIsSerializable(self):
-        base_objects = [1, "hello", 5.34]
-
-        Stream(base_objects).map(lambda x: self.serialization_handler.is_serializable(x)).forEach(
-            lambda x: self.assertTrue(x))
 
     def test_givenNonSerializableObject_whenSerializing_thenThrowSerializationException(self):
         non_serializable_object = object()
@@ -223,7 +185,7 @@ class ANestedDto(object):
 class ACollectionDto(object):
     children: List[ChildDto]
 
-    def __init__(self, children: List[ChildDto]) -> "ACollectionDto":
+    def __init__(self, children: List[ChildDto]):
         self.children = children
 
 
