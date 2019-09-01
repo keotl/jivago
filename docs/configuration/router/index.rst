@@ -24,7 +24,7 @@ Example : Mapping all routes to the ``/api`` prefix
       :language: python
 
    Note the required default rules for proper operation :
-     * ``FilteringRule('*', self.get_default_rules())``
+     * ``FilteringRule('*', self.get_default_filters())``
          This rule adds all Jivago filters which are required for proper error and serialization handling.
      * ``AutoDiscoveringFilteringRule('*', self.registry, self.root_package_name)``
          This rule registers user-defined request filters using the `@RequestFilter` annotation.

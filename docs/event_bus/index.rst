@@ -14,7 +14,7 @@ The ``emit`` and handler methods accepts zero or one argument. In the event (*pu
 .. literalinclude:: payload.py
    :language: python
 
-Should event handlers return something, responses are return to the caller in the form of a tuple containing all non-nil responses. Note that this behaviour is not applicable when using the asynchronous (*async*) event bus. 
+Should event handlers return something, responses are returned to the caller in the form of a tuple containing all non-nil responses. Note that this behaviour is not applicable when using the asynchronous (*async*) event bus.
 
 Event handler types
 ---------------------

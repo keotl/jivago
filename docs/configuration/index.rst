@@ -18,9 +18,6 @@ configure_service_locator()
 scopes()
   This method defines component scopes for the ServiceLocator which determine when to instantiate new components. By default, only the ``Singleton`` exists.
 
-get_filters()
-  This method returns a list of Filters which should be applied to a specific request. It is called once for every request.
-
 get_views_folder_path()
   This method defines the folder in which template files are stored for ``RenderedView`` responses. Defaults to the ``views`` submodule of the root package.
 
@@ -42,7 +39,6 @@ get_banner()
   Defines the ASCII-art banner which is printed in the console at every startup.
 
 .. toctree::
-   ../dependency_injection/index
    router/index
 
 ApplicationProperties and SystemEnvironmentProperties
