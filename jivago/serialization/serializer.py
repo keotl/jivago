@@ -28,7 +28,7 @@ class Serializer(object):
             return obj
 
         if hasattr(obj, '__dict__'):
-            return self.serialize(obj.__dict__)
+            return self.serialize({**obj.__dict__})
 
         return Stream(self.strategies) \
             .firstMatch(lambda s: s.can_handle_serialization(obj)) \
