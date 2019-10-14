@@ -176,6 +176,13 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(result, ANamedTuple)
 
+    def test_givenNoneAttribute_whenSerializing_thenSerializesToNull(self):
+        expected = {"name": None}
+
+        result = self.serialization_handler.serialize(expected)
+
+        self.assertEqual(None, result["name"])
+
 
 @Serializable
 class ADto(object):
@@ -225,6 +232,7 @@ class NestedTypeDictDto(object):
 class DtoWithIterablesAndTuples(object):
     tuples: Tuple[str]
     iterables: Iterable[str]
+
 
 class ANamedTuple(NamedTuple):
     name: str

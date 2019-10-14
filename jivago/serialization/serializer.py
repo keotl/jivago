@@ -13,6 +13,9 @@ class Serializer(object):
         self.strategies = [DatetimeSerializationStrategy()]
 
     def serialize(self, obj: object) -> Union[dict, list]:
+        if obj is None:
+            return None
+
         if isinstance(obj, list) or isinstance(obj, tuple):
             return [self.serialize(x) for x in obj]
 
