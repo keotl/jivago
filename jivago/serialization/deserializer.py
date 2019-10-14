@@ -30,11 +30,11 @@ class Deserializer(object):
             BuiltInTypeDeserializationStrategy(),
             DatetimeDeserializationStrategy(),
             NamedTupleDeserializationStrategy(self),
-            RegisteredSerializableTypeDeserializationStrategy(registry, self),
             TypedDictionaryDeserializationStrategy(self),
             OptionalAttributeDeserializationStrategy(self),
             TypedListDeserializationStrategy(self),
             TypedTupleDeserializationStrategy(self),
+            RegisteredSerializableTypeDeserializationStrategy(registry, self),
             DictionaryDeserializationStrategy(),
             ListDeserializationStrategy(),
             TupleDeserializationStrategy()
