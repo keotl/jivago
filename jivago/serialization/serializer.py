@@ -1,4 +1,4 @@
-from typing import Union, List, Iterable
+from typing import Union, Iterable
 
 from jivago.lang.stream import Stream
 from jivago.serialization.serialization.datetime_serialization_strategy import DatetimeSerializationStrategy
@@ -25,7 +25,7 @@ class Serializer(object):
             for key, value in dictionary.items():
                 dictionary[key] = self.serialize(value)
             return dictionary
-        if Stream(BUILTIN_TYPES).anyMatch(lambda t: isinstance(obj, t)):
+        if issubclass(type(obj), BUILTIN_TYPES):
             return obj
 
         if hasattr(obj, '__dict__'):
