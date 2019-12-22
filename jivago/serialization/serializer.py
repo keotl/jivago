@@ -24,7 +24,7 @@ class Serializer(object):
             for key, value in dictionary.items():
                 dictionary[key] = self.serialize(value)
             return dictionary
-        if type(obj) in BUILTIN_TYPES:
+        if Stream(BUILTIN_TYPES).anyMatch(lambda t: isinstance(obj, t)):
             return obj
 
         if hasattr(obj, '__dict__'):

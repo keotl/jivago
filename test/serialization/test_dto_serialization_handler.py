@@ -190,6 +190,13 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(given.children[0], ChildDto)
 
+    def test_givenATypeDerivedFormABuiltinType_whenSerializing_thenSerializesAsBuiltinType(self):
+        given = {"name": DerivedString("my-derived-name")}
+
+        result = self.serialization_handler.serialize(given)
+
+        self.assertEqual("my-derived-name", result["name"])
+
 
 @Serializable
 class ADto(object):
@@ -245,6 +252,9 @@ class ANamedTuple(NamedTuple):
     name: str
     age: int
 
+
+class DerivedString(str):
+    pass
 
 A_NESTED_DTO = ANestedDto()
 A_NESTED_DTO.child_dto = ChildDto()
