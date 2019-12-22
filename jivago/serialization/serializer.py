@@ -1,16 +1,17 @@
-from typing import Union
+from typing import Union, List, Iterable
 
 from jivago.lang.stream import Stream
 from jivago.serialization.serialization.datetime_serialization_strategy import DatetimeSerializationStrategy
 from jivago.serialization.serialization_exception import SerializationException
+from jivago.serialization.serialization_strategy import SerializationStrategy
 
 BUILTIN_TYPES = (str, float, int, bool)
 
 
 class Serializer(object):
 
-    def __init__(self):
-        self.strategies = [DatetimeSerializationStrategy()]
+    def __init__(self, additional_strategies: Iterable[SerializationStrategy] = ()):
+        self.strategies = [DatetimeSerializationStrategy(), *additional_strategies]
 
     def serialize(self, obj: object) -> Union[dict, list]:
         if obj is None:
