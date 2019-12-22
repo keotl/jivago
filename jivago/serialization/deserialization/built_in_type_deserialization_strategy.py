@@ -12,7 +12,7 @@ class BuiltInTypeDeserializationStrategy(DeserializationStrategy):
 
     @Override
     def can_handle_deserialization(self, declared_type: type) -> bool:
-        return issubclass(declared_type, BUILTIN_TYPES)
+        return type(declared_type) == type and issubclass(declared_type, BUILTIN_TYPES)
 
     @Override
     def deserialize(self, obj, declared_type: Type[T]) -> T:
