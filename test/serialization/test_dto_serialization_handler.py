@@ -186,9 +186,24 @@ class DtoSerializationHandlerTest(unittest.TestCase):
     def test_whenSerializing_DoesNotModifyTheSourceObject(self):
         given = ACollectionDto([ChildDto()])
 
-        result = self.serialization_handler.serialize(given)
+        self.serialization_handler.serialize(given)
 
         self.assertIsInstance(given.children[0], ChildDto)
+
+    def test_givenATypeDerivedFromABuiltinType_whenSerializing_thenSerializesAsBuiltinType(self):
+        given = {"name": DerivedString("my-derived-name")}
+
+        result = self.serialization_handler.serialize(given)
+
+        self.assertEqual("my-derived-name", result["name"])
+
+    def test_givenATypeDerivedFromABuiltingType_whenDeserializing_thenDeserializesAsBuiltinType(self):
+        given = {"name": "my-name"}
+
+        result: DtoWithDerivedStringMember = self.serialization_handler.deserialize(given, DtoWithDerivedStringMember)
+
+        self.assertEqual("my-name", result.name)
+        self.assertIsInstance(result.name, DerivedString)
 
 
 @Serializable
@@ -244,6 +259,15 @@ class DtoWithIterablesAndTuples(object):
 class ANamedTuple(NamedTuple):
     name: str
     age: int
+
+
+class DerivedString(str):
+    pass
+
+
+@Serializable
+class DtoWithDerivedStringMember(object):
+    name: DerivedString
 
 
 A_NESTED_DTO = ANestedDto()
