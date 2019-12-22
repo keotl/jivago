@@ -16,7 +16,9 @@ class DebugJivagoContext(ProductionJivagoContext):
         super().__init__(root_package, registry, banner=banner)
 
     def create_router_config(self) -> RouterBuilder:
-        return super().create_router_config().add_rule(CorsRule("/", {"Access-Control-Allow-Origin": '*', 'Access-Control-Allow-Headers': '*'}))
+        return super().create_router_config().add_rule(CorsRule("/", {"Access-Control-Allow-Origin": '*',
+                                                                      'Access-Control-Allow-Headers': '*',
+                                                                      'Access-Control-Allow-Methods': '*'}))
 
     @Override
     def get_default_filters(self) -> List[Type[Filter]]:
