@@ -43,6 +43,27 @@ class JsonSerializationFilterTest(unittest.TestCase):
     def test_givenApplicationJsonHeaderWithEmptyBody_whenApplyingFilter_thenDoNotDeserializeTheEmptyString(self):
         request = RequestBuilder().headers({"Content-Type": "application/json"}).body("").method("POST").build()
 
-        self.filter.doFilter(A_REQUEST, ResponseBuilder().build(), self.filterChainMock)
+        self.filter.doFilter(request, ResponseBuilder().build(), self.filterChainMock)
 
         self.assertEqual("", request.body)
+
+    def test_givenMultipleContentTypeDirectives_whenApplyingFilter_thenMatchOnMediaType(self):
+        """https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"""
+        request = RequestBuilder() \
+            .headers({"Content-Type": "application/json; charset=utf-8"}) \
+            .body('{"name": "bar"}') \
+            .build()
+
+        self.filter.doFilter(request, ResponseBuilder().build(), self.filterChainMock)
+
+        self.assertEqual({"name": "bar"}, request.body)
+
+    def test_givenTrailingSemiColonInContentType_whenApplyingFilter_thenMatchAnyway(self):
+        request = RequestBuilder() \
+            .headers({"Content-Type": "application/json; "}) \
+            .body('{"name": "bar"}') \
+            .build()
+
+        self.filter.doFilter(request, ResponseBuilder().build(), self.filterChainMock)
+
+        self.assertEqual({"name": "bar"}, request.body)
