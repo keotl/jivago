@@ -25,7 +25,7 @@ class Stream(Generic[T]):
         else:
             return Stream(map(fun, self.iterable))
 
-    def filter(self, fun: Callable[[T], S]) -> "Stream[S]":
+    def filter(self, fun: Callable[[T], S]) -> "Stream[T]":
         """Filters elements using the supplied function. When iterating over tuples, the function can take multiple arguments."""
         if self.__should_expand(fun):
             return Stream(filter(lambda tup: fun(*tup), self.iterable))
@@ -65,7 +65,7 @@ class Stream(Generic[T]):
                     return Nullable(i)
         return Nullable.empty()
 
-    def flat(self) -> "Stream[T]":
+    def flat(self: "Stream[Iterable[T]]") -> "Stream[T]":
         """When iterating over lists, flattens the stream by concatenating all lists."""
         return Stream(itertools.chain(*self))
 
