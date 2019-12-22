@@ -65,7 +65,7 @@ class Stream(Generic[T]):
                     return Nullable(i)
         return Nullable.empty()
 
-    def flat(self) -> "Stream[T]":
+    def flat(self: "Stream[Iterable[T]]") -> "Stream[T]":
         """When iterating over lists, flattens the stream by concatenating all lists."""
         return Stream(itertools.chain(*self))
 
