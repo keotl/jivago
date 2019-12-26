@@ -20,5 +20,5 @@ class OptionalAttributeDeserializationStrategy(DeserializationStrategy):
         if obj is None:
             return obj
 
-        non_nil_declared_type = Stream(declared_type.__args__).firstMatch(lambda x: x != type(None))
+        non_nil_declared_type = Stream(declared_type.__args__).firstMatch(lambda x: x != type(None)).get()
         return self.deserializer.deserialize(obj, non_nil_declared_type)

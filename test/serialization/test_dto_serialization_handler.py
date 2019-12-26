@@ -59,6 +59,12 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertIsInstance(dto, ADtoWithOptionalValue)
         self.assertIsNone(dto.name)
 
+    def test_givenOptionalParameter_whenValueIsPresent_thenAssignTheParameter(self):
+        dto = self.serialization_handler.deserialize({"name": "foubraque"}, ADtoWithOptionalValue)
+
+        self.assertIsInstance(dto, ADtoWithOptionalValue)
+        self.assertEqual("foubraque", dto.name)
+
     def test_givenNestedDtos_whenSerializing_thenRecursivelySerializeDtos(self):
         child = ChildDto()
         child.name = "a name"
