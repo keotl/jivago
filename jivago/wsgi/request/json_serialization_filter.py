@@ -15,7 +15,7 @@ class JsonSerializationFilter(Filter):
     @Override
     def doFilter(self, request: Request, response: Response, chain: FilterChain):
         if is_application_json(request.headers['Content-Type']) and len(request.body) > 0:
-            request.body = json.loads(request.body)
+            request.body = json.loads(request.body.decode("utf-8"))
 
         chain.doFilter(request, response)
 

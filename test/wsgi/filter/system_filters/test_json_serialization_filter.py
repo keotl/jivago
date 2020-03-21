@@ -51,7 +51,7 @@ class JsonSerializationFilterTest(unittest.TestCase):
         """https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"""
         request = RequestBuilder() \
             .headers({"Content-Type": "application/json; charset=utf-8"}) \
-            .body('{"name": "bar"}') \
+            .body(b'{"name": "bar"}') \
             .build()
 
         self.filter.doFilter(request, ResponseBuilder().build(), self.filterChainMock)
@@ -61,7 +61,7 @@ class JsonSerializationFilterTest(unittest.TestCase):
     def test_givenTrailingSemiColonInContentType_whenApplyingFilter_thenMatchAnyway(self):
         request = RequestBuilder() \
             .headers({"Content-Type": "application/json; "}) \
-            .body('{"name": "bar"}') \
+            .body(b'{"name": "bar"}') \
             .build()
 
         self.filter.doFilter(request, ResponseBuilder().build(), self.filterChainMock)
