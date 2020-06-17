@@ -1,5 +1,5 @@
 alabaster==0.7.11
-anachronos==0.0.4
+anachronos==0.0.5
 argh==0.26.2
 Babel==2.6.0
 certifi==2018.8.24

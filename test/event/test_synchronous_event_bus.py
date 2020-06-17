@@ -7,7 +7,7 @@ from jivago.event.synchronous_event_bus import SynchronousEventBus
 MESSAGE_NAME = "message_name"
 
 PAYLOAD = object()
-
+RESPONSE = object()
 
 class SynchronousEventBusTest(unittest.TestCase):
 
@@ -22,9 +22,9 @@ class SynchronousEventBusTest(unittest.TestCase):
         self.message_dispatcher.handle.assert_called_with(PAYLOAD)
 
     def test_whenEmittingEvent_thenReturnCollectionOfResponses(self):
-        self.message_dispatcher.handle.return_value = PAYLOAD
+        self.message_dispatcher.handle.return_value = RESPONSE
 
         responses = self.message_bus.emit(MESSAGE_NAME, PAYLOAD)
 
         self.assertEqual(1, len(responses))
-        self.assertEqual(PAYLOAD, responses[0])
+        self.assertEqual(RESPONSE, responses[0])
