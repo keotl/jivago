@@ -1,4 +1,7 @@
+from typing import Optional
+
 from jivago.lang.annotations import Override
+from jivago.lang.nullable import Nullable
 from jivago.wsgi.invocation.route_handler import RouteHandler
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
@@ -11,12 +14,13 @@ class CorsPreflightRequestHandler(RouteHandler):
 
     def __init__(self, cors_headers: Headers):
         self.cors_headers = cors_headers
-        self.allowed_origin = self.cors_headers[
-            ALLOW_ORIGIN_HEADER] if ALLOW_ORIGIN_HEADER in self.cors_headers else '*'
+        self.allowed_origin = self.cors_headers[ALLOW_ORIGIN_HEADER] \
+            if ALLOW_ORIGIN_HEADER in self.cors_headers \
+            else '*'
 
     @Override
     def invoke(self, request: Request) -> Response:
-        origin = request.headers['Origin']
+        origin = Nullable(request.headers['Origin'])
         if self.should_allow(origin):
             response = Response(200, self.cors_headers, "")
         else:
@@ -27,7 +31,9 @@ class CorsPreflightRequestHandler(RouteHandler):
 
         return response
 
-    def should_allow(self, origin: str) -> bool:
+    def should_allow(self, origin: Nullable[str]) -> bool:
         if self.allowed_origin == '*':
             return True
-        return origin.startswith(self.allowed_origin)
+        return origin \
+            .map(lambda x: x.startswith(self.allowed_origin)) \
+            .orElse(False)
