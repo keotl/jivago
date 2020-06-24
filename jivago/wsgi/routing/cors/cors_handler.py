@@ -25,8 +25,8 @@ class CorsHandler(object):
             .filter(lambda rule: rule.matches(path)) \
             .reduce(None, lambda highest, e: e if highest is None or e.takes_precedence_over(highest) else highest)
 
-    def inject_cors_headers(self, path: str, response_handlers: Headers) -> None:
+    def inject_cors_headers(self, path: str, response_headers: Headers) -> None:
         rule = self._find_highest_priority_rule(path)
 
         if rule:
-            rule.inject_headers(response_handlers)
+            rule.inject_headers(response_headers)

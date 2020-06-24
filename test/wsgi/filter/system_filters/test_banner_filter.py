@@ -2,12 +2,12 @@ import unittest
 from unittest import mock
 
 from jivago.wsgi.filter.filter_chain import FilterChain
-from jivago.wsgi.filter.system_filters.jivago_banner_filter import BannerFilter
+from jivago.wsgi.filter.system_filters.banner_filter import BannerFilter
 from test_utils.request_builder import RequestBuilder
 from test_utils.response_builder import ResponseBuilder
 
 
-class JivagoBannerFilterTest(unittest.TestCase):
+class BannerFilterTest(unittest.TestCase):
 
     def setUp(self):
         self.filter = BannerFilter()

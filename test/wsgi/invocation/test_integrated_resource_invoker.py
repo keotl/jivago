@@ -18,7 +18,7 @@ from jivago.wsgi.methods import GET, POST
 from jivago.wsgi.request.headers import Headers
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
-from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsHandler
+from jivago.wsgi.routing.cors.cors_handler import CorsHandler
 from jivago.wsgi.routing.route_registration import RouteRegistration
 from jivago.wsgi.routing.routing_rule import RoutingRule
 from jivago.wsgi.routing.routing_table import RoutingTable

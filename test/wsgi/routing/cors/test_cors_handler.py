@@ -1,11 +1,11 @@
 import unittest
 
-from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsHandler
 from jivago.config.router.cors_rule import CorsRule
+from jivago.wsgi.routing.cors.cors_handler import CorsHandler
 from jivago.wsgi.routing.cors.no_matching_cors_rule_exception import NoMatchingCorsRuleException
 
 
-class CorsRequestHandlerFactoryTest(unittest.TestCase):
+class CorsHandlerTest(unittest.TestCase):
 
     def setUp(self):
         self.rules = [

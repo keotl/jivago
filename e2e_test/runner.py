@@ -37,7 +37,7 @@ class TestingContext(DebugJivagoContext):
             .add_rule(RoutingRule("/api", AutoDiscoveringRoutingTable(self.registry, self.root_package_name))) \
             .add_rule(RoutingRule("/static", StaticFileRoutingTable(os.path.dirname(e2e_test.app.static.__file__),
                                                                     allowed_extensions=['.txt']))) \
-            .add_rule(CorsRule("/", {'Access-Control-Allow-Origin': 'jivago.io',
+            .add_rule(CorsRule("/", {'Access-Control-Allow-Origin': 'http://jivago.io',
                                      'Access-Control-Allow-Headers': '*',
                                      'Access-Control-Allow-Methods': '*'}))
 
