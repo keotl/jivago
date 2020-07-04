@@ -4,6 +4,7 @@ from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.stream import Stream
 from jivago.wsgi.filter.filter_chain import FilterChain
+from jivago.wsgi.filter.system_filters.default_filters import JIVAGO_DEFAULT_OPTIONS_FILTERS
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.request.request import Request
 
@@ -19,7 +20,9 @@ class FilterChainFactory(object):
 
     def create_filter_chain(self, request: Request) -> FilterChain:
         if request.method == 'OPTIONS':
-            filters = []
+            filters = Stream(JIVAGO_DEFAULT_OPTIONS_FILTERS) \
+                .map(self.service_locator.get) \
+                .toList()
         else:
             filters = Stream(self.filtering_rules) \
                 .filter(lambda rule: rule.matches(request.path)) \

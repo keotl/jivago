@@ -6,10 +6,17 @@ from jivago.wsgi.request.request import Request
 from jivago.wsgi.request.response import Response
 
 
-class JivagoBannerFilter(Filter):
+class BannerFilter(Filter):
 
     @Override
     def doFilter(self, request: Request, response: Response, chain: FilterChain):
         chain.doFilter(request, response)
 
         response.headers['X-Powered-By'] = f"Jivago {jivago.__version__}"
+
+
+class DummyBannerFilter(BannerFilter):
+
+    @Override
+    def doFilter(self, request: Request, response: Response, chain: FilterChain):
+        chain.doFilter(request, response)
