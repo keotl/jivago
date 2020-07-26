@@ -63,7 +63,7 @@ class ProductionJivagoContext(AbstractContext):
         for scope in self.scopes():
             scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.root_package_name)).map(
                 lambda registration: registration.registered).toList()
-            cache = ScopeCache(scope, scoped_classes)
+            cache = ScopeCache(str(scope), scoped_classes)
             self.serviceLocator.register_scope(cache)
 
         Stream(JIVAGO_DEFAULT_FILTERS).forEach(lambda f: self.serviceLocator.bind(f, f))
