@@ -5,6 +5,7 @@ from jivago.wsgi.filter.filter_chain_factory import FilterChainFactory
 from jivago.wsgi.request.http_status_code_resolver import HttpStatusCodeResolver
 from jivago.wsgi.request.request_factory import RequestFactory
 from jivago.wsgi.request.response import Response
+from jivago.wsgi.request.streaming_response_body import StreamingResponseBody
 
 
 class Router(object):
@@ -31,5 +32,7 @@ class Router(object):
                        [x for x in response.headers.items()])
         if isinstance(response.body, str):
             return [response.body.encode('utf-8')]
+        elif isinstance(response.body, StreamingResponseBody):
+            return response.body.iterable
         else:
             return [response.body]
