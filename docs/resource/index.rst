@@ -51,6 +51,14 @@ In cases where a streaming response is desired, Jivago provides the ``StreamingR
 .. literalinclude:: streaming_response.py
    :language: python
 
+
+HTTP Streaming requests
+---------------------------
+Similarly, requests using ``Transfer-Encoding: chunked`` will be mapped automatically to a ``StreamingRequestBody`` instance.
+
+.. literalinclude:: streaming_request.py
+:language: python
+
 Additional router configuration options, including specific filter and CORS rules, can be found at `Router Configuration`_.
 
 .. _Router Configuration: ../configuration/router/index.html
