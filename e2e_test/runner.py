@@ -2,6 +2,9 @@ import os
 from typing import List
 
 import anachronos
+import subprocess
+
+import time
 from anachronos import Anachronos
 from anachronos.configuration import DefaultRunner
 from anachronos.setup import run_wsgi
@@ -53,6 +56,23 @@ class AppRunner(ApplicationRunner):
         import logging
         logging.getLogger().setLevel(logging.CRITICAL)
         run_wsgi(JivagoApplication(components, context=TestingContext))
+
+
+class GunicornRunner(ApplicationRunner):
+
+    @Override
+    def run(self) -> None:
+        self.process = subprocess.Popen(['gunicorn', 'e2e_test.app.application', "-b", ":4000"])
+        time.sleep(5)
+
+    @Override
+    def stop(self):
+        self.process.terminate()
+
+    @Override
+    def app_run_function(self) -> None:
+        # unused
+        pass
 
 
 http = HttpRequester("http://localhost", 4000, "/api")
