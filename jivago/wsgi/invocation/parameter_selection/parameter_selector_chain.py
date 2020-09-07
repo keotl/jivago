@@ -13,6 +13,8 @@ from jivago.wsgi.invocation.parameter_selection.path_parameter_selector import P
 from jivago.wsgi.invocation.parameter_selection.query_parameter_selector import QueryParameterSelector
 from jivago.wsgi.invocation.parameter_selection.raw_request_parameter_selector import RawRequestParameterSelector
 from jivago.wsgi.invocation.parameter_selection.serialized_parameter_selector import SerializedParameterSelector
+from jivago.wsgi.invocation.parameter_selection.streaming_request_body_parameter_selector import \
+    StreamingRequestBodyParameterSelector
 from jivago.wsgi.request.request import Request
 from jivago.wsgi.routing.route_registration import RouteRegistration
 
@@ -22,6 +24,7 @@ class ParameterSelectorChain(object):
     def __init__(self, route: RouteRegistration, deserializer: Deserializer):
         self.parameter_selectors = [
             RawRequestParameterSelector(),
+            StreamingRequestBodyParameterSelector(),
             HeadersParameterSelector(),
             DictionaryParameterSelector(),
             QueryParameterSelector(),
