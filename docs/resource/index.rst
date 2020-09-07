@@ -51,6 +51,8 @@ In cases where a streaming response is desired, Jivago provides the ``StreamingR
 .. literalinclude:: streaming_response.py
    :language: python
 
+Note that chunked (streaming) requests and responses may not be supported by every wsgi server. Jivago has been tested with ``gunicorn``.
+
 
 HTTP Streaming requests
 ---------------------------
