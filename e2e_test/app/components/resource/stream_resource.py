@@ -23,7 +23,7 @@ class StreamResource(object):
     def generate_bytes(self) -> bytes:
         for i in range(0, 5):
             # yield f"{len(f'bytes {i}')}\r\n".encode("utf-8")
-            yield f"bytes {i}\r\n".encode("utf-8")
+            yield f"test-{i}\r\n".encode("utf-8")
             time.sleep(0.1)
 
     @POST
