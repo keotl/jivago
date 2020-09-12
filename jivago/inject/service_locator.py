@@ -3,7 +3,7 @@ from typing import Callable, Optional
 from jivago.inject import typing_meta_helper
 from jivago.inject.exception.instantiation_exception import InstantiationException
 from jivago.inject.exception.non_injectable_constructor_exception import NonInjectableConstructorException
-from jivago.inject.scope_cache import ScopeCache
+from jivago.inject.scope.scope_cache import ScopeCache
 from jivago.lang.annotations import Inject
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream

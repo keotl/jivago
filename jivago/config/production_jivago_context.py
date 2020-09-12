@@ -17,7 +17,8 @@ from jivago.event.synchronous_event_bus import SynchronousEventBus
 from jivago.inject.annotation import Component, Singleton
 from jivago.inject.annoted_class_binder import AnnotatedClassBinder
 from jivago.inject.provider_binder import ProviderBinder
-from jivago.inject.scope_cache import ScopeCache
+from jivago.inject.scope.scope_cache import ScopeCache
+from jivago.inject.scope.singleton_scope_cache import SingletonScopeCache
 from jivago.lang.annotations import Override, BackgroundWorker
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
@@ -49,6 +50,7 @@ class ProductionJivagoContext(AbstractContext):
 
     @Override
     def configure_service_locator(self):
+        # Automatic binding of user-defined components
         AnnotatedClassBinder(self.root_package_name, self.registry, Component).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, Resource).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, BackgroundWorker).bind(self.serviceLocator)
@@ -58,17 +60,19 @@ class ProductionJivagoContext(AbstractContext):
         AnnotatedClassBinder(self.root_package_name, self.registry, PostInit).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, EventHandlerClass).bind(self.serviceLocator)
         AnnotatedClassBinder(self.root_package_name, self.registry, RequestFilter).bind(self.serviceLocator)
-
+        RunnableEventHandlerBinder(self.root_package_name, self.registry).bind(self.serviceLocator)
+        ExceptionMapperBinder().bind(self.serviceLocator)
         ProviderBinder(self.root_package_name, self.registry).bind(self.serviceLocator)
-        for scope in self.scopes():
+
+        # Component scope management
+        for scope in [Singleton, BackgroundWorker]:
             scoped_classes = Stream(self.registry.get_annotated_in_package(scope, self.root_package_name)).map(
                 lambda registration: registration.registered).toList()
-            cache = ScopeCache(str(scope), scoped_classes)
+            cache = SingletonScopeCache(str(scope), scoped_classes)
             self.serviceLocator.register_scope(cache)
 
+        # Jivago dependencies
         Stream(JIVAGO_DEFAULT_FILTERS).forEach(lambda f: self.serviceLocator.bind(f, f))
-
-        # TODO better way to handle Jivago Dependencies
         self.serviceLocator.bind(Registry, Registry.INSTANCE)
         self.serviceLocator.bind(TaskScheduler, TaskScheduler(self.serviceLocator))
         self.serviceLocator.bind(Deserializer, Deserializer(Registry.INSTANCE))
@@ -83,15 +87,8 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(SynchronousEventBus, self.serviceLocator.get(EventBus))
         self.serviceLocator.bind(AsyncEventBus, AsyncEventBus(self.serviceLocator.get(EventBus)))
 
-        RunnableEventHandlerBinder(self.root_package_name, self.registry).bind(self.service_locator())
-
-        ExceptionMapperBinder().bind(self.serviceLocator)
-
         if not self.banner:
             self.serviceLocator.bind(BannerFilter, DummyBannerFilter)
-
-    def scopes(self) -> List[type]:
-        return [Singleton, BackgroundWorker]
 
     @Override
     def get_views_folder_path(self) -> str:
