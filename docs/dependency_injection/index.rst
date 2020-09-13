@@ -31,6 +31,12 @@ By default, all components are re-instantiated when a request is received. Howev
 
 A *singleton* component will be instantiated when it is first requested, and reused for subsequent calls.
 
+Jivago also provides the ``@RequestScoped`` annotation for components which should be re-used for the lifetime of a single HTTP request. Instances will be destroyed after the resource class returns and the filter chain is unwound.
+Using request-scoped components outside of an HTTP request lifecycle (e.g. async event bus, background worker, init hooks ...) is not supported and may lead to unexpected results.
+
+.. literalinclude:: request_scoped.py
+   :language: python
+
 Factory Functions
 -------------------
 When complex scoping is required for a given component, for example when handling a database connection, factory functions can be used to instantiate and cache components using the ``@Provider`` annotation. In this case, the return type hint defines the class to which the function is registered. 
