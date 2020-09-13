@@ -1,13 +1,14 @@
 import unittest
 
+from jivago.inject.scope.scope_cache import ComponentNotHandledByScopeException, UninstantiatedObjectException
+from jivago.inject.scope.singleton_scope_cache import SingletonScopeCache
 from jivago.lang.registry import Annotation
-from jivago.inject.scope_cache import ScopeCache, ComponentNotHandledByScopeException, UninstantiatedObjectException
 
 
-class ScopeCacheTest(unittest.TestCase):
+class SingletonScopeCacheTest(unittest.TestCase):
 
     def setUp(self):
-        self.scope = ScopeCache(SomeScope, [SomeScopedComponent])
+        self.scope = SingletonScopeCache(SomeScope, [SomeScopedComponent])
 
     def test_whenCheckingHandlesComponent_thenChecksWhetherTheComponentIsInTheScopedComponentsList(self):
         scoped = self.scope.handles_component(SomeScopedComponent)
