@@ -43,7 +43,7 @@ class ServiceLocator(object):
         if scope is not None and scope.is_stored(stored_component):
             return scope.get(stored_component)
         instance = None
-        
+
         if interface in self.providers.keys():
             instance = self.__inject_function(self.providers[interface])
         else:
@@ -75,6 +75,7 @@ class ServiceLocator(object):
                     break
                 parameter = parameter_types[name]
                 parameters.append(self.get(parameter))
+        # TODO this AttributeError catch block is too broad, and sometimes hides user errors. - keotl - 2020-09-13
         except AttributeError:
             pass
         return provider_method(*parameters)

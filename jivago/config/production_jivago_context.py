@@ -73,10 +73,11 @@ class ProductionJivagoContext(AbstractContext):
             cache = SingletonScopeCache(str(scope), scoped_classes)
             self.serviceLocator.register_scope(cache)
 
-        request_scope_cache = self.serviceLocator.register_scope(
-            RequestScopeCache(Stream(self.registry.get_annotated_in_package(RequestScoped, self.root_package_name))
-                              .map(lambda registration: registration.registered)
-                              .toList()))
+        request_scope_cache = RequestScopeCache(
+            Stream(self.registry.get_annotated_in_package(RequestScoped, self.root_package_name))
+                .map(lambda registration: registration.registered)
+                .toList())
+        self.serviceLocator.register_scope(request_scope_cache)
 
         # Jivago dependencies
         Stream(JIVAGO_DEFAULT_FILTERS).forEach(lambda f: self.serviceLocator.bind(f, f))

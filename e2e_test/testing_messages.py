@@ -26,6 +26,7 @@ ASYNC_FUNCTION_EVENT_HANDLER = "AsyncEvent: Got Event in simple function"
 
 # Dependency injection
 INSTANTIATED_LAZY_BEAN = "Injection: Instantiated lazy component"
+INSTANTIATED_REQUEST_SCOPED_BEAN = "Injection: Instantiated request-scoped component with value "
 
 # HTTP Streaming
 POST_HTTP_STREAM = "Stream: Got HTTP streamed request"
