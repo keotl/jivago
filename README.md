@@ -7,7 +7,7 @@ Jivago is an object-oriented, highly-reflective Python framework for building we
 
 Also includes other Java-esque goodies, such as stream operations!
 
-Find the documentation over at [jivago.readthedocs.io](https://jivago.readthedocs.io).
+Find the documentation over at [docs.jivago.io](https://docs.jivago.io).
 
 ### Minimal Jivago Application
 ```python
