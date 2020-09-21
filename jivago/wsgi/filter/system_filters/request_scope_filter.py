@@ -1,9 +1,9 @@
-from requests import Request, Response
-
 from jivago.inject.scope.request_scope_cache import RequestScopeCache
 from jivago.lang.annotations import Override, Inject
 from jivago.wsgi.filter.filter import Filter
 from jivago.wsgi.filter.filter_chain import FilterChain
+from jivago.wsgi.request.request import Request
+from jivago.wsgi.request.response import Response
 
 
 class RequestScopeFilter(Filter):
