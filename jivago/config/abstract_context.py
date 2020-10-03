@@ -9,7 +9,7 @@ class AbstractContext(object):
 
     def __init__(self):
         self.serviceLocator = ServiceLocator()
-        self.INSTANCE = self
+        AbstractContext.INSTANCE = self
         self.serviceLocator.bind(ServiceLocator, self.serviceLocator)
 
     def configure_service_locator(self):
