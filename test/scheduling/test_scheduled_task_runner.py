@@ -16,6 +16,7 @@ class ScheduledTaskRunnerTests(unittest.TestCase):
         self.service_locator = ServiceLocator()
         self.service_locator.bind(SomeScheduledTask, SomeScheduledTask)
         self.service_locator.bind(SomeCrashingTask, SomeCrashingTask)
+        self.service_locator.bind(SomeTaskCrashingOnCleanup, SomeTaskCrashingOnCleanup)
         self.schedule_mock: Schedule = mock.create_autospec(Schedule)
         self.schedule_mock.next_start_time.return_value = datetime.now()
 
@@ -33,6 +34,15 @@ class ScheduledTaskRunnerTests(unittest.TestCase):
         time.sleep(0.05)
 
         self.assertTrue(SomeCrashingTask.times_called > 1)
+
+    def test_givenUncaughtException_whenCleaningUp_shouldNotCrash(self):
+        self.runner = ScheduledTaskRunner(SomeTaskCrashingOnCleanup, self.schedule_mock, self.service_locator)
+
+        self.runner.start()
+        self.runner.stop()
+
+        self.assertTrue(SomeTaskCrashingOnCleanup.run_called)
+        self.assertTrue(SomeTaskCrashingOnCleanup.cleanup_called)
 
     def tearDown(self):
         self.runner.stop()
@@ -55,3 +65,15 @@ class SomeCrashingTask(Runnable):
 
         if SomeCrashingTask.times_called == 1:
             raise Exception("Error!!")
+
+class SomeTaskCrashingOnCleanup(Runnable):
+    cleanup_called = False
+    run_called = False
+    def run(self):
+        SomeTaskCrashingOnCleanup.run_called = True
+
+    def cleanup(self):
+        SomeTaskCrashingOnCleanup.cleanup_called = True
+        raise Exception("Error!")
+
+

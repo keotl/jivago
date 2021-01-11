@@ -35,7 +35,10 @@ class ScheduledTaskRunner(Runnable):
     def stop(self):
         self.thread_stop_event.set()
         with self.run_lock:
-            self.service_locator.get(self.runner_class).cleanup()
+            try:
+                self.service_locator.get(self.runner_class).cleanup()
+            except Exception as e:
+                self.logger.warning(f"Uncaught exception while cleaning up scheduled task {self.runner_class}: {e}.")
 
     def start(self):
         self.thread.start()
