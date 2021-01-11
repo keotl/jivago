@@ -1,6 +1,7 @@
 import unittest
 
 from jivago.wsgi.request.request_factory import RequestFactory
+from jivago.wsgi.request.streaming_request_body import StreamingRequestBody
 
 
 class RequestFactoryTest(unittest.TestCase):
@@ -35,6 +36,14 @@ class RequestFactoryTest(unittest.TestCase):
 
         self.assertEqual(b'{\n"message" : "string"\n}', request.body)
         self.assertEqual("application/json", request.headers['Content-Type'])
+
+    def test_givenChunkedEncoding_whenBuildingRequest_thenCreateStreamingRequestBody(self):
+        env = {**POST_WSGI_ENV, "HTTP_TRANSFER_ENCODING": "chunked"}
+
+        request = self.request_factory.build_request(env)
+
+        self.assertIsInstance(request.body, StreamingRequestBody)
+        self.assertEqual(b'{\n"message" : "string"\n}', request.body.read())
 
 
 class DummyWsgiReadStream(object):

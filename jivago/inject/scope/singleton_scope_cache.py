@@ -1,13 +1,18 @@
 from typing import List
 
-from jivago.lang.registry import Annotation
+from jivago.inject.scope.scope_cache import ScopeCache, UninstantiatedObjectException, \
+    ComponentNotHandledByScopeException
 from jivago.lang.stream import Stream
 
 
-class ScopeCache(object):
+class SingletonScopeCache(ScopeCache):
 
-    def __init__(self, scope: Annotation, scoped_components: List[type]):
-        self.scope = scope
+    def __init__(self, name: str, scoped_components: List[type]):
+        """
+        :param name: human-readable name
+        :param scoped_components: components managed by this scope
+        """
+        super().__init__(name)
         self.scoped_components = Stream(scoped_components).map(lambda clazz: (clazz, None)).toDict()
 
     def handles_component(self, component: type) -> bool:
@@ -26,11 +31,3 @@ class ScopeCache(object):
         if component not in self.scoped_components.keys():
             raise ComponentNotHandledByScopeException(component)
         self.scoped_components[component] = instance
-
-
-class ComponentNotHandledByScopeException(Exception):
-    pass
-
-
-class UninstantiatedObjectException(Exception):
-    pass

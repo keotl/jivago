@@ -35,3 +35,12 @@ class CorsPreflightRequestHandlerTest(unittest.TestCase):
         response = self.cors_handler.invoke(request)
 
         self.assertEqual(400, response.status)
+
+    def test_givenMissingOrigin_whenHandlingPreflightRequest_thenReturn400BadRequest(self):
+        request = RequestBuilder().headers({}).build()
+        self.cors_handler = CorsPreflightRequestHandler(Headers({'Access-Control-Allow-Origin': 'http://api.jivago.io'}))
+
+        response = self.cors_handler.invoke(request)
+
+        self.assertEqual(400, response.status)
+

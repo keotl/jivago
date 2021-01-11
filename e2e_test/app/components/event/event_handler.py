@@ -34,3 +34,4 @@ class MyHandlerClass(object):
 @EventHandler("event")
 def my_event_handler_function():
     anachronos.get_instance().store(FUNCTION_EVENT_HANDLER)
+

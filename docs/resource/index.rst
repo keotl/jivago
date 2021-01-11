@@ -44,7 +44,22 @@ While it is not generally recommended to serve static files from a WSGI applicat
 
 The ``StaticFileRoutingTable`` can also be used with a ``allowed_extensions`` parameter to explicitly allow or disallow specific file types.
 
+HTTP Streaming responses
+---------------------------
+In cases where a streaming response is desired, Jivago provides the ``StreamingResponseBody`` object. Returning an instance of ``StreamingResponseBody`` will cause the ``Transfer-Encoding`` header to be automatically set to ``chunked``. A ``StreamingResponseBody`` object requires an ``Iterable[bytes]`` object.
 
+.. literalinclude:: streaming_response.py
+   :language: python
+
+Note that chunked (streaming) requests and responses may not be supported by every wsgi server. Jivago has been tested with ``gunicorn``.
+
+
+HTTP Streaming requests
+---------------------------
+Similarly, requests using ``Transfer-Encoding: chunked`` will be mapped automatically to a ``StreamingRequestBody`` instance.
+
+.. literalinclude:: streaming_request.py
+:language: python
 
 Additional router configuration options, including specific filter and CORS rules, can be found at `Router Configuration`_.
 

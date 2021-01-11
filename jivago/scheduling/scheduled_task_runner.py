@@ -1,3 +1,4 @@
+import logging
 import threading
 import time
 from datetime import datetime
@@ -17,6 +18,7 @@ class ScheduledTaskRunner(Runnable):
         self.thread_stop_event = threading.Event()
         self.thread = threading.Thread(target=self.run, daemon=True)
         self.run_lock = threading.Lock()
+        self.logger = logging.getLogger(ScheduledTaskRunner.__name__)
 
     @Override
     def run(self):
@@ -24,15 +26,19 @@ class ScheduledTaskRunner(Runnable):
             sleep_time = self.schedule.next_start_time() - datetime.utcnow()
             if sleep_time.total_seconds() > 0:
                 time.sleep(sleep_time.total_seconds())
-            self.run_lock.acquire()
-            self.service_locator.get(self.runner_class).run()
-            self.run_lock.release()
+            with self.run_lock:
+                try:
+                    self.service_locator.get(self.runner_class).run()
+                except Exception as e:
+                    self.logger.warning(f"Uncaught exception while executing scheduled task {self.runner_class}: {e}.")
 
     def stop(self):
         self.thread_stop_event.set()
-        self.run_lock.acquire()
-        self.service_locator.get(self.runner_class).cleanup()
-        self.run_lock.release()
+        with self.run_lock:
+            try:
+                self.service_locator.get(self.runner_class).cleanup()
+            except Exception as e:
+                self.logger.warning(f"Uncaught exception while cleaning up scheduled task {self.runner_class}: {e}.")
 
     def start(self):
         self.thread.start()

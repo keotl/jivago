@@ -1,13 +1,13 @@
+from jivago.config.router.cors_rule import CorsRule
+from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.config.router.router_config_rule import RouterConfigRule
 from jivago.inject.service_locator import ServiceLocator
 from jivago.lang.registry import Registry
 from jivago.serialization.deserializer import Deserializer
 from jivago.wsgi.filter.filter_chain_factory import FilterChainFactory
-from jivago.config.router.filtering.filtering_rule import FilteringRule
 from jivago.wsgi.invocation.route_handler_factory import RouteHandlerFactory
 from jivago.wsgi.request.request_factory import RequestFactory
-from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsRequestHandlerFactory
-from jivago.config.router.cors_rule import CorsRule
+from jivago.wsgi.routing.cors.cors_handler import CorsHandler
 from jivago.wsgi.routing.router import Router
 from jivago.wsgi.routing.routing_rule import RoutingRule
 
@@ -29,10 +29,12 @@ class RouterBuilder(object):
         return self
 
     def build(self, registry: Registry, service_locator: ServiceLocator) -> Router:
+        cors_handler = CorsHandler(self.cors_rules)
+        service_locator.bind(CorsHandler, cors_handler)
+
         filter_chain_factory = FilterChainFactory(self.filtering_rules, service_locator,
                                                   RouteHandlerFactory(service_locator,
                                                                       Deserializer(registry),
                                                                       self.routing_rules,
-                                                                      CorsRequestHandlerFactory(self.cors_rules))
-                                                  )
+                                                                      cors_handler))
         return Router(service_locator, RequestFactory(), filter_chain_factory)

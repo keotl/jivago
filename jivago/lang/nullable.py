@@ -19,7 +19,7 @@ class Nullable(Generic[T]):
         """Returns True if item is not None."""
         return self._item is not None
 
-    def get(self) -> Optional[T]:
+    def get(self) -> T:
         """Gets the item if present.
 
         Raises:

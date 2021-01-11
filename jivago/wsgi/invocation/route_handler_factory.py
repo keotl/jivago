@@ -6,7 +6,7 @@ from jivago.serialization.deserializer import Deserializer
 from jivago.wsgi.invocation.route_handler import RouteHandler
 from jivago.wsgi.methods import OPTIONS
 from jivago.wsgi.request.request import Request
-from jivago.wsgi.routing.cors.cors_request_handler_factory import CorsRequestHandlerFactory
+from jivago.wsgi.routing.cors.cors_handler import CorsHandler
 from jivago.wsgi.routing.exception.method_not_allowed_exception import MethodNotAllowedException
 from jivago.wsgi.routing.exception.unknown_path_exception import UnknownPathException
 from jivago.wsgi.routing.routing_rule import RoutingRule
@@ -17,9 +17,9 @@ class RouteHandlerFactory(object):
     def __init__(self, service_locator: ServiceLocator,
                  deserializer: Deserializer,
                  routing_rules: List[RoutingRule],
-                 cors_handler_factory: CorsRequestHandlerFactory):
+                 cors_handler: CorsHandler):
 
-        self.cors_handler_factory = cors_handler_factory
+        self.cors_handler = cors_handler
         self.routing_rules = routing_rules
         self.deserializer = deserializer
         self.service_locator = service_locator
@@ -35,15 +35,14 @@ class RouteHandlerFactory(object):
             raise UnknownPathException(request.path)
 
         if self.is_cors_request(request) and OPTIONS not in routable_http_methods:
-            return Stream.of(self.cors_handler_factory.create_cors_preflight_handler(request.path))
+            return Stream.of(self.cors_handler.create_cors_preflight_handler(request.path))
 
         if request.method_annotation not in routable_http_methods:
             raise MethodNotAllowedException()
 
         return Stream(self.routing_rules) \
             .map(lambda rule: rule.create_route_handlers(request, self.service_locator, self.deserializer)) \
-            .flat() \
-            .map(lambda route_handler: self.cors_handler_factory.apply_cors_rules(request.path, route_handler))
+            .flat()
 
     def is_cors_request(self, request: Request) -> bool:
         return request.method_annotation == OPTIONS

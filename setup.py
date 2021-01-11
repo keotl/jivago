@@ -45,11 +45,14 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
-
+    package_data={"jivago": ["*.typed"]},
+    include_package_data=True,
     packages=find_packages(
         exclude=['contrib', 'docs', 'test', 'test.*' 'tests', 'tests.*', 'example_app', 'example_app.*', 'test_data',
                  'test_data.*', 'test_utils', 'test_utils.*', 'e2e_test', 'e2e_test.*']),
 
-    install_requires=['Jinja2', 'MarkupSafe', 'croniter', 'pyyaml', 'werkzeug'],
+    install_requires=['Jinja2', 'croniter', 'pyyaml', 'werkzeug'],
 )
