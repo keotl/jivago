@@ -66,14 +66,14 @@ class SomeCrashingTask(Runnable):
         if SomeCrashingTask.times_called == 1:
             raise Exception("Error!!")
 
+
 class SomeTaskCrashingOnCleanup(Runnable):
     cleanup_called = False
     run_called = False
+
     def run(self):
         SomeTaskCrashingOnCleanup.run_called = True
 
     def cleanup(self):
         SomeTaskCrashingOnCleanup.cleanup_called = True
         raise Exception("Error!")
-
-

@@ -11,9 +11,9 @@ matrix:
     - os: linux
       python: 3.8
       dist: bionic
-#    - os: linux
-#      python: 3.9
-#      dist: focal
+    - os: linux
+      python: 3.9
+      dist: focal
 
 install:
 - pip install -r requirements.txt
