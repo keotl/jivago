@@ -4,6 +4,7 @@ from typing import NamedTuple, Type
 from jivago.lang.annotations import Override
 from jivago.lang.stream import Stream
 from jivago.serialization.deserialization_strategy import DeserializationStrategy
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 
 class NamedTupleDeserializationStrategy(DeserializationStrategy):
@@ -29,10 +30,14 @@ class NamedTupleDeserializationStrategy(DeserializationStrategy):
 
             return declared_type(**parameters)
 
-        attributes = declared_type.__annotations__
-        parameters = Stream(attributes.items()) \
-            .map(lambda name, attribute_type:
-                 (name, self.deserializer.deserialize(obj.get(name), attribute_type))) \
-            .toList()
-
+        if isinstance(obj, dict):
+            attributes = declared_type.__annotations__
+            parameters = Stream(attributes.items()) \
+                .map(lambda name, attribute_type:
+                     (name, self.deserializer.deserialize(obj.get(name), attribute_type))) \
+                .toList()
+        elif isinstance(obj, list):
+            parameters = obj
+        else:
+            raise IncorrectAttributeTypeException()
         return declared_type(*parameters)
