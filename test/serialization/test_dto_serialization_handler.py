@@ -182,6 +182,22 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(result, ANamedTuple)
 
+    def test_givenJsonList_whenDeserializingAsNamedTuple_thenDeserializeFromList(self):
+        serialized = ["paul atreides", 17]
+
+        result = self.serialization_handler.deserialize(serialized, ANamedTuple)
+
+        self.assertIsInstance(result, ANamedTuple)
+        self.assertEqual("paul atreides", result.name)
+        self.assertEqual(17, result.age)
+
+    def test_givenNamedTuple_whenSerializing_thenSerializeToDictionary(self):
+        obj = ANamedTuple("paul atreides", 17)
+
+        serialized = self.serialization_handler.serialize(obj)
+
+        self.assertEqual({"name": "paul atreides", "age": 17}, serialized)
+
     def test_givenNoneAttribute_whenSerializing_thenSerializesToNoneOrNull(self):
         expected = {"name": None}
 
@@ -196,14 +212,14 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertIsInstance(given.children[0], ChildDto)
 
-    def test_givenATypeDerivedFromABuiltinType_whenSerializing_thenSerializesAsBuiltinType(self):
+    def test_givenATypeDerivedFromABuiltInType_whenSerializing_thenSerializesAsBuiltinType(self):
         given = {"name": DerivedString("my-derived-name")}
 
         result = self.serialization_handler.serialize(given)
 
         self.assertEqual("my-derived-name", result["name"])
 
-    def test_givenATypeDerivedFromABuiltingType_whenDeserializing_thenDeserializesAsBuiltinType(self):
+    def test_givenATypeDerivedFromABuiltInType_whenDeserializing_thenDeserializesAsBuiltinType(self):
         given = {"name": "my-name"}
 
         result: DtoWithDerivedStringMember = self.serialization_handler.deserialize(given, DtoWithDerivedStringMember)

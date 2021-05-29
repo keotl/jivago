@@ -4,6 +4,7 @@ from typing import NamedTuple, Type
 from jivago.lang.annotations import Override
 from jivago.lang.stream import Stream
 from jivago.serialization.deserialization_strategy import DeserializationStrategy
+from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 
 class NamedTupleDeserializationStrategy(DeserializationStrategy):
@@ -23,16 +24,23 @@ class NamedTupleDeserializationStrategy(DeserializationStrategy):
     @Override
     def deserialize(self, obj, declared_type: Type[NamedTuple]) -> NamedTuple:
         if sys.version_info[0:2] == (3, 6):
-            parameters = {}
-            for name, clazz in declared_type._field_types.items():
-                parameters[name] = self.deserializer.deserialize(obj[name], clazz)
+            if isinstance(obj, dict):
+                parameters = {}
+                for name, clazz in declared_type._field_types.items():
+                    parameters[name] = self.deserializer.deserialize(obj[name], clazz)
+                return declared_type(**parameters)
+            elif isinstance(obj, list):
+                return declared_type(*obj)
+            raise IncorrectAttributeTypeException()
 
-            return declared_type(**parameters)
-
-        attributes = declared_type.__annotations__
-        parameters = Stream(attributes.items()) \
-            .map(lambda name, attribute_type:
-                 (name, self.deserializer.deserialize(obj.get(name), attribute_type))) \
-            .toList()
-
+        if isinstance(obj, dict):
+            attributes = declared_type.__annotations__
+            parameters = Stream(attributes.items()) \
+                .map(lambda name, attribute_type:
+                     (name, self.deserializer.deserialize(obj.get(name), attribute_type))) \
+                .toList()
+        elif isinstance(obj, list):
+            parameters = obj
+        else:
+            raise IncorrectAttributeTypeException()
         return declared_type(*parameters)
