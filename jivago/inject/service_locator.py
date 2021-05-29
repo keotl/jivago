@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, TypeVar, Type, Union, List
 
 from jivago.inject import typing_meta_helper
 from jivago.inject.exception.instantiation_exception import InstantiationException
@@ -7,6 +7,9 @@ from jivago.inject.scope.scope_cache import ScopeCache
 from jivago.lang.annotations import Inject
 from jivago.lang.registry import Registry
 from jivago.lang.stream import Stream
+
+T = TypeVar("T")
+S = TypeVar("S")
 
 
 class ServiceLocator(object):
@@ -17,7 +20,7 @@ class ServiceLocator(object):
         self.providers = {}
         self.scopeCaches = []
 
-    def bind(self, interface, implementation):
+    def bind(self, interface: Type[T], implementation: Union[Type[T], Type[S], T, Callable[..., T]]):
         if self.__is_provider_function(implementation):
             self.providers[interface] = implementation
         elif isinstance(implementation, type):
@@ -28,7 +31,7 @@ class ServiceLocator(object):
     def register_scope(self, scope_cache: ScopeCache):
         self.scopeCaches.append(scope_cache)
 
-    def get(self, interface: type):
+    def get(self, interface: Type[T]) -> T:
         if interface in self.literals.keys():
             return self.literals[interface]
         if typing_meta_helper.is_typing_meta_collection(interface):
@@ -54,7 +57,7 @@ class ServiceLocator(object):
             scope.store(stored_component, instance)
         return instance
 
-    def get_all(self, clazz: type):
+    def get_all(self, clazz: Type[T]) -> List[T]:
         return Stream(self.literals.keys(), self.components.keys(), self.providers.keys()).filter(
             lambda k: issubclass(k, clazz)).map(lambda k: self.get(k)).toList()
 
