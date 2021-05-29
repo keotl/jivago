@@ -24,11 +24,14 @@ class NamedTupleDeserializationStrategy(DeserializationStrategy):
     @Override
     def deserialize(self, obj, declared_type: Type[NamedTuple]) -> NamedTuple:
         if sys.version_info[0:2] == (3, 6):
-            parameters = {}
-            for name, clazz in declared_type._field_types.items():
-                parameters[name] = self.deserializer.deserialize(obj[name], clazz)
-
-            return declared_type(**parameters)
+            if isinstance(obj, dict):
+                parameters = {}
+                for name, clazz in declared_type._field_types.items():
+                    parameters[name] = self.deserializer.deserialize(obj[name], clazz)
+                return declared_type(**parameters)
+            elif isinstance(obj, list):
+                return declared_type(*obj)
+            raise IncorrectAttributeTypeException()
 
         if isinstance(obj, dict):
             attributes = declared_type.__annotations__
