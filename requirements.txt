@@ -30,7 +30,7 @@ sphinx-rtd-theme==0.4.1
 sphinxcontrib-napoleon==0.7
 sphinxcontrib-websupport==1.1.0
 tornado==5.1
-urllib3==1.24.2
+urllib3==1.26.5
 watchdog==0.9.0
 Werkzeug==0.15.3
 gunicorn==20.0.4
