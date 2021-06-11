@@ -13,8 +13,9 @@ T = TypeVar('T')
 
 class ObjectMapper(object):
 
-    def __init__(self):
-        self.deserializer = Deserializer(ObjectMapper.__RegistryStub())
+    def __init__(self, allow_unregistered_types: bool = False):
+        self.deserializer = Deserializer(
+            ObjectMapper.__RegistryStub() if allow_unregistered_types else Registry.INSTANCE)
         self.serializer = Serializer()
 
     def deserialize(self, json_str: str, clazz: Type[T]) -> T:
@@ -29,4 +30,4 @@ class ObjectMapper(object):
 
         @Override
         def is_annotated(self, object: object, annotation: "Annotation"):
-            return annotation == Serializable and object not in BUILTIN_TYPES + (dict,)
+            return annotation == Serializable and object not in BUILTIN_TYPES + (dict, list, tuple)

@@ -17,7 +17,8 @@ from jivago.serialization.deserialization.typed_dictionary_deserialization_strat
     TypedDictionaryDeserializationStrategy
 from jivago.serialization.deserialization.typed_list_deserialization_strategy import TypedListDeserializationStrategy
 from jivago.serialization.deserialization.typed_tuple_deserialization_strategy import TypedTupleDeserializationStrategy
-from jivago.serialization.serialization_exception import SerializationException
+from jivago.serialization.serialization_exception import SerializationException, \
+    NoMatchingDeserializationStrategyException
 from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
 T = TypeVar('T')
@@ -48,7 +49,7 @@ class Deserializer(object):
         try:
             return Stream(self.deserialization_strategies). \
                 firstMatch(lambda s: s.can_handle_deserialization(object_clazz)) \
-                .orElseThrow(SerializationException) \
+                .orElseThrow(lambda: NoMatchingDeserializationStrategyException(object_clazz)) \
                 .deserialize(obj, object_clazz)
         except (AttributeError, TypeError):
             raise IncorrectAttributeTypeException()

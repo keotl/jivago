@@ -37,7 +37,7 @@ class NamedTupleDeserializationStrategy(DeserializationStrategy):
             attributes = declared_type.__annotations__
             parameters = Stream(attributes.items()) \
                 .map(lambda name, attribute_type:
-                     (name, self.deserializer.deserialize(obj.get(name), attribute_type))) \
+                     self.deserializer.deserialize(obj.get(name), attribute_type)) \
                 .toList()
         elif isinstance(obj, list):
             parameters = obj

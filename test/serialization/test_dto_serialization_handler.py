@@ -5,7 +5,8 @@ from typing import Optional, List, Dict, Tuple, Iterable, NamedTuple
 from jivago.lang.annotations import Serializable
 from jivago.lang.registry import Registry
 from jivago.serialization.deserializer import Deserializer
-from jivago.serialization.serialization_exception import SerializationException
+from jivago.serialization.serialization_exception import SerializationException, \
+    NoMatchingDeserializationStrategyException
 from jivago.serialization.serializer import Serializer
 from jivago.wsgi.invocation.incorrect_attribute_type_exception import IncorrectAttributeTypeException
 
@@ -181,6 +182,8 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         result = self.serialization_handler.deserialize(serialized, ANamedTuple)
 
         self.assertIsInstance(result, ANamedTuple)
+        self.assertEqual("paul atreides", result.name)
+        self.assertEqual(17, result.age)
 
     def test_givenJsonList_whenDeserializingAsNamedTuple_thenDeserializeFromList(self):
         serialized = ["paul atreides", 17]
@@ -226,6 +229,31 @@ class DtoSerializationHandlerTest(unittest.TestCase):
 
         self.assertEqual("my-name", result.name)
         self.assertIsInstance(result.name, DerivedString)
+
+    def test_givenUntypedList_whenDeserializing_thenInstantiateBasicList(self):
+        given = [1, 2, 3]
+
+        result = self.serialization_handler.deserialize(given, list)
+
+        self.assertEqual(given, result)
+
+    def test_givenUntypedTuple_whenDeserializing_thenInstantiateBasicTuple(self):
+        given = [1, 2, 3]
+
+        result = self.serialization_handler.deserialize(given, tuple)
+
+        self.assertEqual((1, 2, 3), result)
+
+    def test_givenUntypedDictionary_whenDeserializing_thenInstantiateBasicDict(self):
+        given = {"key": "value"}
+
+        result = self.serialization_handler.deserialize(given, dict)
+
+        self.assertEqual(given, result)
+
+    def test_givenUnknownDeserializationStrategy_whenDeserializing_thenThrowExceptionWithHelpfulMessage(self):
+        with self.assertRaisesRegexp(NoMatchingDeserializationStrategyException, "UnknownType.*@Serializable"):
+            self.serialization_handler.deserialize({}, UnknownType)
 
 
 @Serializable
@@ -290,6 +318,10 @@ class DerivedString(str):
 @Serializable
 class DtoWithDerivedStringMember(object):
     name: DerivedString
+
+
+class UnknownType(object):
+    pass
 
 
 A_NESTED_DTO = ANestedDto()
