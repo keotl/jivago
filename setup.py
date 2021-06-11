@@ -11,11 +11,11 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 def read_version_from_git() -> str:
     try:
-        version_string = check_output(git_version_command.split()).decode('utf-8').strip()
-        dirty = version_string.split("-")[1] != "0"
+        version_string = check_output(git_version_command.split()).decode('utf-8').strip().split("-")
+        dirty = version_string[1] != "0"
         if dirty:
-            return version_string
-        return version_string.split("-")[0]
+            return f"{version_string[0]}+{version_string[2]}"
+        return version_string[0]
 
     except:
         return "0.0.0"
