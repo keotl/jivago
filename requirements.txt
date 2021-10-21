@@ -1,7 +1,7 @@
 alabaster==0.7.11
 anachronos==0.0.6
 argh==0.26.2
-Babel==2.6.0
+Babel==2.9.1
 certifi==2018.8.24
 chardet==3.0.4
 coverage==4.5.1
