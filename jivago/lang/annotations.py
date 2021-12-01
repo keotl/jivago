@@ -1,9 +1,10 @@
-from typing import Callable
+from typing import Callable, TypeVar
 
 from jivago.lang.registry import Annotation
 
+T_OVERRIDABLE = TypeVar("T_OVERRIDABLE", Callable, property)
 
-def Override(fun: Callable) -> Callable:
+def Override(fun: T_OVERRIDABLE) -> T_OVERRIDABLE:
     return fun
 
 
