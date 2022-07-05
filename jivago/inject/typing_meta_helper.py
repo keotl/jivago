@@ -1,4 +1,4 @@
-def is_typing_meta_collection(clazz, metas=('List', 'Collection', 'Iterable', 'Tuple')) -> bool:
+def is_typing_meta_collection(clazz, metas=('List', 'Collection', 'Iterable', 'Tuple', 'Optional')) -> bool:
     if not hasattr(clazz, "__module__"):
         return False
     typing_meta_name = clazz._name if hasattr(clazz, "_name") else clazz.__name__ if hasattr(clazz, "__name__") else ""
@@ -11,4 +11,4 @@ def is_union_typing_meta(clazz):
     return is_typing_meta_collection(clazz, ("",))
 
 def is_optional_typing_meta(clazz):
-    return is_union_typing_meta(clazz) and type(None) in clazz.__args__
+    return is_typing_meta_collection(clazz, ("Optional")) and type(None) in clazz.__args__
