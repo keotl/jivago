@@ -34,7 +34,15 @@ class TemplateFilterTest(unittest.TestCase):
         self.assertEqual(A_RESPONSE.body, returned_response.body)
         self.assertEqual(A_RESPONSE.status, returned_response.status)
 
-    def test_givenATemplatedResponse_whenApplyingFilter_thenContentTypeIsSetToTextHtml(self):
+    def test_givenATemplatedResponse_whenApplyingFilter_thenContentTypeIsSetToProvidedContentType(self):
+        a_templated_response = Response(200, {}, RenderedView("test.html", {"foo": "bar"}, content_type="foobar"))
+        self.viewTemplateRepositoryMock.get_template.return_value = A_TEMPLATE
+
+        self.templateFilter.doFilter(A_REQUEST, a_templated_response, self.filterChainMock)
+
+        self.assertEqual("foobar", a_templated_response.headers['Content-Type'])
+
+    def test_givenATemplatedResponse_whenApplyingFilter_thenContentTypeDefaultsToTextHtml(self):
         a_templated_response = Response(200, {}, RenderedView("test.html", {"foo": "bar"}))
         self.viewTemplateRepositoryMock.get_template.return_value = A_TEMPLATE
 

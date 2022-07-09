@@ -98,7 +98,9 @@ See `Dependency Injection`_ for advanced configurations.
 
 View Rendering
 ---------------
-Jivago also supports rendered HTML views, using the Jinja2 templating engine. 
+Jivago also supports rendered HTML views, using the Jinja2 templating
+engine. Optionally, the content type can be overridden using the
+optional ``content_type`` keyword argument in the ``RenderedView`` controller.
 
 *templated_resource.py*
 

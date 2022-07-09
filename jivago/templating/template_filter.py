@@ -32,4 +32,4 @@ class TemplateFilter(Filter):
                 template_parameters = self.serializer.serialize(rendered_view.data)
             response.body = Template(template_text).render(**template_parameters)
 
-            response.headers['Content-Type'] = "text/html"
+            response.headers['Content-Type'] = rendered_view.content_type

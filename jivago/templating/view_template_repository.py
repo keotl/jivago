@@ -11,6 +11,6 @@ class ViewTemplateRepository(object):
     def get_template(self, filename: str) -> str:
         try:
             with open(os.path.join(self.view_template_folder, filename), 'r') as f:
-                return "\n".join(f.readlines())
+                return "".join(f.readlines())
         except FileNotFoundError:
             raise NoSuchTemplateException()
