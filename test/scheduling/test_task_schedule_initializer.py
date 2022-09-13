@@ -1,6 +1,8 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, tzinfo
 from unittest import mock
+
+import pytz
 
 from jivago.lang.registry import Registry
 from jivago.lang.runnable import Runnable
@@ -39,7 +41,7 @@ class TaskScheduleInitializerTest(unittest.TestCase):
         self.taskScheduleInitializer.initialize_task_scheduler(self.taskSchedulerMock)
 
         runnable_class, schedule = self.taskSchedulerMock.schedule_task.call_args[0]
-        self.assertTrue(schedule.next_start_time() > DATE_IN_THE_FUTURE)
+        self.assertTrue(schedule.next_start_time() > DATE_IN_THE_FUTURE.astimezone(pytz.UTC))
 
     def test_givenSimpleTimeInterval_whenCreatingSchedule_thenScheduleEveryXSeconds(self):
         self.registry.content = {}

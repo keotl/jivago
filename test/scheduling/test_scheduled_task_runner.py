@@ -18,7 +18,7 @@ class ScheduledTaskRunnerTests(unittest.TestCase):
         self.service_locator.bind(SomeCrashingTask, SomeCrashingTask)
         self.service_locator.bind(SomeTaskCrashingOnCleanup, SomeTaskCrashingOnCleanup)
         self.schedule_mock: Schedule = mock.create_autospec(Schedule)
-        self.schedule_mock.next_start_time.return_value = datetime.now()
+        self.schedule_mock.next_start_time.return_value = datetime.utcnow()
 
     def test_run_scheduled_task(self):
         self.runner = ScheduledTaskRunner(SomeScheduledTask, self.schedule_mock, self.service_locator)

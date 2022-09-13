@@ -18,16 +18,19 @@ class ReflectiveRoutingTable(TreeRoutingTable):
                 sub_paths = registry.get_annotated_in_package(Path, resource.registered.__module__)
 
                 for route_function in routable_functions:
-                    route_sub_path = Stream(sub_paths).firstMatch(lambda r: r.registered == route_function.registered)
+                    registered_paths = Stream(sub_paths) \
+                        .filter(lambda r: r.registered == route_function.registered) \
+                        .toList()
                     resource_path = resource.arguments['value']
 
-                    if not route_sub_path.isPresent():
+                    if not registered_paths:
                         self.register_route(primitive, resource_path, resource.registered,
                                             route_function.registered)
                     else:
-                        sub_path = route_sub_path.get().arguments['value']
-                        path = resource_path + sub_path if \
-                            resource_path.endswith('/') or sub_path.startswith('/') \
-                            else resource_path + '/' + sub_path
+                        for registered_path in registered_paths:
+                            sub_path = registered_path.arguments['value']
+                            path = resource_path + sub_path if \
+                                resource_path.endswith('/') or sub_path.startswith('/') \
+                                else resource_path + '/' + sub_path
 
-                        self.register_route(primitive, path, resource.registered, route_function.registered)
+                            self.register_route(primitive, path, resource.registered, route_function.registered)
