@@ -1,5 +1,5 @@
 alabaster==0.7.11
-anachronos==0.0.6
+anachronos==0.0.7
 MarkupSafe==2.0.1
 argh==0.26.2
 Babel==2.9.1
