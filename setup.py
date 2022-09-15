@@ -61,5 +61,5 @@ setup(
         exclude=['contrib', 'docs', 'test', 'test.*' 'tests', 'tests.*', 'example_app', 'example_app.*', 'test_data',
                  'test_data.*', 'test_utils', 'test_utils.*', 'e2e_test', 'e2e_test.*']),
 
-    install_requires=['Jinja2', 'croniter', 'pyyaml', 'werkzeug'],
+    install_requires=['Jinja2', 'croniter', 'pyyaml', 'werkzeug', 'pytz'],
 )
