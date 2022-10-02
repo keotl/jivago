@@ -1,4 +1,4 @@
-from urllib.parse import unquote
+from urllib.parse import unquote, unquote_plus
 
 from jivago.wsgi.invocation.url_encoded_form_parser import parse_urlencoded_form
 from jivago.wsgi.methods import to_method
@@ -12,7 +12,7 @@ class Request(object):
         self.path = unquote(path)
         self.headers = headers
         self.body = body
-        self.queryString = unquote(query_string)
+        self.queryString = unquote_plus(query_string)
         self._query_form = None
 
     @property

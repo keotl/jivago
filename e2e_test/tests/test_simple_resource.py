@@ -35,6 +35,12 @@ class SimpleResourceTest(anachronos.TestCase):
         self.assertEqual(200, response.status_code)
         self.assertThat(GET_WITH_PARAMETERS).is_contained()
 
+    def test_getWithQueryParametersWithSpaces(self):
+        response = http.get("/params?query=query+with+spaces%20+%25&age=13")
+
+        self.assertEqual(200, response.status_code)
+        self.assertThat(GET_WITH_PARAMETERS + " query with spaces  % 13").is_stored()
+
     def test_givenMissingOrMalformedQueryParams_thenReturn400BadRequest(self):
         response = http.get("/params?query=foo&age=a")
 
