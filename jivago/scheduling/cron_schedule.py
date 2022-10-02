@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
-import pytz
 from croniter import croniter
 
 from jivago.lang.annotations import Override
@@ -11,7 +10,7 @@ class CronSchedule(Schedule):
 
     def __init__(self, cron_string: str, start_time: datetime):
         if start_time:
-            self.iterator = croniter(cron_string, start_time=start_time.astimezone(pytz.UTC))
+            self.iterator = croniter(cron_string, start_time=start_time.astimezone(timezone.utc))
         else:
             self.iterator = croniter(cron_string)
 
