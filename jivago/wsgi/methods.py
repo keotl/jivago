@@ -17,9 +17,10 @@ DELETE = HttpMethod("DELETE")
 PUT = HttpMethod("PUT")
 PATCH = HttpMethod("PATCH")
 OPTIONS = HttpMethod("OPTIONS")
+HEAD = HttpMethod("HEAD")
 
-http_methods = [GET, POST, DELETE, PUT, PATCH, OPTIONS]
-method_strings = {'GET': GET, 'POST': POST, 'DELETE': DELETE, 'PUT': PUT, 'PATCH': PATCH, 'OPTIONS': OPTIONS}
+http_methods = [GET, POST, DELETE, PUT, PATCH, OPTIONS, HEAD]
+method_strings = {'GET': GET, 'POST': POST, 'DELETE': DELETE, 'PUT': PUT, 'PATCH': PATCH, 'OPTIONS': OPTIONS, 'HEAD': HEAD}
 
 
 def to_method(method_name: str) -> HttpMethod:
