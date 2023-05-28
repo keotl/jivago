@@ -47,6 +47,8 @@ class ProductionJivagoContext(AbstractContext):
         self.root_package_name = root_package.__name__ if root_package else ''
         self.root_package = root_package
         self.registry = registry
+        self._event_bus = None
+        self._async_event_bus = None
         super().__init__()
 
     @Override
@@ -91,9 +93,9 @@ class ProductionJivagoContext(AbstractContext):
         self.serviceLocator.bind(PartialContentHandler, PartialContentHandler)
         self.serviceLocator.bind(HttpStatusCodeResolver, HttpStatusCodeResolver)
         self.serviceLocator.bind(ObjectMapper, ObjectMapper)
-        self.serviceLocator.bind(EventBus, self.create_event_bus())
-        self.serviceLocator.bind(SynchronousEventBus, self.serviceLocator.get(EventBus))
-        self.serviceLocator.bind(AsyncEventBus, AsyncEventBus(self.serviceLocator.get(EventBus)))
+        self.serviceLocator.bind(SynchronousEventBus, self._event_bus_instance)
+        self.serviceLocator.bind(EventBus, self._event_bus_instance)
+        self.serviceLocator.bind(AsyncEventBus, self._async_event_bus_instance)
         self.serviceLocator.bind(RequestScopeCache, request_scope_cache)
 
         if not self.banner:
@@ -117,3 +119,13 @@ class ProductionJivagoContext(AbstractContext):
     def create_event_bus(self) -> EventBus:
         return ReflectiveEventBusInitializer(self.service_locator(), self.registry,
                                              self.root_package_name).create_message_bus()
+
+    def _event_bus_instance(self) -> EventBus:
+        if self._event_bus is None:
+            self._event_bus = self.create_event_bus()
+        return self._event_bus
+
+    def _async_event_bus_instance(self) -> AsyncEventBus:
+        if self._async_event_bus is None:
+            self._async_event_bus = AsyncEventBus(self._event_bus_instance())
+        return self._async_event_bus

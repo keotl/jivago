@@ -1,13 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor
 
 from jivago.event.event_bus import EventBus
-from jivago.event.synchronous_event_bus import SynchronousEventBus
 from jivago.lang.annotations import Override
 
 
 class AsyncEventBus(EventBus):
 
-    def __init__(self, event_bus: SynchronousEventBus, pool_size=2):
+    def __init__(self, event_bus: EventBus, pool_size=2):
         self.event_bus = event_bus
         self.thread_pool = ThreadPoolExecutor(max_workers=pool_size)
 
