@@ -15,6 +15,7 @@ class MessageDispatcherRunnableTest(unittest.TestCase):
         self.dependency_mock = mock.MagicMock()
         self.service_locator.bind(object, self.dependency_mock)
         self.service_locator.bind(MessageDispatcherRunnableMock, MessageDispatcherRunnableMock)
+        self.service_locator.bind(MessageDispatcherRunnableMockWithException, MessageDispatcherRunnableMockWithException)
 
     def test_whenHandlingMessage_thenInstantiateAndCallRunMethod(self):
         dispatcher = MessageDispatcherRunnable("foo", MessageDispatcherRunnableMock, self.service_locator)
@@ -22,6 +23,13 @@ class MessageDispatcherRunnableTest(unittest.TestCase):
         dispatcher.handle(None)
 
         self.dependency_mock.assert_called()
+    def test_givenException_whenHandlingMessage_thenReturnNone(self):
+        dispatcher = MessageDispatcherRunnable("foo", MessageDispatcherRunnableMockWithException, self.service_locator)
+
+        res = dispatcher.handle(None)
+
+        self.assertEqual(None, res)
+
 
 
 @EventHandler("foo")
@@ -34,3 +42,10 @@ class MessageDispatcherRunnableMock(Runnable):
     @Override
     def run(self):
         self.dependency_mock()
+
+@EventHandler("foo_exception")
+class MessageDispatcherRunnableMockWithException(Runnable):
+
+    @Override
+    def run(self):
+        raise Exception("error!")

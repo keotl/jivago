@@ -14,6 +14,7 @@ class JitMessageDispatcherClassTest(unittest.TestCase):
     def setUp(self):
         self.service_locator = ServiceLocator()
         self.service_locator.bind(DispatcherMock, DispatcherMock)
+        self.service_locator.bind(DispatcherWithException, DispatcherWithException)
 
     def test_whenHandlingMessage_thenInstantiateAndInvoke(self):
         message_dispatcher_class = JitMessageDispatcherClass(MESSAGE_NAME, DispatcherMock,
@@ -24,9 +25,23 @@ class JitMessageDispatcherClassTest(unittest.TestCase):
 
         self.assertEqual(PAYLOAD, result)
 
+    def test_givenException_whenHandlingMessage_thenReturnNone(self):
+        message_dispatcher_class = JitMessageDispatcherClass(MESSAGE_NAME, DispatcherWithException,
+                                                             DispatcherWithException.handle_message,
+                                                             self.service_locator)
+
+        result = message_dispatcher_class.handle(PAYLOAD)
+
+        self.assertEqual(None, result)
+
 
 class DispatcherMock(object):
 
     @EventHandler(MESSAGE_NAME)
     def handle_message(self, payload):
         return payload
+
+class DispatcherWithException(object):
+    @EventHandler(MESSAGE_NAME)
+    def handle_message(self, payload):
+        raise Exception("error!")

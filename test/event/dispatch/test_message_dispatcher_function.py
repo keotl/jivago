@@ -14,6 +14,16 @@ class MessageDispatcherFunctionTest(unittest.TestCase):
 
         self.assertEqual(PAYLOAD, result)
 
+    def test_givenException_whenDispatching_thenReturnNone(self):
+        dispatcher = MessageDispatcherFunction("foobar",dispatch_with_exception)
+
+        result = dispatcher.handle(PAYLOAD)
+
+        self.assertEqual(None, result)
+
 
 def dispatch(payload):
     return payload
+
+def dispatch_with_exception():
+    raise Exception("error!")
