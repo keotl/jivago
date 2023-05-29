@@ -18,6 +18,7 @@ class FilterChain(object):
             for invoker in self.route_handler_factory.create_route_handlers(request):
                 try:
                     gotten_response = invoker.invoke(request)
+                    break
                 except IncorrectResourceParametersException:
                     continue
             if gotten_response is None:
