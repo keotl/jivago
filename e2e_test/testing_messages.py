@@ -12,6 +12,8 @@ POSTINIT = "Hooks:PostInit"
 
 SCHEDULED = "Scheduled:EverySecond"
 
+BACKGROUND_WORKER = "BackgroundWorker:run"
+
 # Filters
 FILTER = "Filtering:Entering Filter"
 

@@ -18,6 +18,7 @@ from jivago.config.startup_hooks import PreInit, Init, PostInit
 from jivago.lang.annotations import BackgroundWorker
 from jivago.lang.registry import Registry, Annotation
 from jivago.lang.stream import Stream
+from jivago.scheduling.background_worker_scheduler import BackgroundWorkerScheduler
 from jivago.scheduling.task_schedule_initializer import TaskScheduleInitializer
 from jivago.scheduling.task_scheduler import TaskScheduler
 
@@ -62,9 +63,10 @@ class JivagoApplication(object):
         self.call_startup_hook(Init)
 
         self.LOGGER.info("Starting background workers")
-        self.backgroundWorkers = Stream(self.get_annotated(BackgroundWorker)).map(
-            lambda clazz: self.serviceLocator.get(clazz)).map(lambda worker: Thread(target=worker.run, daemon=True))
-        Stream(self.backgroundWorkers).forEach(lambda thread: thread.start())
+        self.backgroundWorkers = BackgroundWorkerScheduler(
+            Stream(self.get_annotated(BackgroundWorker))
+            .map(lambda clazz: self.serviceLocator.get(clazz)))
+        self.backgroundWorkers.start()
 
         task_schedule_initializer = TaskScheduleInitializer(self.registry, self.root_module_name)
         self.task_scheduler: TaskScheduler = self.serviceLocator.get(TaskScheduler)
