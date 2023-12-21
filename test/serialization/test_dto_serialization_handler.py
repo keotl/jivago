@@ -252,7 +252,7 @@ class DtoSerializationHandlerTest(unittest.TestCase):
         self.assertEqual(given, result)
 
     def test_givenUnknownDeserializationStrategy_whenDeserializing_thenThrowExceptionWithHelpfulMessage(self):
-        with self.assertRaisesRegexp(NoMatchingDeserializationStrategyException, "UnknownType.*@Serializable"):
+        with self.assertRaisesRegex(NoMatchingDeserializationStrategyException, "UnknownType.*@Serializable"):
             self.serialization_handler.deserialize({}, UnknownType)
 
 
