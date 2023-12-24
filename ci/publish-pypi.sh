@@ -1,6 +1,11 @@
 #!/bin/sh
 apk add git
-pip install git
+
+git describe --tags --exact-match
+if [ $? -ne 0 ]; then
+    echo "Not a tagged commit. Skipping."
+    exit 0;
+fi
 
 pip install build twine
 python3 -m build
