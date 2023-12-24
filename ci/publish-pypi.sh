@@ -10,4 +10,4 @@ fi
 
 pip install build twine
 python3 -m build
-python3 -m twine upload --non-interactive --repository testpypi dist/*
+python3 -m twine upload --non-interactive dist/*
