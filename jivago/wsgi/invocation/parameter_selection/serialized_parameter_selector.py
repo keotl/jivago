@@ -1,3 +1,4 @@
+import json
 from jivago.lang.annotations import Override
 
 from jivago.serialization.deserializer import Deserializer
@@ -19,6 +20,6 @@ class SerializedParameterSelector(ParameterSelector):
     @Override
     def format_parameter(self, parameter_name: str, parameter_declaration: type, request: Request) -> object:
         try:
-            return self.deserializer.deserialize(request.body, parameter_declaration)
+            return self.deserializer.deserialize(json.loads(request.body.decode("utf-8")), parameter_declaration)
         except SerializationException:
             raise MissingRouteInvocationArgument()
