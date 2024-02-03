@@ -14,7 +14,7 @@ from jivago.config.properties.global_config_loader import GlobalConfigLoader
 from jivago.config.properties.json_config_loader import JsonConfigLoader
 from jivago.config.properties.system_environment_properties import SystemEnvironmentProperties
 from jivago.config.properties.yaml_config_loader import YamlConfigLoader
-from jivago.config.startup_hooks import PreInit, Init, PostInit
+from jivago.config.startup_hooks import PreInit, Init, PostInit, PreShutdown
 from jivago.lang.annotations import BackgroundWorker
 from jivago.lang.registry import Registry, Annotation
 from jivago.lang.stream import Stream
@@ -55,12 +55,12 @@ class JivagoApplication(object):
         self.serviceLocator.bind(SystemEnvironmentProperties, self.__load_system_environment_properties())
 
         self.LOGGER.info("Running PreInit hooks")
-        self.call_startup_hook(PreInit)
+        self.call_lifecycle_hook(PreInit)
 
         self.router = self.context.create_router_config().build(self.registry, self.serviceLocator)
 
         self.LOGGER.info("Running Init hooks")
-        self.call_startup_hook(Init)
+        self.call_lifecycle_hook(Init)
 
         self.LOGGER.info("Starting background workers")
         self.backgroundWorkers = BackgroundWorkerScheduler(
@@ -73,7 +73,7 @@ class JivagoApplication(object):
         task_schedule_initializer.initialize_task_scheduler(self.task_scheduler)
 
         self.LOGGER.info("Running PostInit hooks")
-        self.call_startup_hook(PostInit)
+        self.call_lifecycle_hook(PostInit)
 
         signal.signal(signal.SIGTERM, self.cleanup)
         signal.signal(signal.SIGINT, self.cleanup)
@@ -100,7 +100,7 @@ class JivagoApplication(object):
         return Stream(Registry().get_annotated_in_package(annotation, self.root_module_name)).map(
             lambda registration: registration.registered).toList()
 
-    def call_startup_hook(self, hook: Annotation):
+    def call_lifecycle_hook(self, hook: Annotation):
         Stream(self.get_annotated(hook)).map(lambda triggered_class: self.serviceLocator.get(triggered_class)).forEach(
             lambda x: x.run())
 
@@ -111,6 +111,12 @@ class JivagoApplication(object):
     def cleanup(self, signum, frame):
         self.LOGGER.info("Received shutdown signal. Terminating...")
         self.task_scheduler.stop()
+        try:
+            self.call_lifecycle_hook(PreShutdown)
+        except Exception as e:
+            import traceback
+            self.LOGGER.error(f"Unhandled exception in PreShutdown hook {e}.")
+            self.LOGGER.error("".join(traceback.format_exception(e)))
         import sys
         sys.exit(0)
 

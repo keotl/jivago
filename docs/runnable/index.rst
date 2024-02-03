@@ -29,7 +29,7 @@ Application Initialization Hooks
 * **PreInit** is invoked right after the service locator and application properties are configured.
 * **Init** is invoked after initializing the routing table. At this stage, the application is in a coherent state.
 * **PostInit** is invoked after starting background workers and scheduled tasks. No further initialization task is left to be done.
-
+* **PreShutdown** is invoked upon receiving SIGINT/SIGTERM signals. Use for cleaning up resources and gracefully shutting down threads.
 
 Scheduled Tasks
 -----------------

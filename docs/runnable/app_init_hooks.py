@@ -1,4 +1,4 @@
-from jivago.config.startup_hooks import PreInit, Init, PostInit
+from jivago.config.startup_hooks import PreInit, Init, PostInit, PreShutdown
 from jivago.lang.annotations import Override
 from jivago.lang.runnable import Runnable
 
@@ -25,3 +25,10 @@ class ThirdHook(Runnable):
     @Override
     def run(self):
         print("Third!")
+
+@PreShutdown
+class ShutdownHook(Runnable):
+
+    @Override
+    def run(self):
+        print("Cleaning up before shutting down.")
